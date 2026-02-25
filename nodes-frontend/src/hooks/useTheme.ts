@@ -1,27 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
-type Theme = 'dark' | 'light' | 'system'
+type Theme = "dark" | "light" | "system";
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('theme') as Theme) || 'system'
+    if (typeof window !== "undefined") {
+      // По умолчанию тёмная тема для киберпанк-атмосферы
+      return (localStorage.getItem("theme") as Theme) || "dark";
     }
-    return 'system'
-  })
+    return "dark";
+  });
 
   useEffect(() => {
-    const root = window.document.documentElement
-    root.classList.remove('light', 'dark')
+    const root = window.document.documentElement;
+    root.classList.remove("light", "dark");
 
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light'
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light";
 
-    const effectiveTheme = theme === 'system' ? systemTheme : theme
-    root.classList.add(effectiveTheme)
-    localStorage.setItem('theme', theme)
-  }, [theme])
+    const effectiveTheme = theme === "system" ? systemTheme : theme;
+    root.classList.add(effectiveTheme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
-  return { theme, setTheme }
+  return { theme, setTheme };
 }
