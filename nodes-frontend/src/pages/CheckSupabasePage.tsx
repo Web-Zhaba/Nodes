@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import { checkSupabaseConnection } from "@/lib/check-supabase";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,19 +23,22 @@ interface CheckResult {
 }
 
 export default function CheckSupabasePage() {
-  const [status, setStatus] = useState<CheckResult | null>(null);
   const [isChecking, setIsChecking] = useState(false);
+  const [status, setStatus] = useState<CheckResult | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const runCheck = async () => {
+  const runCheck = useCallback(async () => {
     setIsChecking(true);
     const result = await checkSupabaseConnection();
     setStatus(result);
     setIsChecking(false);
-  };
-
-  useEffect(() => {
-    runCheck();
   }, []);
+
+  // Инициализация при первом рендере
+  if (!isInitialized) {
+    setIsInitialized(true);
+    runCheck();
+  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
