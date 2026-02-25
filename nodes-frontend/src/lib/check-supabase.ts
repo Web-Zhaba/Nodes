@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { supabase } from "./supabase";
 
 /**
  * Проверка подключения к Supabase
@@ -14,67 +14,69 @@ export async function checkSupabaseConnection() {
       connections: false,
     },
     error: null as string | null,
-  }
+  };
 
   try {
     // 1. Проверка состояния сессии
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (session) {
       result.user = {
         id: session.user.id,
-        email: session.user.email || '',
-      }
+        email: session.user.email || "",
+      };
     }
 
     // 2. Проверка таблиц через запрос к profiles
-    const { data: profiles, error: profilesError } = await supabase
-      .from('profiles')
-      .select('id, email')
-      .limit(1)
+    const { error: profilesError } = await supabase
+      .from("profiles")
+      .select("id, email")
+      .limit(1);
 
     if (profilesError) {
-      throw new Error(`Profiles table: ${profilesError.message}`)
+      throw new Error(`Profiles table: ${profilesError.message}`);
     }
-    result.tables.profiles = true
+    result.tables.profiles = true;
 
     // 3. Проверка таблицы nodes
     const { error: nodesError } = await supabase
-      .from('nodes')
-      .select('id')
-      .limit(1)
+      .from("nodes")
+      .select("id")
+      .limit(1);
 
     if (nodesError) {
-      throw new Error(`Nodes table: ${nodesError.message}`)
+      throw new Error(`Nodes table: ${nodesError.message}`);
     }
-    result.tables.nodes = true
+    result.tables.nodes = true;
 
     // 4. Проверка таблицы impulses
     const { error: impulsesError } = await supabase
-      .from('impulses')
-      .select('id')
-      .limit(1)
+      .from("impulses")
+      .select("id")
+      .limit(1);
 
     if (impulsesError) {
-      throw new Error(`Impulses table: ${impulsesError.message}`)
+      throw new Error(`Impulses table: ${impulsesError.message}`);
     }
-    result.tables.impulses = true
+    result.tables.impulses = true;
 
     // 5. Проверка таблицы connections
     const { error: connectionsError } = await supabase
-      .from('connections')
-      .select('id')
-      .limit(1)
+      .from("connections")
+      .select("id")
+      .limit(1);
 
     if (connectionsError) {
-      throw new Error(`Connections table: ${connectionsError.message}`)
+      throw new Error(`Connections table: ${connectionsError.message}`);
     }
-    result.tables.connections = true
+    result.tables.connections = true;
 
-    result.connected = true
+    result.connected = true;
   } catch (err) {
-    result.error = err instanceof Error ? err.message : 'Unknown error'
+    result.error = err instanceof Error ? err.message : "Unknown error";
   }
 
-  return result
+  return result;
 }
