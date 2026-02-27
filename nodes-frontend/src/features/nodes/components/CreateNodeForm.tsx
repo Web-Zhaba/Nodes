@@ -38,7 +38,7 @@ import { NodePreview } from "./NodePreview";
  */
 export function CreateNodeForm() {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [nodeType, setNodeType] = useState<NodeType>("binary");
   const [connectorNames, setConnectorNames] = useState<string[]>([]);
   const [allConnectors, setAllConnectors] = useState<
@@ -61,7 +61,7 @@ export function CreateNodeForm() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<CreateNodeFormData>({
     resolver: zodResolver(createNodeSchema) as any,
     defaultValues: {
@@ -89,7 +89,7 @@ export function CreateNodeForm() {
 
   // Обработка отправки формы
   const onSubmit = async (data: CreateNodeFormData) => {
-    setIsSubmitting(true);
+
 
     try {
       // Создаём узел с коннекторами
@@ -121,8 +121,6 @@ export function CreateNodeForm() {
         description:
           error instanceof Error ? error.message : "Не удалось создать узел",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -173,7 +171,7 @@ export function CreateNodeForm() {
               placeholder="Например: Утренняя медитация"
               className={cn(
                 errors.name &&
-                  "border-destructive focus-visible:ring-destructive",
+                "border-destructive focus-visible:ring-destructive",
               )}
               {...register("name")}
             />
@@ -283,7 +281,7 @@ export function CreateNodeForm() {
                   }
                   className={cn(
                     errors.target_value &&
-                      "border-destructive focus-visible:ring-destructive",
+                    "border-destructive focus-visible:ring-destructive",
                   )}
                   value={previewValues.target_value || ""}
                   onChange={(e) =>
@@ -377,7 +375,7 @@ export function CreateNodeForm() {
               placeholder="Краткое описание узла..."
               className={cn(
                 errors.description &&
-                  "border-destructive focus-visible:ring-destructive",
+                "border-destructive focus-visible:ring-destructive",
               )}
               {...register("description")}
             />

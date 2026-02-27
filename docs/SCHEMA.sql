@@ -144,11 +144,11 @@ ALTER TABLE connections ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view own profile"
   ON profiles FOR SELECT
-  USING (auth.uid() = id);
+  USING ((select auth.uid()) = id);
 
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE
-  USING (auth.uid() = id);
+  USING ((select auth.uid()) = id);
 
 -- =====================================================
 -- 5. Policies для cores
@@ -156,19 +156,19 @@ CREATE POLICY "Users can update own profile"
 
 CREATE POLICY "Users can view own cores"
   ON cores FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can create own cores"
   ON cores FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update own cores"
   ON cores FOR UPDATE
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete own cores"
   ON cores FOR DELETE
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 -- =====================================================
 -- 6. Policies для connectors
@@ -176,19 +176,19 @@ CREATE POLICY "Users can delete own cores"
 
 CREATE POLICY "Users can view own connectors"
   ON connectors FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can create own connectors"
   ON connectors FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update own connectors"
   ON connectors FOR UPDATE
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete own connectors"
   ON connectors FOR DELETE
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 -- =====================================================
 -- 7. Policies для nodes
@@ -196,19 +196,19 @@ CREATE POLICY "Users can delete own connectors"
 
 CREATE POLICY "Users can view own nodes"
   ON nodes FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can create own nodes"
   ON nodes FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update own nodes"
   ON nodes FOR UPDATE
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete own nodes"
   ON nodes FOR DELETE
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 -- =====================================================
 -- 8. Policies для node_connectors
@@ -220,7 +220,7 @@ CREATE POLICY "Users can view own node_connectors"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = node_connectors.node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
@@ -230,7 +230,7 @@ CREATE POLICY "Users can create own node_connectors"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = node_connectors.node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
@@ -240,7 +240,7 @@ CREATE POLICY "Users can delete own node_connectors"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = node_connectors.node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
@@ -254,7 +254,7 @@ CREATE POLICY "Users can view own impulses"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = impulses.node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
@@ -264,7 +264,7 @@ CREATE POLICY "Users can create own impulses"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = impulses.node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
@@ -274,7 +274,7 @@ CREATE POLICY "Users can delete own impulses"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = impulses.node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
@@ -288,7 +288,7 @@ CREATE POLICY "Users can view own connections"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = connections.from_node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
@@ -298,7 +298,7 @@ CREATE POLICY "Users can create own connections"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = connections.from_node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
@@ -308,7 +308,7 @@ CREATE POLICY "Users can update own connections"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = connections.from_node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
@@ -318,7 +318,7 @@ CREATE POLICY "Users can delete own connections"
     EXISTS (
       SELECT 1 FROM nodes
       WHERE nodes.id = connections.from_node_id
-      AND nodes.user_id = auth.uid()
+      AND nodes.user_id = (select auth.uid())
     )
   );
 
