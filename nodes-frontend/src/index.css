@@ -1,5 +1,65 @@
 @import "tailwindcss";
 
+/* --- Plus Jakarta Sans --- */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* --- IBM Plex Mono --- */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/IBMPlexMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/IBMPlexMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+/* --- Lora --- */
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -188,4 +248,43 @@
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
+}
+
+/* Стили для уведомлений sonner */
+:where([data-sonner-toaster]) {
+  --normal-gap: 12px;
+  --normal-width: 356px;
+
+  font-family: var(--font-sans);
+  font-size: 14px;
+
+  /* Уведомления позиционируются фиксированно и не влияют на layout */
+  position: fixed;
+  z-index: 9999;
+
+  /* Отступы от краёв экрана */
+  top: var(--normal-gap);
+  right: var(--normal-gap);
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 640px) {
+  :where([data-sonner-toaster]) {
+    left: var(--normal-gap);
+    right: var(--normal-gap);
+    width: auto;
+  }
+}
+
+/* Стили для отдельного toast */
+:where([data-sonner-toast]) {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+}
+
+/* Иконки в уведомлениях */
+:where([data-sonner-toast] [data-icon]) {
+  width: 16px;
+  height: 16px;
 }

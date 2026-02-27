@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/main.tsx", "src/tests/**/*.{ts,tsx}!"],
+  "project": ["src/**/*.{ts,tsx}!"],
+  "ignore": ["src/components/ui/**/*"],
+  "ignoreDependencies": [
+    "tailwindcss-animate",
+    "@tailwindcss/postcss",
+    "postcss",
+    "autoprefixer"
+  ]
+}

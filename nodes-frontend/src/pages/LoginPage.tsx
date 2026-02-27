@@ -74,10 +74,11 @@ export default function LoginPage() {
                 type="email"
                 placeholder="you@example.com"
                 disabled={isLoading}
+                autoComplete="email"
                 {...form.register('email')}
               />
               {form.formState.errors.email && (
-                <p className="text-sm text-destructive">
+                <p className="text-sm text-destructive mt-1">
                   {form.formState.errors.email.message}
                 </p>
               )}
@@ -90,10 +91,11 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 disabled={isLoading}
+                autoComplete="current-password"
                 {...form.register('password')}
               />
               {form.formState.errors.password && (
-                <p className="text-sm text-destructive">
+                <p className="text-sm text-destructive mt-1">
                   {form.formState.errors.password.message}
                 </p>
               )}

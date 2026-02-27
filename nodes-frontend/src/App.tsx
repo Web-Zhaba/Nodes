@@ -4,10 +4,15 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useAuth } from "@/hooks/useAuth";
 import Layout from "@/widgets/Layout";
 import ProtectedRoute from "@/widgets/ProtectedRoute";
-import HomePage from "@/pages/HomePage";
-import LoginPage from "@/pages/LoginPage";
-import SignupPage from "@/pages/SignupPage";
-import NotFoundPage from "@/pages/NotFoundPage";
+import { lazy, Suspense } from "react";
+
+// Ленивая загрузка страниц
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const SignupPage = lazy(() => import("@/pages/SignupPage"));
+const NodesListPage = lazy(() => import("@/pages/NodesListPage"));
+const CreateNodePage = lazy(() => import("@/pages/CreateNodePage"));
+const EditNodePage = lazy(() => import("@/pages/EditNodePage"));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -30,44 +35,54 @@ function AuthRedirect() {
 function App() {
   return (
     <ErrorBoundary>
+      {/* Toaster вынесен за пределы BrowserRouter для корректной работы уведомлений */}
+      <Toaster
+        richColors
+        position="top-right"
+        toastOptions={{
+          className: "toast-notification",
+          duration: 4000,
+        }}
+      />
       <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<AuthRedirect />} />
-          <Route path="/signup" element={<SignupPage />} />
+        <Suspense 
+        fallback={<div className="h-screen w-screen flex items-center justify-center animate-pulse">Загрузка Nodes...</div>}>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<AuthRedirect />} />
+            <Route path="/signup" element={<SignupPage />} />
 
-          {/* Protected routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<HomePage />} />
+            {/* Protected routes */}
             <Route
-              path="graph"
-              element={<div className="p-4">Graph Page (WIP)</div>}
-            />
-            <Route
-              path="analytics"
-              element={<div className="p-4">Analytics Page (WIP)</div>}
-            />
-            <Route
-              path="profile"
-              element={<div className="p-4">Profile Page (WIP)</div>}
-            />
-            <Route
-              path="nodes/new"
-              element={<div className="p-4">Create Node Page (WIP)</div>}
-            />
-          </Route>
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<NodesListPage />} />
+              <Route path="nodes" element={<NodesListPage />} />
+              <Route path="nodes/new" element={<CreateNodePage />} />
+              <Route path="nodes/edit/:id" element={<EditNodePage />} />
+              <Route
+                path="graph"
+                element={<div className="p-4">Graph Page (WIP)</div>}
+              />
+              <Route
+                path="analytics"
+                element={<div className="p-4">Analytics Page (WIP)</div>}
+              />
+              <Route
+                path="profile"
+                element={<div className="p-4">Profile Page (WIP)</div>}
+              />
+            </Route>
 
-          {/* 404 */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-        <Toaster richColors position="top-right" />
+            {/* 404 */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </ErrorBoundary>
   );

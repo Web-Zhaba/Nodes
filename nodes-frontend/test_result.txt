@@ -1,0 +1,302 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mE:/Сайты/Nodes/nodes-frontend[39m
+
+[90mstderr[2m | src/features/nodes/components/__tests__/EditNodeForm.test.tsx[2m > [22m[2mEditNodeForm Component[2m > [22m[2mдолжен правильно загружать и отображать данные узла
+[22m[39mAn error occurred in the <RadioBubbleInput> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+An error occurred in the <RadioBubbleInput> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+An error occurred in the <RadioBubbleInput> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+[90mstderr[2m | src/features/nodes/components/__tests__/EditNodeForm.test.tsx[2m > [22m[2mEditNodeForm Component[2m > [22m[2mдолжен вызывать updateNode при сабмите формы
+[22m[39mAn error occurred in the <RadioBubbleInput> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+An error occurred in the <RadioBubbleInput> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+An error occurred in the <RadioBubbleInput> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+[90mstderr[2m | src/features/nodes/components/__tests__/EditNodeForm.test.tsx[2m > [22m[2mEditNodeForm Component[2m > [22m[2mдолжен вызывать deleteNode с подтверждением
+[22m[39mAn error occurred in the <RadioBubbleInput> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+An error occurred in the <RadioBubbleInput> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+An error occurred in the <RadioBubbleInput> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+ [31m❯[39m src/features/nodes/components/__tests__/EditNodeForm.test.tsx [2m([22m[2m4 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 252[2mms[22m[39m
+     [32m✓[39m должен отображать лоадер при инициализации[32m 19[2mms[22m[39m
+[31m     [31m×[31m должен правильно загружать и отображать данные узла[39m[32m 131[2mms[22m[39m
+[31m     [31m×[31m должен вызывать updateNode при сабмите формы[39m[32m 45[2mms[22m[39m
+[31m     [31m×[31m должен вызывать deleteNode с подтверждением[39m[32m 55[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/features/nodes/components/__tests__/EditNodeForm.test.tsx[2m > [22mEditNodeForm Component[2m > [22mдолжен правильно загружать и отображать данные узла
+[31m[1mTestingLibraryElementError[22m: Unable to find an element with the display value: Утренняя пробежка.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div />[31m
+[36m</body>[31m[39m
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/features/nodes/components/__tests__/EditNodeForm.test.tsx:[2m76:19[22m[39m
+    [90m 74| [39m
+    [90m 75| [39m    [90m// Проверяем, что форма заполнилась[39m
+    [90m 76| [39m    expect(screen.getByDisplayValue('Утренняя пробежка')).toBeInTheDoc…
+    [90m   | [39m                  [31m^[39m
+    [90m 77| [39m    expect(screen.getByDisplayValue('Бегать по 30 минут')).toBeInTheDo…
+    [90m 78| [39m    expect(screen.getByDisplayValue('30')).toBeInTheDocument(); // tar…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/features/nodes/components/__tests__/EditNodeForm.test.tsx[2m > [22mEditNodeForm Component[2m > [22mдолжен вызывать updateNode при сабмите формы
+[31m[1mTestingLibraryElementError[22m: Unable to find a label with the text of: /название узла/i
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div />[31m
+[36m</body>[31m[39m
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getAllByLabelText node_modules/@testing-library/dom/dist/queries/label-text.js:[2m111:38[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/features/nodes/components/__tests__/EditNodeForm.test.tsx:[2m105:30[22m[39m
+    [90m103| [39m
+    [90m104| [39m    [90m// Изменяем имя[39m
+    [90m105| [39m    [35mconst[39m nameInput [33m=[39m screen[33m.[39m[34mgetByLabelText[39m([36m/название узла/i[39m)[33m;[39m
+    [90m   | [39m                             [31m^[39m
+    [90m106| [39m    fireEvent[33m.[39m[34mchange[39m(nameInput[33m,[39m { target[33m:[39m { value[33m:[39m [32m'Новое имя'[39m } })[33m;[39m
+    [90m107| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/features/nodes/components/__tests__/EditNodeForm.test.tsx[2m > [22mEditNodeForm Component[2m > [22mдолжен вызывать deleteNode с подтверждением
+[31m[1mTestingLibraryElementError[22m: Unable to find an accessible element with the role "button" and name `/удалить узел/i`
+
+There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div />[31m
+[36m</body>[31m[39m
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/features/nodes/components/__tests__/EditNodeForm.test.tsx:[2m135:33[22m[39m
+    [90m133| [39m
+    [90m134| [39m    [90m// Кликаем по кнопке удаления[39m
+    [90m135| [39m    const deleteButton = screen.getByRole('button', { name: /удалить у…
+    [90m   | [39m                                [31m^[39m
+    [90m136| [39m    fireEvent[33m.[39m[34mclick[39m(deleteButton)[33m;[39m
+    [90m137| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 9 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: ResizeObserver is not defined[39m
+[90m [2m❯[22m ../../../%D0%A1%D0%B0%D0%B9%D1%82%D1%8B/Nodes/nodes-frontend/node_modules/@radix-ui/react-use-size/dist/index.mjs:[2m9:30[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m13213:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13951:13[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m14165:11[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13949:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/nodes/components/__tests__/EditNodeForm.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mдолжен правильно загружать и отображать данные узла[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: ResizeObserver is not defined[39m
+[90m [2m❯[22m ../../../%D0%A1%D0%B0%D0%B9%D1%82%D1%8B/Nodes/nodes-frontend/node_modules/@radix-ui/react-use-size/dist/index.mjs:[2m9:30[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m13213:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13951:13[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m14165:11[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13949:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/nodes/components/__tests__/EditNodeForm.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mдолжен правильно загружать и отображать данные узла[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: ResizeObserver is not defined[39m
+[90m [2m❯[22m ../../../%D0%A1%D0%B0%D0%B9%D1%82%D1%8B/Nodes/nodes-frontend/node_modules/@radix-ui/react-use-size/dist/index.mjs:[2m9:30[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m13213:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13951:13[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m14165:11[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13949:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/nodes/components/__tests__/EditNodeForm.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mдолжен правильно загружать и отображать данные узла[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: ResizeObserver is not defined[39m
+[90m [2m❯[22m ../../../%D0%A1%D0%B0%D0%B9%D1%82%D1%8B/Nodes/nodes-frontend/node_modules/@radix-ui/react-use-size/dist/index.mjs:[2m9:30[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m13213:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13951:13[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m14165:11[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13949:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/nodes/components/__tests__/EditNodeForm.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mдолжен вызывать updateNode при сабмите формы[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: ResizeObserver is not defined[39m
+[90m [2m❯[22m ../../../%D0%A1%D0%B0%D0%B9%D1%82%D1%8B/Nodes/nodes-frontend/node_modules/@radix-ui/react-use-size/dist/index.mjs:[2m9:30[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m13213:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13951:13[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m14165:11[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13949:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/nodes/components/__tests__/EditNodeForm.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mдолжен вызывать updateNode при сабмите формы[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: ResizeObserver is not defined[39m
+[90m [2m❯[22m ../../../%D0%A1%D0%B0%D0%B9%D1%82%D1%8B/Nodes/nodes-frontend/node_modules/@radix-ui/react-use-size/dist/index.mjs:[2m9:30[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m13213:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13951:13[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m14165:11[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13949:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/nodes/components/__tests__/EditNodeForm.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mдолжен вызывать updateNode при сабмите формы[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: ResizeObserver is not defined[39m
+[90m [2m❯[22m ../../../%D0%A1%D0%B0%D0%B9%D1%82%D1%8B/Nodes/nodes-frontend/node_modules/@radix-ui/react-use-size/dist/index.mjs:[2m9:30[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m13213:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13951:13[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m14165:11[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13949:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/nodes/components/__tests__/EditNodeForm.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mдолжен вызывать deleteNode с подтверждением[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: ResizeObserver is not defined[39m
+[90m [2m❯[22m ../../../%D0%A1%D0%B0%D0%B9%D1%82%D1%8B/Nodes/nodes-frontend/node_modules/@radix-ui/react-use-size/dist/index.mjs:[2m9:30[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m13213:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13951:13[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m14165:11[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13949:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/nodes/components/__tests__/EditNodeForm.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mдолжен вызывать deleteNode с подтверждением[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: ResizeObserver is not defined[39m
+[90m [2m❯[22m ../../../%D0%A1%D0%B0%D0%B9%D1%82%D1%8B/Nodes/nodes-frontend/node_modules/@radix-ui/react-use-size/dist/index.mjs:[2m9:30[22m[39m
+[90m [2m❯[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2m❯[22m runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2m❯[22m commitHookEffectListMount node_modules/react-dom/cjs/react-dom-client.development.js:[2m13249:29[22m[39m
+[90m [2m❯[22m commitHookLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m13213:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13951:13[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m14165:11[22m[39m
+[90m [2m❯[22m recursivelyTraverseLayoutEffects node_modules/react-dom/cjs/react-dom-client.development.js:[2m15159:11[22m[39m
+[90m [2m❯[22m commitLayoutEffectOnFiber node_modules/react-dom/cjs/react-dom-client.development.js:[2m13949:11[22m[39m
+
+[31mThis error originated in "[1msrc/features/nodes/components/__tests__/EditNodeForm.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mдолжен вызывать deleteNode с подтверждением[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (4)[39m
+[2m     Errors [22m [1m[31m9 errors[39m[22m
+[2m   Start at [22m 19:41:25
+[2m   Duration [22m 2.10s[2m (transform 139ms, setup 134ms, import 500ms, tests 252ms, environment 1.05s)[22m
+

@@ -83,10 +83,11 @@ export default function SignupPage() {
                 type="email"
                 placeholder="you@example.com"
                 disabled={isLoading}
+                autoComplete="email"
                 {...form.register('email')}
               />
               {form.formState.errors.email && (
-                <p className="text-sm text-destructive">
+                <p className="text-sm text-destructive mt-1">
                   {form.formState.errors.email.message}
                 </p>
               )}
@@ -99,10 +100,11 @@ export default function SignupPage() {
                 type="password"
                 placeholder="••••••••"
                 disabled={isLoading}
+                autoComplete="new-password"
                 {...form.register('password')}
               />
               {form.formState.errors.password && (
-                <p className="text-sm text-destructive">
+                <p className="text-sm text-destructive mt-1">
                   {form.formState.errors.password.message}
                 </p>
               )}
@@ -115,10 +117,11 @@ export default function SignupPage() {
                 type="password"
                 placeholder="••••••••"
                 disabled={isLoading}
+                autoComplete="new-password"
                 {...form.register('confirmPassword')}
               />
               {form.formState.errors.confirmPassword && (
-                <p className="text-sm text-destructive">
+                <p className="text-sm text-destructive mt-1">
                   {form.formState.errors.confirmPassword.message}
                 </p>
               )}
