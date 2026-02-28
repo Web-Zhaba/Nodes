@@ -4,6 +4,8 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useAuth } from "@/hooks/useAuth";
 import Layout from "@/widgets/Layout";
 import ProtectedRoute from "@/widgets/ProtectedRoute";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { lazy, Suspense } from "react";
 import NodesListPage from "@/pages/NodesListPage";
 
@@ -86,6 +88,8 @@ function App() {
           </Routes>
         </Suspense>
       </BrowserRouter>
+      <Analytics />
+      <SpeedInsights />
     </ErrorBoundary>
   );
 }
