@@ -260,7 +260,7 @@ export function CreateNodeForm() {
                   <Timer className="h-8 w-8" />
                   <span className="font-medium">Duration</span>
                   <span className="text-xs text-muted-foreground">
-                    Как долго
+                    Таймер
                   </span>
                 </Label>
               </div>

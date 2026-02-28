@@ -195,9 +195,9 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Настройки узла</h1>
-            <p className="text-muted-foreground">
-              Управление параметрами и типами нейронной связи
-            </p>
+            {/* <p className="text-muted-foreground">
+              Управление параметрами и типами узла
+            </p> */}
           </div>
         </div>
 
