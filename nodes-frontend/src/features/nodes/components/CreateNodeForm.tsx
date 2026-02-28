@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { NodeType } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ import { NodePreview } from "./NodePreview";
  */
 export function CreateNodeForm() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [nodeType, setNodeType] = useState<NodeType>("binary");
   const [connectorNames, setConnectorNames] = useState<string[]>([]);
@@ -47,11 +49,13 @@ export function CreateNodeForm() {
 
   // Загружаем коннекторы пользователя
   useEffect(() => {
-    loadConnectors();
-  }, []);
+    if (user) {
+      loadConnectors(user.id);
+    }
+  }, [user]);
 
-  const loadConnectors = async () => {
-    const data = await getUserConnectors();
+  const loadConnectors = async (userId: string) => {
+    const data = await getUserConnectors(userId);
     setAllConnectors(data);
   };
 
@@ -103,7 +107,7 @@ export function CreateNodeForm() {
         color: data.color,
         icon: data.icon,
         connector_ids: data.connector_ids,
-      });
+      }, user?.id);
 
       if (!newNode) {
         throw new Error("Не удалось создать узел");
@@ -357,7 +361,7 @@ export function CreateNodeForm() {
 
           {/* Иконка */}
           <div className="space-y-2">
-            <Label>Иконка (Lucide)</Label>
+            <Label>Иконка</Label>
             <IconPicker
               value={previewValues.icon || "Circle"}
               onChange={(icon) => setValue("icon", icon)}

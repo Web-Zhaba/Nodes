@@ -16,6 +16,7 @@ import {
 import { toast } from "sonner";
 import type { NodeType } from "@/types";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +44,7 @@ interface EditNodeFormProps {
  */
 export function EditNodeForm({ nodeId }: EditNodeFormProps) {
   const navigate = useNavigate();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,7 +73,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
       try {
         const [nodeData, connectorsData] = await Promise.all([
           getNodeById(nodeId),
-          getUserConnectors(),
+          getUserConnectors(user?.id),
         ]);
 
         if (!nodeData) {
@@ -102,8 +104,10 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
       }
     };
 
-    init();
-  }, [nodeId, reset, navigate]);
+    if (user && !isAuthLoading) {
+      init();
+    }
+  }, [nodeId, reset, navigate, user, isAuthLoading]);
 
   // Следим за значениями для предпросмотра
   const previewValues = watch();
@@ -151,7 +155,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
         color: data.color,
         icon: data.icon,
         connector_ids: data.connector_ids, // ВАЖНО: добавил отправку коннекторов
-      });
+      }, user?.id);
 
       if (success) {
         toast.success("Изменения сохранены");

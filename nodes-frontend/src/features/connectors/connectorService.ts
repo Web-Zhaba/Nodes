@@ -8,20 +8,25 @@ import type { Connector } from "@/types";
 /**
  * Получить все коннекторы пользователя
  */
-export async function getUserConnectors(): Promise<Connector[]> {
+export async function getUserConnectors(userId?: string): Promise<Connector[]> {
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let finalUserId = userId;
 
-    if (!user) {
+    if (!finalUserId) {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      finalUserId = session?.user?.id;
+    }
+
+    if (!finalUserId) {
       return [];
     }
 
     const { data, error } = await supabase
       .from("connectors")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", finalUserId)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -46,18 +51,24 @@ export async function createConnector(
     color?: string;
     is_mainline?: boolean;
   },
+  userId?: string
 ): Promise<Connector | null> {
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let finalUserId = userId;
 
-    if (!user) {
+    if (!finalUserId) {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      finalUserId = session?.user?.id;
+    }
+
+    if (!finalUserId) {
       return null;
     }
 
     const connectorData = {
-      user_id: user.id,
+      user_id: finalUserId,
       name: name.replace(/^#/, ""), // Удаляем # если есть
       description: options?.description || "",
       color: options?.color || "#22c55e",

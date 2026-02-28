@@ -31,9 +31,9 @@ export function BinaryControl({
 
     try {
       if (isCompletedToday) {
-        // Можно добавить undo функциональность позже
-        toast.info("Уже выполнено сегодня", {
-          description: "Отдыхай, ты заслужил!",
+        await onImpulse(0);
+        toast.success("Отметка снята", {
+          description: "Выполнение за сегодня отменено",
         });
       } else {
         await onImpulse(1);
@@ -53,8 +53,8 @@ export function BinaryControl({
   return (
     <div className={cn("space-y-2 w-full mt-auto", className)}>
       <motion.div
-        whileTap={!isPending && !isCompletedToday ? { scale: 0.97 } : {}}
-        className="w-full"
+        whileTap={!isPending ? { scale: 0.97 } : {}}
+        className="w-full group"
       >
         <Button
           onClick={handleClick}
@@ -62,16 +62,22 @@ export function BinaryControl({
           className={cn(
             "w-full transition-colors duration-300 shadow-sm",
             isCompletedToday
-              ? "bg-green-500 hover:bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.3)]"
+              ? "bg-green-500 hover:bg-red-500/90 text-white shadow-[0_0_15px_rgba(34,197,94,0.3)]"
               : "bg-primary hover:bg-primary/90",
           )}
           size="lg"
         >
           {isCompletedToday ? (
-            <>
-              <Check className="w-5 h-5 mr-2" />
-              Выполнено сегодня
-            </>
+            <div className="flex items-center">
+              <span className="flex items-center group-hover:hidden">
+                <Check className="w-5 h-5 mr-2" />
+                Выполнено сегодня
+              </span>
+              <span className="hidden items-center group-hover:flex">
+                <Zap className="w-5 h-5 mr-2 rotate-180" />
+                Отменить выполнение
+              </span>
+            </div>
           ) : (
             <>
               <Check className="w-5 h-5 mr-2" />

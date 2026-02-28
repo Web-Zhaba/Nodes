@@ -5,14 +5,15 @@ import { useAuth } from "@/hooks/useAuth";
 import Layout from "@/widgets/Layout";
 import ProtectedRoute from "@/widgets/ProtectedRoute";
 import { lazy, Suspense } from "react";
+import NodesListPage from "@/pages/NodesListPage";
 
 // Ленивая загрузка страниц
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const SignupPage = lazy(() => import("@/pages/SignupPage"));
-const NodesListPage = lazy(() => import("@/pages/NodesListPage"));
 const CreateNodePage = lazy(() => import("@/pages/CreateNodePage"));
 const EditNodePage = lazy(() => import("@/pages/EditNodePage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+const AuthCallbackPage = lazy(() => import("@/pages/AuthCallbackPage"));
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -45,12 +46,13 @@ function App() {
         }}
       />
       <BrowserRouter>
-        <Suspense 
-        fallback={<div className="h-screen w-screen flex items-center justify-center animate-pulse">Загрузка Nodes...</div>}>
+        <Suspense
+          fallback={<div className="h-screen w-screen flex items-center justify-center animate-pulse">Загрузка Nodes...</div>}>
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<AuthRedirect />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
             {/* Protected routes */}
             <Route

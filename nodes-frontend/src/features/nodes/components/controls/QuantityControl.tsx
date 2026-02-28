@@ -37,44 +37,46 @@ export function QuantityControl({
   const handleIncrement = () => {
     const newValue = displayValue + 1;
     setLocalValue(newValue); // Мгновенное обновление локально
-    onUpdateValue(newValue); // Отправка в store
   };
 
   const handleDecrement = () => {
     if (displayValue > 0) {
       const newValue = displayValue - 1;
       setLocalValue(newValue); // Мгновенное обновление локально
-      onUpdateValue(newValue); // Отправка в store
     }
   };
 
-  const handleSubmit = async () => {
-    if (isPending || displayValue === 0) return;
+  const handleSubmit = async (overrideValue?: number) => {
+    const valueToSubmit = overrideValue !== undefined ? overrideValue : displayValue;
+
+    if (isPending || valueToSubmit === 0) return;
 
     setIsPending(true);
 
     try {
-      // Мы отправляем 0, так как само значение уже сохранено через onUpdateValue ранее.
-      // onImpulse здесь нужен только для фиксации события (инкремента счетчика выполнений).
+      if (localValue !== null || overrideValue !== undefined) {
+        onUpdateValue(valueToSubmit);
+      }
+      // onImpulse здесь нужен для фиксации события (инкремента счетчика выполнений).
       await onImpulse(0);
 
-      if (displayValue >= targetValue) {
+      if (valueToSubmit >= targetValue) {
         toast.success(
-          displayValue > targetValue ? "Перевыполнение!" : "Цель достигнута!",
+          valueToSubmit > targetValue ? "Перевыполнение!" : "Цель достигнута!",
           {
-            description: `${displayValue}/${targetValue} — отлично!`,
+            description: `${valueToSubmit}/${targetValue} — отлично!`,
           },
         );
       } else {
         toast.success("Прогресс сохранён", {
-          description: `${displayValue}/${targetValue}`,
+          description: `${valueToSubmit}/${targetValue}`,
         });
       }
 
       // Сбрасываем локальное значение после успешного сохранения
       setLocalValue(null);
       setHasSavedToday(true);
-      setSavedValue(displayValue); // Фиксируем значение
+      setSavedValue(valueToSubmit); // Фиксируем значение
     } catch (error) {
       toast.error("Ошибка", {
         description: "Не удалось сохранить прогресс",
@@ -86,6 +88,9 @@ export function QuantityControl({
 
   const isGoalReached = displayValue >= targetValue;
   const isOverdrive = displayValue > targetValue; // Перевыполнение цели
+  const recordedValue = hasSavedToday && savedValue !== null ? savedValue : currentValue;
+  const isChanged = displayValue !== recordedValue;
+  const showSavedState = !isChanged && recordedValue > 0;
 
   return (
     <div className={cn("w-full", className)}>
@@ -96,7 +101,7 @@ export function QuantityControl({
           <span
             className={cn(
               "font-medium",
-              isOverdrive && "text-purple-500 font-semibold",
+              isOverdrive && "text-orange-500 font-bold",
               isGoalReached && !isOverdrive && "text-green-500",
               !isGoalReached && "text-blue-500",
             )}
@@ -110,7 +115,7 @@ export function QuantityControl({
             animate={{
               scaleX: progress / 100,
               backgroundColor: isOverdrive
-                ? "#a855f7"
+                ? "#f97316"
                 : isGoalReached
                   ? "#22c55e"
                   : "#3b82f6"
@@ -119,7 +124,7 @@ export function QuantityControl({
             className={cn(
               "absolute inset-0 origin-left rounded-full shadow",
               isOverdrive
-                ? "shadow-[0_0_8px_rgba(168,85,247,0.8)]"
+                ? "shadow-[0_0_8px_rgba(249,115,22,0.8)]"
                 : isGoalReached
                   ? "shadow-[0_0_8px_rgba(34,197,94,0.8)]"
                   : "shadow-[0_0_8px_rgba(59,130,246,0.6)]",
@@ -127,7 +132,7 @@ export function QuantityControl({
           />
         </div>
         {isOverdrive && (
-          <p className="text-[10px] text-purple-500 text-center font-bold tracking-wider uppercase mt-1">
+          <p className="text-[10px] text-orange-500 text-center font-bold tracking-wider uppercase mt-1">
             +{displayValue - targetValue} OVERDRIVE
           </p>
         )}
@@ -150,15 +155,36 @@ export function QuantityControl({
             </Button>
           </motion.div>
 
-          <span
+          <input
+            type="number"
+            value={displayValue === 0 ? "" : displayValue}
+            onChange={(e) => {
+              const val = parseInt(e.target.value, 10);
+              setLocalValue(isNaN(val) ? 0 : Math.max(0, val));
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                e.currentTarget.blur();
+                const val = parseInt(e.currentTarget.value, 10);
+                const finalValue = isNaN(val) ? 0 : Math.max(0, val);
+
+                // Используем локальное обновление перед отправкой
+                if (finalValue > 0) {
+                  setLocalValue(finalValue);
+                  handleSubmit(finalValue);
+                }
+              }
+            }}
+            disabled={isPending}
             className={cn(
-              "text-3xl font-black w-20 text-center drop-shadow-sm font-mono tracking-tight",
-              isOverdrive && "text-purple-500 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]",
+              "text-3xl font-black w-24 text-center drop-shadow-sm font-mono tracking-tight bg-transparent border-none outline-none appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all",
+              isOverdrive && "text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]",
               isGoalReached && !isOverdrive && "text-green-500 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]",
             )}
-          >
-            {displayValue}
-          </span>
+            style={{ MozAppearance: "textfield" }}
+            placeholder="0"
+          />
 
           <motion.div whileTap={!isPending ? { scale: 0.85 } : {}}>
             <Button
@@ -176,45 +202,42 @@ export function QuantityControl({
 
         {/* Кнопка завершения */}
         <motion.div
-          whileTap={!isPending && displayValue > 0 && !hasSavedToday ? { scale: 0.97 } : {}}
+          whileTap={!isPending && displayValue > 0 && isChanged ? { scale: 0.97 } : {}}
           className="w-full"
         >
           <Button
-            onClick={handleSubmit}
-            disabled={isPending || displayValue === 0}
+            onClick={() => handleSubmit()}
+            disabled={isPending || displayValue === 0 || !isChanged}
             className={cn(
               "w-full transition-all shadow-sm font-medium",
-              hasSavedToday && "bg-green-500 hover:bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.3)]",
-              isOverdrive &&
-              !hasSavedToday &&
-              "bg-purple-600 hover:bg-purple-700 text-white shadow-[0_0_15px_rgba(147,51,234,0.3)]",
-              isGoalReached &&
-              !isOverdrive &&
-              !hasSavedToday &&
-              "bg-green-500 hover:bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.3)]",
-              !isGoalReached && !hasSavedToday && displayValue > 0 && "bg-primary hover:bg-primary/90"
+              showSavedState && "bg-green-500 text-white shadow-[0_0_15px_rgba(34,197,94,0.3)] opacity-90",
+              !showSavedState && isOverdrive && "bg-orange-600 hover:bg-orange-700 text-white shadow-[0_0_15px_rgba(234,88,12,0.3)]",
+              !showSavedState && isGoalReached && !isOverdrive && "bg-green-500 hover:bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.3)]",
+              !showSavedState && !isGoalReached && displayValue > 0 && "bg-primary hover:bg-primary/90"
             )}
             size="lg"
           >
             <Check className="w-5 h-5 mr-2" />
-            {hasSavedToday
+            {showSavedState
               ? "Сохранено!"
-              : isOverdrive
-                ? "Сохранить Overdrive!"
-                : isGoalReached
-                  ? "Сохранить успех!"
-                  : "Сохранить прогресс"}
+              : recordedValue > 0
+                ? (isOverdrive ? "Перезаписать Overdrive!" : "Перезаписать")
+                : isOverdrive
+                  ? "Сохранить Overdrive!"
+                  : isGoalReached
+                    ? "Сохранить успех!"
+                    : "Сохранить прогресс"}
           </Button>
         </motion.div>
 
-        {(hasSavedToday || (currentValue >= targetValue)) ? (
+        {(hasSavedToday || currentValue > 0) ? (
           <p className="text-xs text-center text-green-500/80 font-medium flex items-center justify-center gap-1">
             <Check className="w-3 h-3" />
-            Сегодня уже выполнено на {hasSavedToday && savedValue !== null ? savedValue : currentValue} / {targetValue}
+            Уже зафиксировано: {hasSavedToday && savedValue !== null ? savedValue : currentValue} / {targetValue}
           </p>
         ) : (
           <p className="text-xs text-center text-muted-foreground/70">
-            Сегодня еще не выполнялось
+            Сегодня еще не фиксировалось
           </p>
         )}
       </div>

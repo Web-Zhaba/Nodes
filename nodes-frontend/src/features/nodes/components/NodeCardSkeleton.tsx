@@ -9,7 +9,7 @@ interface NodeCardSkeletonProps {
 export function NodeCardSkeleton({ className }: NodeCardSkeletonProps) {
   return (
     <div className={cn("w-full max-w-md relative", className)}>
-      <Card className="relative h-full flex flex-col bg-background/80 backdrop-blur-md overflow-hidden border border-white/10 shadow-sm min-h-[220px]">
+      <Card className="relative h-full flex flex-col bg-background/95 overflow-hidden border border-white/10 shadow-sm min-h-[220px]">
         <CardContent className="p-4 flex-1 mt-2 flex flex-col gap-4">
           {/* Header */}
           <div className="flex items-start justify-between">

@@ -46,6 +46,12 @@ export const NodeCard = memo(function NodeCard({
     (node.target_value || 0) > 0
   );
 
+  // Режим Overdrive: превышение цели
+  const isOverdrive =
+    node.node_type !== 'binary' &&
+    todayValue > (node.target_value || 0) &&
+    (node.target_value || 0) > 0;
+
   return (
     <TooltipProvider delayDuration={200}>
       <motion.div
@@ -53,38 +59,44 @@ export const NodeCard = memo(function NodeCard({
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
         className="w-full max-w-md relative group h-full flex flex-col"
       >
-        {/* Фоновое свечение (активируется при выполнении) */}
-        <motion.div
-          initial={false}
-          animate={{
-            opacity: isEffectivelyCompleted ? 0.3 : 0,
-            scale: isEffectivelyCompleted ? 1 : 0.95
-          }}
-          transition={{ duration: 0.7 }}
-          className="absolute -inset-0.5 rounded-xl blur-md pointer-events-none"
-          style={{
-            backgroundColor: node.color,
-            boxShadow: `0 0 20px ${node.color}60`
-          }}
-        />
-
         <Card
           className={cn(
-            "relative h-full flex flex-col bg-background/80 backdrop-blur-md overflow-hidden",
-            "border border-white/10 shadow-sm transition-colors duration-500",
-            isEffectivelyCompleted && "border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.05)]",
+            "relative h-full flex flex-col bg-background/80 overflow-hidden",
+            "border transition-all duration-700",
+            !isEffectivelyCompleted && "border-white/5 shadow-sm",
+            isEffectivelyCompleted && !isOverdrive && "border-white/20 shadow-[0_0_20px_rgba(255,255,256,0.03)]",
+            isOverdrive && "border-orange-500/40 shadow-[0_4px_20px_rgba(249,115,22,0.1)]",
             className
           )}
+          style={isEffectivelyCompleted && !isOverdrive ? {
+            borderColor: `${node.color}40`,
+            boxShadow: `inset 0 0 20px ${node.color}10`
+          } : {}}
         >
-          {/* Индикатор цвета узла — тонкая градиентная линия */}
+          {/* Внутреннее мягкое свечение (Inner Radiance) - перенесено внутрь для clipping */}
           <div
-            className="absolute top-0 left-0 right-0 h-1 z-10 opacity-80"
+            className={cn(
+              "absolute inset-0 z-0 pointer-events-none transition-opacity duration-1000",
+              isEffectivelyCompleted ? "opacity-15" : "opacity-0"
+            )}
             style={{
-              background: `linear-gradient(90deg, ${node.color} 0%, transparent 100%)`
+              background: `radial-gradient(circle at 50% 0%, ${node.color}, transparent 80%)`
             }}
           />
+          {/* Индикатор цвета узла — тонкая градиентная линия */}
+          <div
+            className={cn(
+              "absolute top-0 left-0 right-0 h-px z-10 opacity-80",
+              isOverdrive && "bg-gradient-to-r from-orange-400 via-yellow-300 to-orange-400 h-[2px] shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+            )}
+            style={!isOverdrive ? {
+              background: isEffectivelyCompleted
+                ? `linear-gradient(90deg, transparent 0%, ${node.color} 50%, transparent 100%)`
+                : `linear-gradient(90deg, ${node.color}aa 0%, transparent 100%)`
+            } : {}}
+          />
 
-          <CardContent className="p-4 space-y-4 flex-1 mt-2">
+          <CardContent className="p-4 space-y-4 flex-1 mt-2 relative z-10">
             {/* Заголовок */}
             <NodeCardHeader node={node} connectors={connectors} />
 

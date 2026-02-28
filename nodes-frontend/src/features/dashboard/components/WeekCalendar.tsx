@@ -49,7 +49,7 @@ export function WeekCalendar({ selectedDate, onSelectDate, className }: WeekCale
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1 sm:gap-2">
         {days.map((day) => {
           const isSelected = isSameDay(day, selectedDate);
           const isToday = isSameDay(day, today);
@@ -62,24 +62,27 @@ export function WeekCalendar({ selectedDate, onSelectDate, className }: WeekCale
               onClick={() => !isFuture && onSelectDate(day)}
               disabled={isFuture}
               className={cn(
-                "relative flex flex-col items-center justify-center p-3 rounded-2xl border transition-colors duration-300 h-20",
+                "relative flex flex-col items-center justify-center p-1 sm:p-3 rounded-xl sm:rounded-2xl border transition-all duration-300 h-16 sm:h-20",
                 isSelected
-                  ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20"
-                  : "bg-background/50 border-white/5 hover:bg-muted/50 backdrop-blur-sm",
-                isFuture && "opacity-40 cursor-not-allowed",
-                isToday && !isSelected && "border-primary/50 text-primary"
+                  ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105 z-10"
+                  : "bg-background/60 border-white/5 hover:bg-muted/30",
+                isFuture && "opacity-20 cursor-not-allowed",
+                isToday && !isSelected && "border-primary/40 text-primary bg-primary/5"
               )}
             >
-              <span className={cn("text-[10px] font-medium uppercase mb-1", isSelected ? "text-primary-foreground/80" : "text-muted-foreground")}>
+              <span className={cn(
+                "text-[8px] sm:text-[10px] font-bold uppercase mb-0.5 sm:mb-1 tracking-tighter sm:tracking-normal",
+                isSelected ? "text-primary-foreground/90" : "text-muted-foreground"
+              )}>
                 {format(day, "EEEEEE", { locale: ru })}
               </span>
-              <span className="text-xl font-bold">
+              <span className="text-base sm:text-xl font-black tracking-tight">
                 {format(day, "d")}
               </span>
 
               {/* Индикатор активности */}
-              {isToday && (
-                <span className="absolute bottom-1.5 w-1 h-1 rounded-full bg-current opacity-50" />
+              {isToday && !isSelected && (
+                <span className="absolute bottom-1 w-1 h-1 rounded-full bg-primary animate-pulse" />
               )}
             </motion.button>
           );

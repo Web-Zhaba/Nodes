@@ -20,13 +20,14 @@ interface DurationControlProps {
 export function DurationControl({
   node,
   elapsedToday,
-  isCompletedToday,
   onImpulse,
   className,
 }: DurationControlProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0); // Всегда 0 в начале сессии
   const [isPending, setIsPending] = useState(false);
+  const [isEditingTime, setIsEditingTime] = useState(false);
+  const [manualMinutes, setManualMinutes] = useState("");
   const intervalRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const pausedElapsedRef = useRef<number>(0); // Сохраняем значение при паузе
@@ -68,10 +69,12 @@ export function DurationControl({
   };
 
   // Остановка и сохранение
-  const handleStop = async () => {
+  const handleStop = async (overrideElapsed?: number | any) => {
     handlePause();
 
-    if (elapsed < 10) {
+    const finalElapsed = typeof overrideElapsed === "number" ? overrideElapsed : elapsed;
+
+    if (finalElapsed < 10) {
       toast.warning("Слишком мало времени", {
         description: "Минимум 10 секунд для записи",
       });
@@ -83,15 +86,15 @@ export function DurationControl({
     setIsPending(true);
 
     try {
-      await onImpulse(elapsed);
-      const totalElapsed = elapsedToday + elapsed;
+      await onImpulse(finalElapsed);
+      const totalElapsed = elapsedToday + finalElapsed;
 
       const newIsOverdrive = totalElapsed > targetValue;
 
       toast.success(newIsOverdrive ? "Перевыполнение!" : "Время записано!", {
         description: newIsOverdrive
           ? `${formatTime(totalElapsed - targetValue)} сверх цели!`
-          : `${formatTime(elapsed)} — отличный результат!`,
+          : `${formatTime(finalElapsed)} — отличный результат!`,
       });
 
       setElapsed(0); // Сброс визуального таймера до нуля
@@ -113,6 +116,36 @@ export function DurationControl({
   // Местный стейт для успешного сохранения (если БД не успела обновить props)
   const [hasSavedToday, setHasSavedToday] = useState(false);
   const [savedElapsed, setSavedElapsed] = useState<number | null>(null);
+
+  // Сброс сохраненного времени
+  const handleReset = async () => {
+    if (isPending) return;
+
+    // Если таймер бежит, ставим на паузу
+    handlePause();
+
+    // Предупреждение/Подтверждение можно добавить, но пока просто сбросим
+    setIsPending(true);
+
+    try {
+      await onImpulse(-1); // -1 магическое значение для удаления импульсов
+
+      toast.success("Прогресс сброшен", {
+        description: "Сохраненное время за сегодня удалено",
+      });
+
+      setElapsed(0);
+      pausedElapsedRef.current = 0;
+      setSavedElapsed(0);
+      setHasSavedToday(true); // Переопределяем значение новым (нулем), чтобы сразу обновить UI
+    } catch (error) {
+      toast.error("Ошибка", {
+        description: "Не удалось сбросить время",
+      });
+    } finally {
+      setIsPending(false);
+    }
+  };
 
   // Очистка при размонтировании
   useEffect(() => {
@@ -147,7 +180,7 @@ export function DurationControl({
           <span
             className={cn(
               "font-medium",
-              isOverdrive && "text-purple-500 font-semibold",
+              isOverdrive && "text-orange-500 font-bold",
               isGoalReached && !isOverdrive && "text-green-500",
               !isGoalReached && "text-blue-500",
             )}
@@ -161,7 +194,7 @@ export function DurationControl({
             animate={{
               scaleX: progress / 100,
               backgroundColor: isOverdrive
-                ? "#a855f7"
+                ? "#f97316"
                 : isGoalReached
                   ? "#22c55e"
                   : "#3b82f6"
@@ -170,7 +203,7 @@ export function DurationControl({
             className={cn(
               "absolute inset-0 origin-left rounded-full shadow",
               isOverdrive
-                ? "shadow-[0_0_8px_rgba(168,85,247,0.8)]"
+                ? "shadow-[0_0_8px_rgba(249,115,22,0.8)]"
                 : isGoalReached
                   ? "shadow-[0_0_8px_rgba(34,197,94,0.8)]"
                   : "shadow-[0_0_8px_rgba(59,130,246,0.6)]",
@@ -178,24 +211,64 @@ export function DurationControl({
           />
         </div>
         {isOverdrive && (
-          <p className="text-[10px] text-purple-500 text-center font-bold tracking-wider uppercase mt-1">
+          <p className="text-[10px] text-orange-500 text-center font-bold tracking-wider uppercase mt-1">
             +{formatTime(currentTotalElapsed - targetValue)} OVERDRIVE
           </p>
         )}
       </div>
 
       {/* Таймер (крупно) — фиксированная высота */}
-      <div className="text-center py-4 h-[88px] flex-shrink-0">
-        <span
-          className={cn(
-            "text-4xl font-mono font-black tracking-tight drop-shadow-sm transition-colors",
-            isRunning && "text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]",
-            isOverdrive && "text-purple-500 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]",
-            isGoalReached && !isOverdrive && "text-green-500 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]",
-          )}
-        >
-          {formatTime(elapsed)}
-        </span>
+      <div className="text-center py-4 h-[88px] flex-shrink-0 flex flex-col items-center justify-center">
+        {!isEditingTime ? (
+          <span
+            onClick={() => {
+              if (!isRunning) {
+                setIsEditingTime(true);
+                setManualMinutes(Math.floor(elapsed / 60).toString());
+              }
+            }}
+            title={!isRunning ? "Кликните, чтобы ввести минуты вручную" : ""}
+            className={cn(
+              "text-4xl font-mono font-black tracking-tight drop-shadow-sm transition-colors",
+              !isRunning && "cursor-pointer hover:opacity-80 transition-opacity",
+              isRunning && "text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]",
+              isOverdrive && "text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]",
+              isGoalReached && !isOverdrive && "text-green-500 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]",
+            )}
+          >
+            {formatTime(elapsed)}
+          </span>
+        ) : (
+          <div className="flex items-center justify-center gap-1.5 mt-[-4px]">
+            <input
+              type="number"
+              autoFocus
+              value={manualMinutes}
+              onChange={(e) => setManualMinutes(e.target.value)}
+              onBlur={() => {
+                const val = parseInt(manualMinutes, 10);
+                if (!isNaN(val) && val >= 0) {
+                  setElapsed(val * 60);
+                  pausedElapsedRef.current = val * 60;
+                }
+                setIsEditingTime(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.currentTarget.blur();
+                  const val = parseInt(e.currentTarget.value, 10);
+                  if (!isNaN(val) && val >= 0) {
+                    handleStop(val * 60);
+                  }
+                }
+              }}
+              className="w-20 bg-transparent text-center text-4xl font-mono font-black tracking-tight border-b-2 border-primary/40 outline-none focus:border-primary transition-colors appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              style={{ MozAppearance: "textfield" }}
+              placeholder="0"
+            />
+            <span className="text-sm font-medium text-muted-foreground pb-[-8px]">мин</span>
+          </div>
+        )}
         {isRunning && (
           <div className="flex items-center justify-center gap-1.5 mt-2">
             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(239,68,68,0.8)]" />
@@ -208,13 +281,13 @@ export function DurationControl({
       <div className="space-y-3 mt-auto">
         <div className="flex gap-3">
           {!isRunning ? (
-            <motion.div whileTap={!isPending && !isCompletedToday ? { scale: 0.97 } : {}} className="flex-1">
+            <motion.div whileTap={!isPending ? { scale: 0.97 } : {}} className="flex-1">
               <Button
                 onClick={handleStart}
-                disabled={isPending || isCompletedToday}
+                disabled={isPending}
                 className={cn(
                   "w-full transition-all shadow-sm font-medium",
-                  !isCompletedToday && "bg-primary hover:bg-primary/90"
+                  "bg-primary hover:bg-primary/90"
                 )}
                 size="lg"
               >
@@ -224,11 +297,11 @@ export function DurationControl({
             </motion.div>
           ) : (
             <>
-              <motion.div whileTap={{ scale: 0.97 }} className="flex-1">
+              <motion.div whileTap={{ scale: 0.97 }} className="flex-2 justify-center">
                 <Button
                   onClick={handlePause}
                   variant="outline"
-                  className="w-full h-11 bg-background/50 border-white/10 shadow-sm"
+                  className="w-30 h-11 bg-background/50 border-white/10 shadow-sm"
                   size="lg"
                 >
                   <Pause className="w-5 h-5 mr-1" />
@@ -237,11 +310,11 @@ export function DurationControl({
               </motion.div>
               <motion.div whileTap={!isPending ? { scale: 0.97 } : {}} className="flex-1">
                 <Button
-                  onClick={handleStop}
+                  onClick={() => handleStop()}
                   disabled={isPending}
                   className={cn(
-                    "w-full transition-all shadow-sm font-medium",
-                    isOverdrive && "bg-purple-600 hover:bg-purple-700 text-white shadow-[0_0_15px_rgba(147,51,234,0.3)]",
+                    "w-30 transition-all shadow-sm font-medium",
+                    isOverdrive && "bg-orange-600 hover:bg-orange-700 text-white shadow-[0_0_15px_rgba(234,88,12,0.3)]",
                     isGoalReached &&
                     !isOverdrive &&
                     "bg-green-500 hover:bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.3)]",
@@ -257,14 +330,24 @@ export function DurationControl({
           )}
         </div>
 
-        {(isCompletedToday || hasSavedToday) ? (
-          <p className="text-xs text-center text-green-500/80 font-medium flex items-center justify-center gap-1">
-            <Timer className="w-3 h-3" />
-            Сегодня уже выполнено на {formatTime(hasSavedToday && savedElapsed !== null ? savedElapsed : elapsedToday)}
-          </p>
+        {currentTotalElapsed > 0 ? (
+          <div className="flex flex-row items-center justify-center gap-1">
+            <p className="text-xs text-center text-green-500/80 font-medium flex items-center justify-center gap-1">
+              <Timer className="w-3 h-3" />
+              Уже зафиксировано: {formatTime(hasSavedToday && savedElapsed !== null ? savedElapsed : elapsedToday)}
+            </p>
+            <Button
+              variant="link"
+              onClick={handleReset}
+              disabled={isPending || isRunning}
+              className="h-auto p-0 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-red-500 transition-colors"
+            >
+              Сбросить
+            </Button>
+          </div>
         ) : (
           <p className="text-xs text-center text-muted-foreground/70">
-            Сегодня еще не выполнялось
+            Сегодня еще не фиксировалось
           </p>
         )}
       </div>

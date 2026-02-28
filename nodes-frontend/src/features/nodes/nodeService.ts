@@ -8,13 +8,18 @@ import type { Node, CreateNodeData } from "@/types";
 /**
  * Получить все узлы пользователя с коннекторами
  */
-export async function getUserNodes(): Promise<Node[]> {
+export async function getUserNodes(userId?: string): Promise<Node[]> {
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let finalUserId = userId;
 
-    if (!user) {
+    if (!finalUserId) {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      finalUserId = session?.user?.id;
+    }
+
+    if (!finalUserId) {
       return [];
     }
 
@@ -28,7 +33,7 @@ export async function getUserNodes(): Promise<Node[]> {
         )
       `,
       )
-      .eq("user_id", user.id)
+      .eq("user_id", finalUserId)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -55,20 +60,26 @@ export async function getUserNodes(): Promise<Node[]> {
  */
 export async function createNode(
   nodeData: CreateNodeData & { connector_ids?: string[] },
+  userId?: string
 ): Promise<Node | null> {
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let finalUserId = userId;
 
-    if (!user) {
+    if (!finalUserId) {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      finalUserId = session?.user?.id;
+    }
+
+    if (!finalUserId) {
       return null;
     }
 
     const { connector_ids, ...nodeFields } = nodeData;
 
     const newNode = {
-      user_id: user.id,
+      user_id: finalUserId,
       name: nodeFields.name,
       description: nodeFields.description || "",
       node_type: nodeFields.node_type,
@@ -128,16 +139,29 @@ export async function createNode(
 export async function updateNode(
   id: string,
   updates: Partial<Node> & { connector_ids?: string[] },
+  userId?: string
 ): Promise<boolean> {
   try {
+    let finalUserId = userId;
+
+    if (!finalUserId) {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      finalUserId = session?.user?.id;
+    }
+
     const { connector_ids, ...nodeFields } = updates;
 
     // 1. Обновляем основные поля узла
     if (Object.keys(nodeFields).length > 0) {
-      const { error: nodeError } = await supabase
-        .from("nodes")
-        .update(nodeFields)
-        .eq("id", id);
+      const query = supabase.from("nodes").update(nodeFields).eq("id", id);
+
+      if (finalUserId) {
+        query.eq("user_id", finalUserId);
+      }
+
+      const { error: nodeError } = await query;
 
       if (nodeError) {
         console.error("Ошибка обновления узла:", nodeError);
@@ -268,6 +292,34 @@ export async function createImpulse(
 }
 
 /**
+ * Удалить импульс (снять отметку выполнения)
+ */
+export async function deleteImpulse(
+  nodeId: string,
+  date: Date = new Date()
+): Promise<boolean> {
+  try {
+    const dateStr = formatDateToSql(date);
+
+    // Используем RPC, чтобы корректно декрементировать completion_count в таблице nodes
+    const { error } = await supabase.rpc("cancel_node_progress", {
+      p_node_id: nodeId,
+      p_date: dateStr,
+    });
+
+    if (error) {
+      console.error("Ошибка вызова cancel_node_progress:", error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Ошибка удаления импульса:", error);
+    return false;
+  }
+}
+
+/**
  * Вспомогательная функция для форматирования даты в YYYY-MM-DD
  */
 function formatDateToSql(date: Date): string {
@@ -344,10 +396,16 @@ export async function updateQuantityValue(
 /**
  * Получить ID узлов для фокуса на указанную дату
  */
-export async function getDailyFocusNodeIds(date: Date): Promise<string[]> {
+export async function getDailyFocusNodeIds(date: Date, userId?: string): Promise<string[]> {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
+    let finalUserId = userId;
+
+    if (!finalUserId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      finalUserId = session?.user?.id;
+    }
+
+    if (!finalUserId) return [];
 
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -357,7 +415,7 @@ export async function getDailyFocusNodeIds(date: Date): Promise<string[]> {
     const { data, error } = await supabase
       .from("daily_focus")
       .select("node_id")
-      .eq("user_id", user.id)
+      .eq("user_id", finalUserId)
       .eq("focus_date", dateStr);
 
     if (error) {
@@ -375,10 +433,16 @@ export async function getDailyFocusNodeIds(date: Date): Promise<string[]> {
 /**
  * Установить узлы фокуса на указанную дату
  */
-export async function setDailyFocusNodes(nodeIds: string[], date: Date): Promise<boolean> {
+export async function setDailyFocusNodes(nodeIds: string[], date: Date, userId?: string): Promise<boolean> {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
+    let finalUserId = userId;
+
+    if (!finalUserId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      finalUserId = session?.user?.id;
+    }
+
+    if (!finalUserId) return false;
 
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -386,11 +450,11 @@ export async function setDailyFocusNodes(nodeIds: string[], date: Date): Promise
     const dateStr = `${year}-${month}-${day}`;
 
     // 1. Удаляем все для этой даты (чтобы синхронизировать)
-    await supabase.from("daily_focus").delete().eq("user_id", user.id).eq("focus_date", dateStr);
+    await supabase.from("daily_focus").delete().eq("user_id", finalUserId).eq("focus_date", dateStr);
 
     // 2. Добавляем запрошенные
     if (nodeIds.length > 0) {
-      const rows = nodeIds.map(id => ({ user_id: user.id, node_id: id, focus_date: dateStr }));
+      const rows = nodeIds.map(id => ({ user_id: finalUserId, node_id: id, focus_date: dateStr }));
       const { error } = await supabase.from("daily_focus").insert(rows);
       if (error) {
         console.error("Ошибка установки узлов фокуса:", error);
