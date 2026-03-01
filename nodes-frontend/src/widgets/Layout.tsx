@@ -95,7 +95,7 @@ export default function Layout() {
       {/* Footer */}
       <footer className="hidden md:block border-t py-6 mt-auto">
         <div className="container mx-auto max-w-7xl px-4 text-center text-[10px] sm:text-sm text-muted-foreground font-medium tracking-wide">
-          <span className="font-bold">NODES</span> — Трекер жизни нового поколения
+          <span className="font-bold">NODES</span> — Новый взгляд на формирование привычек
         </div>
       </footer>
     </div>
