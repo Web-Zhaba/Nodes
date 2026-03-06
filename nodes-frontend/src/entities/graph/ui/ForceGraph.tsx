@@ -11,9 +11,16 @@ interface ForceGraphProps {
 }
 
 const CORE_RADIUS = 18;
-const LABEL_FONT_SIZE = 5;    // px in graph-space (scales with zoom automatically)
-const LABEL_OFFSET = 4;       // px gap between circle edge and label baseline
-const ICON_PIXEL_RATIO = 4;   // render icons at 4x then downscale → sharp on HiDPI
+/**
+ * These constants define sizes/gaps in SCREEN PIXELS (not graph units).
+ * Dividing by globalScale converts them to graph-space, so on screen
+ * they stay visually constant at any zoom level — exactly as in the article:
+ *   const _fontSize = fontSize / globalScale
+ */
+const LABEL_FONT_SIZE_CORE = 13; // screen px — label size for cores (bold)
+const LABEL_FONT_SIZE_NODE = 11; // screen px — label size for regular nodes
+const LABEL_OFFSET = 3;          // screen px — gap between node edge and text top
+const ICON_PIXEL_RATIO = 4;      // render icons at 4x then downscale → sharp on HiDPI
 
 export function ForceGraph({ graphData, backgroundColor = "transparent" }: ForceGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -103,15 +110,27 @@ export function ForceGraph({ graphData, backgroundColor = "transparent" }: Force
       }
 
       // ── 4. Label below circle ────────────────────────────────────────────
-      const labelY = y + radius + LABEL_OFFSET;
-      const fontSize = LABEL_FONT_SIZE / globalScale;
+      //
+      // Key formula (from article):
+      //   const _fontSize = fontSize / globalScale
+      //
+      // Both fontSize and offset are in SCREEN pixels.
+      // Dividing by globalScale converts to graph-space, so the text
+      // stays a constant visual size at any zoom level.
+      //
+      // textBaseline = 'middle' → labelY points to the text center.
+      // To place text TOP at (radius + LABEL_OFFSET) screen px below the node:
+      //   labelY = y + radius + (LABEL_OFFSET + halfFont) / globalScale
+      const baseFontSize = isCore ? LABEL_FONT_SIZE_CORE : LABEL_FONT_SIZE_NODE;
+      const scaledFont = baseFontSize / globalScale;
+      const labelY = y + radius + (LABEL_OFFSET + baseFontSize / 2) / globalScale;
 
       ctx.font = isCore
-        ? `bold ${fontSize}px Inter, system-ui, sans-serif`
-        : `${fontSize}px Inter, system-ui, sans-serif`;
+        ? `bold ${scaledFont}px Inter, system-ui, sans-serif`
+        : `${scaledFont}px Inter, system-ui, sans-serif`;
       ctx.textAlign = "center";
-      ctx.textBaseline = "top";
-      ctx.fillStyle = isCore ? color : "rgba(255,255,255,0.7)";
+      ctx.textBaseline = "middle"; // center of text is at labelY
+      ctx.fillStyle = isCore ? color : "rgba(255,255,255,0.75)";
       ctx.fillText(name, x, labelY);
     },
     []
