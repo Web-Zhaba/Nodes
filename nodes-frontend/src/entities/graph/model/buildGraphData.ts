@@ -45,21 +45,7 @@ export function buildGraphData(
     }
   }
 
-  // --- 3. Determine the "primary" color for each node ---
-  // A node's color = first linked core's color, else DEFAULT_NODE_COLOR
-  const nodeColorMap = new Map<string, string>();
-  for (const [connectorId, nodeIds] of connectorToNodesMap.entries()) {
-    const coreId = connectorToCoreMap.get(connectorId);
-    if (coreId && cores[coreId]) {
-      const coreColor = cores[coreId].color || DEFAULT_CORE_COLOR;
-      for (const nodeId of nodeIds) {
-        // Only set if not already assigned (first core wins)
-        if (!nodeColorMap.has(nodeId)) {
-          nodeColorMap.set(nodeId, coreColor);
-        }
-      }
-    }
-  }
+  // --- 3. Removed: Nodes now use their own colors instead of inheriting from Cores ---
 
   // --- 4. Add CORE graph nodes ---
   for (const core of Object.values(cores)) {
@@ -76,7 +62,7 @@ export function buildGraphData(
 
   // --- 5. Add NODE graph nodes ---
   for (const node of Object.values(nodes)) {
-    const color = nodeColorMap.get(node.id) ?? DEFAULT_NODE_COLOR;
+    const color = node.color || DEFAULT_NODE_COLOR;
     graphNodes.push({
       id: node.id,
       name: node.name,
