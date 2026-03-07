@@ -99,6 +99,7 @@ export interface CreateNodeData {
   target_value?: number;
   color?: string;
   icon?: string;
+  core_id?: string;
 }
 
 /**
