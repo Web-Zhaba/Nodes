@@ -98,11 +98,19 @@ export const drawNodeLabel = ({
 
   // Рисуем текст
   const label = String(node.name) || "";
-  const _fontSize = finalFontSize / globalScale;
   
+  // ФИКС ОТЗЕРКАЛИВАНИЯ ПРИ ЗУМЕ: 
+  // Браузеры багуют, когда размер шрифта (_fontSize) становится меньше 1px.
+  // Поэтому мы инвертируем масштаб context'а и рисуем текст в нормальных экранных пикселях.
+  ctx.save();
+  // 1. Сначала смещаем начало координат в точку, где должен быть текст (в координатах графа)
+  ctx.translate(nodeX, nodeY + nodeSize + finalOffset);
+  // 2. Затем инвертируем глобальный зум
+  ctx.scale(1 / globalScale, 1 / globalScale);
+
   ctx.font = isCore 
-    ? `bold ${_fontSize}px Inter, system-ui, sans-serif`
-    : `${_fontSize}px Inter, system-ui, sans-serif`;
+    ? `bold ${finalFontSize}px Inter, system-ui, sans-serif`
+    : `${finalFontSize}px Inter, system-ui, sans-serif`;
     
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -116,15 +124,23 @@ export const drawNodeLabel = ({
       ? labelActiveColor
       : _labelColor;
       
-  ctx.fillText(label, nodeX, nodeY + nodeSize + finalOffset);
+  // 3. Отступы уже учтены в translate(), поэтому рисуем строго в (0,0)
+  ctx.fillText(label, 0, 0);
 
   // Вычисляем значения для области выделения/клика
-  const textWidth = ctx.measureText(label).width;
+  // measureText теперь возвращает ширину в ЭКРАННЫХ пикселях, нужно перевести обратно в граф
+  const screenTextWidth = ctx.measureText(label).width;
+  ctx.restore();
+
+  const graphTextWidth = screenTextWidth / globalScale;
+  const graphFontSize = finalFontSize / globalScale;
+
   const pointerArea = {
-    x: nodeX - textWidth / 2,
+    x: nodeX - graphTextWidth / 2,
     y: nodeY - nodeSize / 2 - finalOffset / 2,
-    width: textWidth,
-    height: nodeSize + finalFontSize + finalOffset,
+    width: graphTextWidth,
+    // В оригинальной статье была ошибка: смешивали экранный fontSize и графовый offset. Здесь исправлено на graphFontSize.
+    height: nodeSize + graphFontSize + finalOffset,
   };
 
   // Если включен режим отладки
