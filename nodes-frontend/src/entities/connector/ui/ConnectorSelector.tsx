@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Plus, Tag, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import type { Connector } from "@/types";
 import {
   getUserConnectors,
   createConnector,
 } from "@/features/connectors/connectorService";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ConnectorTag } from "@/components/ui/connector-tag";
 
 interface ConnectorSelectorProps {
   value: string[]; // Массив ID выбранных коннекторов
@@ -18,6 +18,7 @@ interface ConnectorSelectorProps {
 
 /**
  * Компонент выбора множественных коннекторов (семантических связей)
+ * Перенесен в entities для общего использования
  */
 export function ConnectorSelector({
   value,
@@ -44,10 +45,8 @@ export function ConnectorSelector({
   // Обработка выбора/снятия коннектора
   const handleToggleConnector = (connectorId: string) => {
     if (value.includes(connectorId)) {
-      // Удалить из выбранных
       onChange(value.filter((id) => id !== connectorId));
     } else {
-      // Добавить к выбранным
       onChange([...value, connectorId]);
     }
   };
@@ -56,13 +55,9 @@ export function ConnectorSelector({
   const handleCreateConnector = async () => {
     if (!customValue.trim()) return;
 
-    // Создаём коннектор
     const newConnector = await createConnector(customValue.trim());
-
     if (newConnector) {
-      // Обновляем список
       await loadConnectors();
-      // Добавляем к выбранным
       onChange([...value, newConnector.id]);
     }
 
@@ -70,68 +65,38 @@ export function ConnectorSelector({
     setShowCustomInput(false);
   };
 
-  // Обработка ввода в кастомное поле
-  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/^#/, ""); // Удаляем # если есть
-    setCustomValue(val);
-  };
-
-  // Удаление выбранного коннектора
-  const handleRemoveConnector = (e: React.MouseEvent, connectorId: string) => {
-    e.stopPropagation();
-    onChange(value.filter((id) => id !== connectorId));
-  };
-
   return (
     <div className={cn("space-y-3", className)}>
-      {/* Выбранные коннекторы */}
+      {/* Выбранные коннекторы (используем новый UI компонент) */}
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {connectors
             .filter((c) => value.includes(c.id))
             .map((connector) => (
-              <Badge
+              <ConnectorTag
                 key={connector.id}
-                variant="secondary"
-                className="flex items-center gap-1.5 px-3 py-1.5 h-auto font-medium cursor-pointer transition-all"
-                style={{
-                  backgroundColor: `${connector.color}20`,
-                  border: `2px solid ${connector.color}`,
-                  color: connector.color,
-                }}
-                onClick={() => handleToggleConnector(connector.id)}
-              >
-                <Tag className="h-3.5 w-3.5" />#{connector.name}
-                <button
-                  type="button"
-                  onClick={(e) => handleRemoveConnector(e, connector.id)}
-                  className="ml-1 hover:bg-black/10 rounded-full p-0.5 transition-colors"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </Badge>
+                name={connector.name}
+                color={connector.color}
+                onRemove={() => handleToggleConnector(connector.id)}
+                interactive
+              />
             ))}
         </div>
       )}
 
       {/* Существующие коннекторы для выбора */}
-      {!isLoading && connectors.length > 0 && (
+      {!isLoading && connectors.length > 0 && connectors.some(c => !value.includes(c.id)) && (
         <div className="flex flex-wrap gap-2">
           {connectors
             .filter((c) => !value.includes(c.id))
             .map((connector) => (
-              <button
+              <ConnectorTag
                 key={connector.id}
-                type="button"
+                name={connector.name}
+                color={connector.color}
+                active={false}
                 onClick={() => handleToggleConnector(connector.id)}
-                className={cn(
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium",
-                  "transition-all border-2 hover:scale-105",
-                  "bg-muted text-muted-foreground border-transparent hover:border-muted-foreground/30",
-                )}
-              >
-                <Tag className="h-3.5 w-3.5" />#{connector.name}
-              </button>
+              />
             ))}
         </div>
       )}
@@ -143,30 +108,25 @@ export function ConnectorSelector({
           variant="outline"
           size="sm"
           onClick={() => setShowCustomInput(true)}
-          className="h-9 border-dashed"
+          className="h-9 border-dashed text-xs"
         >
-          <Plus className="h-4 w-4 mr-1" />
+          <Plus className="h-3.5 w-3.5 mr-1" />
           Новый коннектор
         </Button>
       ) : (
-        /* Форма создания нового коннектора */
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
               #
             </span>
             <Input
               type="text"
               value={customValue}
-              onChange={handleCustomInputChange}
-              placeholder="введите название..."
-              className="pl-7"
+              onChange={(e) => setCustomValue(e.target.value.replace(/^#/, ""))}
+              placeholder="название..."
+              className="pl-7 h-9 text-sm"
               autoFocus
-              onBlur={() => {
-                if (!customValue.trim()) {
-                  setShowCustomInput(false);
-                }
-              }}
+              onBlur={() => !customValue.trim() && setShowCustomInput(false)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
@@ -184,6 +144,7 @@ export function ConnectorSelector({
             onClick={handleCreateConnector}
             disabled={!customValue.trim()}
             size="sm"
+            className="h-9"
           >
             Создать
           </Button>
@@ -201,12 +162,6 @@ export function ConnectorSelector({
           </Button>
         </div>
       )}
-
-      {/* Подсказка */}
-      <p className="text-xs text-muted-foreground">
-        Коннекторы объединяют узлы по смыслу (например: #здоровье, #утро,
-        #спорт). Можно выбрать несколько.
-      </p>
     </div>
   );
 }

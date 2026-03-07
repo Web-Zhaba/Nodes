@@ -8,14 +8,20 @@ import {
   ICON_PIXEL_RATIO,
   drawNodeCircle,
   drawNodeLabel,
+  getCssVar,
 } from "../lib/graphUtils";
 
 interface ForceGraphProps {
   graphData: GraphData;
   backgroundColor?: string;
+  onNodeClick?: (nodeId: string, kind: "node" | "core") => void;
 }
 
-export function ForceGraph({ graphData, backgroundColor = "transparent" }: ForceGraphProps) {
+export function ForceGraph({ 
+  graphData, 
+  backgroundColor = "transparent",
+  onNodeClick
+}: ForceGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<ForceGraphMethods | undefined>(undefined);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -50,12 +56,34 @@ export function ForceGraph({ graphData, backgroundColor = "transparent" }: Force
   useEffect(() => {
     const g = graphRef.current;
     if (!g) return;
-    g.d3Force("charge")?.strength?.(-160);
-    g.d3Force("link")?.distance?.(70);
+    g.d3Force("charge")?.strength?.(-60);
+    g.d3Force("link")?.distance?.(50);
   });
 
-  // ── Cleanup icon cache on unmount ────────────────────────────────────────
-  useEffect(() => () => clearIconCache(), []);
+  // ── Theme-aware colors ──────────────────────────────────────────────────
+  const [colors, setColors] = useState({
+    label: "rgba(255, 255, 255, 0.75)",
+    muted: "rgba(255, 255, 255, 0.5)",
+  });
+
+  const updateColors = useCallback(() => {
+    // Используем CSS переменные из index.css (переводятся в oklch или hsl)
+    const label = getCssVar("--foreground", "rgba(255, 255, 255, 0.8)");
+    const muted = getCssVar("--muted-foreground", "rgba(255, 255, 255, 0.5)");
+    setColors({ label, muted });
+  }, []);
+
+  useEffect(() => {
+    updateColors();
+    // Следим за изменением класса .dark на html
+    const observer = new MutationObserver(updateColors);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    
+    return () => {
+      observer.disconnect();
+      clearIconCache(); // Возвращаем очистку кэша
+    };
+  }, [updateColors]);
 
   // ── Custom node painter ──────────────────────────────────────────────────
   // Вызывает утилиты из graphUtils.ts — по образу статьи (Graph/utils.ts)
@@ -79,9 +107,15 @@ export function ForceGraph({ graphData, backgroundColor = "transparent" }: Force
       }
 
       // 3. Подпись (логика в graphUtils.drawNodeLabel)
-      drawNodeLabel({ node, ctx, globalScale });
+      // Передаем вычисленный цвет из CSS переменных
+      drawNodeLabel({ 
+        node, 
+        ctx, 
+        globalScale,
+        labelColor: isCore ? node.color : colors.label // Ядра всегда своего цвета, узлы — цвета текста
+      });
     },
-    []
+    [colors]
   );
 
   // ── Link accessors ───────────────────────────────────────────────────────
@@ -124,6 +158,12 @@ export function ForceGraph({ graphData, backgroundColor = "transparent" }: Force
         d3VelocityDecay={0.4}
         d3AlphaDecay={0.02}
         cooldownTicks={100}
+        onNodeClick={(node) => {
+          const gn = node as GraphNode;
+          if (onNodeClick) {
+            onNodeClick(gn.id, gn.nodeKind);
+          }
+        }}
       />
     </div>
   );

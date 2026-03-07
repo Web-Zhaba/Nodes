@@ -29,17 +29,32 @@ export type DrawNodeLabelProps = {
   hoverNodes?: (GraphNode | null)[];
   // Выбранные узлы (задел на будущее)
   clickNodes?: (GraphNode | null)[];
+  // Цвет подписи
+  labelColor?: string;
   // Режим отладки
   debug?: boolean;
 };
 
-// Дефолтные цвета и размеры для нашего проекта
+// Дефолтные значения (теперь это только fallback)
 export const defaultColors = {
   nodeColor: "#8888aa",
   activeNodeColor: "#6c63ff",
-  labelColor: "rgba(255,255,255,0.75)",
+  labelColor: "rgba(255, 255, 255, 0.75)", // Fallback для светлой/темной темы
   tooltipColor: "#f7ebeb",
 };
+
+/**
+ * Простой хелпер для получения значения CSS-переменной.
+ * Canvas не умеет работать с var() напрямую, поэтому вычисляем.
+ */
+export function getCssVar(name: string, fallback: string = "#000000"): string {
+  if (typeof window === "undefined") return fallback;
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  
+  // Если это oklch или другие сложные форматы, Canvas может их не понять в старых браузерах,
+  // но современные браузеры (Chrome 111+, Safari 16.4+) поддерживают их в fillStyle.
+  return value || fallback;
+}
 
 export interface DrawNodeCircleProps {
   node: GraphNode & { x: number; y: number };
@@ -77,13 +92,15 @@ export const drawNodeLabel = ({
   node,
   ctx,
   globalScale = 1,
-  fontSize = 10,
+  fontSize = 12,
   offset = 4,
   hoverNodes = [],
   clickNodes = [],
   debug = false,
+  labelColor: customLabelColor,
 }: DrawNodeLabelProps): void => {
-  const { activeNodeColor, labelColor } = defaultColors;
+  const { activeNodeColor, labelColor: defaultLabelColor } = defaultColors;
+  const labelColor = customLabelColor || defaultLabelColor;
 
   const nodeX = node.x || 0;
   const nodeY = node.y || 0;

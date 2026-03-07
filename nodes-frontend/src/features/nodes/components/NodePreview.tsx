@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Icons } from "@/lib/icons";
+import { ConnectorTag } from "@/components/ui/connector-tag";
 import type { NodeType } from "@/types";
 
 interface NodePreviewProps {
@@ -71,15 +72,15 @@ export function NodePreview({
           {connectorNames && connectorNames.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-1">
               {connectorNames.slice(0, 3).map((connName, idx) => (
-                <span
-                  key={idx}
-                  className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded"
-                >
-                  #{connName}
-                </span>
+                <ConnectorTag 
+                  key={idx} 
+                  name={connName} 
+                  size="sm"
+                  className="bg-muted border-transparent"
+                />
               ))}
               {connectorNames.length > 3 && (
-                <span className="text-xs text-muted-foreground">
+                <span className="text-[10px] text-muted-foreground flex items-center">
                   +{connectorNames.length - 3}
                 </span>
               )}

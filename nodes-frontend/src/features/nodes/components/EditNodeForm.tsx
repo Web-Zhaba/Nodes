@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -28,12 +26,12 @@ import {
   createNodeSchema,
   type CreateNodeFormData,
 } from "../lib/createNodeSchema";
-import { updateNode, deleteNode, getNodeById } from "../nodeService";
-import { getUserConnectors } from "@/features/connectors/connectorService";
+import { useNodeQuery, useUpdateNodeMutation, useDeleteNodeMutation } from "../hooks/useNodesQuery";
+import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQuery";
 import { ColorPicker } from "./ColorPicker";
 import { IconPicker } from "./IconPicker";
 import { NodePreview } from "./NodePreview";
-import { ConnectorSelector } from "./ConnectorSelector";
+import { ConnectorSelector } from "@/entities/connector/ui/ConnectorSelector";
 
 interface EditNodeFormProps {
   nodeId: string;
@@ -44,15 +42,15 @@ interface EditNodeFormProps {
  */
 export function EditNodeForm({ nodeId }: EditNodeFormProps) {
   const navigate = useNavigate();
-  const { user, isLoading: isAuthLoading } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
+  
+  const { data: nodeData, isLoading: isNodeLoading } = useNodeQuery(nodeId);
+  const { data: connectors = {} } = useConnectorsQuery(user?.id);
+  
+  const updateMutation = useUpdateNodeMutation();
+  const deleteMutation = useDeleteNodeMutation();
+
   const [nodeType, setNodeType] = useState<NodeType>("binary");
-  const [connectorNames, setConnectorNames] = useState<string[]>([]);
-  const [allConnectors, setAllConnectors] = useState<
-    Array<{ id: string; name: string; color: string }>
-  >([]);
 
   // React Hook Form
   const {
@@ -66,59 +64,32 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
     resolver: zodResolver(createNodeSchema) as any,
   });
 
-  // Загружаем данные узла и коннекторы
+  // Инициализируем форму при загрузке данных
   useEffect(() => {
-    const init = async () => {
-      setIsLoading(true);
-      try {
-        const [nodeData, connectorsData] = await Promise.all([
-          getNodeById(nodeId),
-          getUserConnectors(user?.id),
-        ]);
-
-        if (!nodeData) {
-          toast.error("Узел не найден");
-          navigate("/nodes");
-          return;
-        }
-
-        setAllConnectors(connectorsData);
-        setNodeType(nodeData.node_type);
-
-        // Инициализируем форму
-        reset({
-          name: nodeData.name,
-          description: nodeData.description || "",
-          node_type: nodeData.node_type,
-          mass: nodeData.mass,
-          target_value: nodeData.target_value,
-          color: nodeData.color || "#8b5cf6",
-          icon: nodeData.icon || "Circle",
-          connector_ids: nodeData.connector_ids || [],
-        });
-      } catch (error) {
-        console.error("Ошибка инициализации:", error);
-        toast.error("Ошибка загрузки данных");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (user && !isAuthLoading) {
-      init();
+    if (nodeData) {
+      setNodeType(nodeData.node_type);
+      reset({
+        name: nodeData.name,
+        description: nodeData.description || "",
+        node_type: nodeData.node_type,
+        mass: nodeData.mass,
+        target_value: nodeData.target_value,
+        color: nodeData.color || "#8b5cf6",
+        icon: nodeData.icon || "Circle",
+        connector_ids: nodeData.connector_ids || [],
+      });
     }
-  }, [nodeId, reset, navigate, user, isAuthLoading]);
+  }, [nodeData, reset]);
 
   // Следим за значениями для предпросмотра
   const previewValues = watch();
 
   // Обновляем названия коннекторов
-  useEffect(() => {
-    const selectedNames = allConnectors
+  const connectorNames = useMemo(() => {
+    return Object.values(connectors)
       .filter((c) => previewValues.connector_ids?.includes(c.id))
       .map((c) => c.name);
-    setConnectorNames(selectedNames);
-  }, [previewValues.connector_ids, allConnectors]);
+  }, [previewValues.connector_ids, connectors]);
 
   // Удаление узла
   const handleDelete = async () => {
@@ -126,52 +97,42 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
       return;
     }
 
-    setIsDeleting(true);
     try {
-      const success = await deleteNode(nodeId);
-      if (success) {
-        toast.success("Узел удален");
-        navigate("/nodes");
-      } else {
-        throw new Error("Не удалось удалить узел");
-      }
+      await deleteMutation.mutateAsync(nodeId);
+      toast.success("Узел удален");
+      navigate("/nodes");
     } catch (error) {
       toast.error("Ошибка удаления");
-      setIsDeleting(false);
     }
   };
 
   // Сохранение изменений
   const onSubmit = async (data: CreateNodeFormData) => {
-    console.log("Submitting data:", data); // Для отладки
-    setIsSubmitting(true);
     try {
-      const success = await updateNode(nodeId, {
-        name: data.name,
-        description: data.description,
-        node_type: data.node_type,
-        mass: data.mass,
-        target_value: data.node_type !== "binary" ? data.target_value : undefined,
-        color: data.color,
-        icon: data.icon,
-        connector_ids: data.connector_ids, // ВАЖНО: добавил отправку коннекторов
-      }, user?.id);
+      await updateMutation.mutateAsync({
+        nodeId,
+        updates: {
+          name: data.name,
+          description: data.description,
+          node_type: data.node_type,
+          mass: data.mass,
+          target_value: data.node_type !== "binary" ? data.target_value : undefined,
+          color: data.color,
+          icon: data.icon,
+          connector_ids: data.connector_ids,
+        },
+        userId: user?.id,
+      });
 
-      if (success) {
-        toast.success("Изменения сохранены");
-        navigate("/nodes");
-      } else {
-        throw new Error("Не удалось обновить узел");
-      }
+      toast.success("Изменения сохранены");
+      navigate("/nodes");
     } catch (error) {
       console.error("Ошибка обновления:", error);
       toast.error("Ошибка при сохранении");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  if (isLoading) {
+  if (isNodeLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -206,10 +167,10 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
           variant="outline"
           size="sm"
           onClick={handleDelete}
-          disabled={isDeleting}
+          disabled={deleteMutation.isPending}
           className="text-destructive hover:bg-destructive/10 border-destructive/20 gap-2 w-fit"
         >
-          {isDeleting ? (
+          {deleteMutation.isPending ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Trash2 className="h-4 w-4" />
@@ -375,13 +336,13 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
             >
               Отмена
             </Button>
-            <Button type="submit" disabled={isSubmitting} size="lg" className="flex-1 h-12 gap-2 shadow-lg shadow-primary/20">
-              {isSubmitting ? (
+            <Button type="submit" disabled={updateMutation.isPending} size="lg" className="flex-1 h-12 gap-2 shadow-lg shadow-primary/20">
+              {updateMutation.isPending ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
                 <Save className="h-5 w-5" />
               )}
-              {isSubmitting ? "Сохранение..." : "Сохранить"}
+              {updateMutation.isPending ? "Сохранение..." : "Сохранить"}
             </Button>
           </div>
         </div>

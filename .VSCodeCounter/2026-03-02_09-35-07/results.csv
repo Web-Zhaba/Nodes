@@ -1,0 +1,114 @@
+"filename", "language", "Markdown", "JSON", "Skill", "HTML", "JavaScript", "JSON with Comments", "XML", "TypeScript", "MS SQL", "TypeScript JSX", "PostCSS", "comment", "blank", "total"
+"d:\Сайты\Nodes\.agents\rules\rule.md", "Markdown", 151, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 184
+"d:\Сайты\Nodes\.agents\skills\brainstorm\SKILL.md", "Skill", 0, 0, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 96
+"d:\Сайты\Nodes\.agents\skills\executing-plans\SKILL.md", "Skill", 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 85
+"d:\Сайты\Nodes\.agents\skills\systematic-debugging\SKILL.md", "Skill", 0, 0, 220, 0, 0, 0, 0, 0, 0, 0, 0, 0, 77, 297
+"d:\Сайты\Nodes\.agents\skills\systematic-debugging\condition-based-waiting.md", "Markdown", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"d:\Сайты\Nodes\.agents\skills\systematic-debugging\defense-in-depth.md", "Markdown", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"d:\Сайты\Nodes\.agents\skills\systematic-debugging\root-cause-tracing.md", "Markdown", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"d:\Сайты\Nodes\.agents\skills\test-driven-development\SKILL.md", "Skill", 0, 0, 279, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 372
+"d:\Сайты\Nodes\.agents\skills\test-driven-development\testing-anti-patterns.md", "Markdown", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"d:\Сайты\Nodes\.agents\skills\using-superpowers\SKILL.md", "Skill", 0, 0, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 96
+"d:\Сайты\Nodes\.agents\skills\verification-before-completion\SKILL.md", "Skill", 0, 0, 106, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 140
+"d:\Сайты\Nodes\.agents\skills\writing-plans\SKILL.md", "Skill", 0, 0, 77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 117
+"d:\Сайты\Nodes\README.md", "Markdown", 194, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 263
+"d:\Сайты\Nodes\docs\APP_STRUCTURE.md", "Markdown", 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 31
+"d:\Сайты\Nodes\docs\CONCEPT.md", "Markdown", 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 33
+"d:\Сайты\Nodes\docs\GUIDES.md", "Markdown", 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 53
+"d:\Сайты\Nodes\docs\OPTIMIZATION_PLAN.md", "Markdown", 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 62
+"d:\Сайты\Nodes\docs\PROGRESS.md", "Markdown", 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 200
+"d:\Сайты\Nodes\docs\ROADMAP.md", "Markdown", 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 64
+"d:\Сайты\Nodes\docs\SCHEMA.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 264, 0, 0, 61, 63, 388
+"d:\Сайты\Nodes\docs\TECHNICAL.md", "Markdown", 38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 46
+"d:\Сайты\Nodes\docs\TEST_ACCOUNT.md", "Markdown", 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 5
+"d:\Сайты\Nodes\docs\deploy-vercel.md", "Markdown", 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 148
+"d:\Сайты\Nodes\docs\plan.md", "Markdown", 870, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 221, 1091
+"d:\Сайты\Nodes\docs\plans\2026-02-28-inbox-design.md", "Markdown", 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 49
+"d:\Сайты\Nodes\docs\supabase-schema.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 136, 0, 0, 45, 28, 209
+"d:\Сайты\Nodes\nodes-frontend\README.md", "Markdown", 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 106
+"d:\Сайты\Nodes\nodes-frontend\bundle-stats.html", "HTML", 0, 0, 0, 138, 0, 0, 0, 0, 0, 0, 0, 4793, 20, 4951
+"d:\Сайты\Nodes\nodes-frontend\components.json", "JSON", 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 26
+"d:\Сайты\Nodes\nodes-frontend\eslint.config.js", "JavaScript", 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 2, 24
+"d:\Сайты\Nodes\nodes-frontend\index.html", "HTML", 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 3, 22
+"d:\Сайты\Nodes\nodes-frontend\knip.json", "JSON", 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 13
+"d:\Сайты\Nodes\nodes-frontend\package-lock.json", "JSON", 0, 8234, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8235
+"d:\Сайты\Nodes\nodes-frontend\package.json", "JSON", 0, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 70
+"d:\Сайты\Nodes\nodes-frontend\postcss.config.js", "JavaScript", 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 1, 7
+"d:\Сайты\Nodes\nodes-frontend\public\vite.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+"d:\Сайты\Nodes\nodes-frontend\src\App.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 0, 6, 43
+"d:\Сайты\Nodes\nodes-frontend\src\App.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 83, 0, 5, 10, 98
+"d:\Сайты\Nodes\nodes-frontend\src\assets\react.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+"d:\Сайты\Nodes\nodes-frontend\src\components\ErrorBoundary.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 74, 0, 0, 11, 85
+"d:\Сайты\Nodes\nodes-frontend\src\components\ThemeToggle.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 4, 20
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\badge.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 6, 37
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\button.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 1, 6, 60
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\card-tilt.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 122, 0, 0, 20, 142
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\card.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 0, 0, 9, 77
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\dialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 0, 0, 13, 121
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\input.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 4, 23
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\label.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 5, 25
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\popover.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 7, 32
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\radio-group.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 6, 45
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\scroll-area.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 5, 47
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\skeleton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 3, 16
+"d:\Сайты\Nodes\nodes-frontend\src\components\ui\tooltip.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 7, 31
+"d:\Сайты\Nodes\nodes-frontend\src\config\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 1, 1, 8
+"d:\Сайты\Nodes\nodes-frontend\src\features\connectors\connectorService.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 71, 0, 0, 0, 9, 15, 95
+"d:\Сайты\Nodes\nodes-frontend\src\features\dashboard\components\CapacityBar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 6, 47
+"d:\Сайты\Nodes\nodes-frontend\src\features\dashboard\components\DailyFocusSelector.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 117, 0, 2, 13, 132
+"d:\Сайты\Nodes\nodes-frontend\src\features\dashboard\components\WeekCalendar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 83, 0, 1, 10, 94
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\__tests__\nodeService.test.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 10, 20, 102
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\ColorPicker.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 6, 4, 53
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\ConnectorSelector.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 179, 0, 18, 16, 213
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\CreateNodeForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 394, 0, 28, 34, 456
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\EditNodeForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 342, 0, 20, 30, 392
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\IconPicker.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 141, 0, 10, 9, 160
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 139, 0, 14, 12, 165
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCardHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 74, 0, 8, 9, 91
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCardSkeleton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 4, 6, 49
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCardStability.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 0, 4, 6, 58
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCardStats.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 3, 3, 28
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodePreview.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 133, 0, 17, 14, 164
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\__tests__\EditNodeForm.test.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 0, 12, 30, 153
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\controls\BinaryControl.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 0, 3, 8, 103
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\controls\DurationControl.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 305, 0, 18, 34, 357
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\controls\QuantityControl.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 216, 0, 11, 20, 247
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\lib\createNodeSchema.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 15, 10, 54
+"d:\Сайты\Nodes\nodes-frontend\src\features\nodes\nodeService.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 344, 0, 0, 0, 52, 75, 471
+"d:\Сайты\Nodes\nodes-frontend\src\hooks\useAuth.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 2, 6, 32
+"d:\Сайты\Nodes\nodes-frontend\src\hooks\useTheme.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 1, 7, 30
+"d:\Сайты\Nodes\nodes-frontend\src\index.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 265, 9, 26, 300
+"d:\Сайты\Nodes\nodes-frontend\src\lib\icons.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 130, 0, 0, 0, 7, 3, 140
+"d:\Сайты\Nodes\nodes-frontend\src\lib\supabase.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 1, 3, 16
+"d:\Сайты\Nodes\nodes-frontend\src\lib\utils.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 2, 7
+"d:\Сайты\Nodes\nodes-frontend\src\main.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 2, 11
+"d:\Сайты\Nodes\nodes-frontend\src\pages\AuthCallbackPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 112, 0, 9, 13, 134
+"d:\Сайты\Nodes\nodes-frontend\src\pages\CreateNodePage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 3, 2, 13
+"d:\Сайты\Nodes\nodes-frontend\src\pages\EditNodePage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 3, 4, 24
+"d:\Сайты\Nodes\nodes-frontend\src\pages\HomePage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 70, 0, 0, 5, 75
+"d:\Сайты\Nodes\nodes-frontend\src\pages\LoginPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 107, 0, 0, 12, 119
+"d:\Сайты\Nodes\nodes-frontend\src\pages\NodesListPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 249, 0, 13, 31, 293
+"d:\Сайты\Nodes\nodes-frontend\src\pages\NotFoundPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 2, 31
+"d:\Сайты\Nodes\nodes-frontend\src\pages\SignupPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 135, 0, 0, 13, 148
+"d:\Сайты\Nodes\nodes-frontend\src\store\__tests__\useAppStore.test.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 4, 7, 33
+"d:\Сайты\Nodes\nodes-frontend\src\store\__tests__\useNodesStore.test.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 142, 0, 0, 0, 12, 36, 190
+"d:\Сайты\Nodes\nodes-frontend\src\store\useAppStore.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 3, 13
+"d:\Сайты\Nodes\nodes-frontend\src\store\useNodesStore.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 149, 0, 0, 0, 20, 29, 198
+"d:\Сайты\Nodes\nodes-frontend\src\tests\BinaryControl.test.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 0, 2, 20, 108
+"d:\Сайты\Nodes\nodes-frontend\src\tests\NodeCardStability.test.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 0, 0, 13, 48
+"d:\Сайты\Nodes\nodes-frontend\src\tests\NodeCardStats.test.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 11, 38
+"d:\Сайты\Nodes\nodes-frontend\src\tests\NotFoundPage.test.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 3, 25
+"d:\Сайты\Nodes\nodes-frontend\src\tests\QuantityControl.test.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 0, 0, 29, 163
+"d:\Сайты\Nodes\nodes-frontend\src\tests\setup.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 2, 4, 21
+"d:\Сайты\Nodes\nodes-frontend\src\types\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 31, 13, 99
+"d:\Сайты\Nodes\nodes-frontend\src\widgets\Layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 88, 0, 7, 9, 104
+"d:\Сайты\Nodes\nodes-frontend\src\widgets\ProtectedRoute.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 7, 33
+"d:\Сайты\Nodes\nodes-frontend\tailwind.config.js", "JavaScript", 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 1, 1, 12
+"d:\Сайты\Nodes\nodes-frontend\tsconfig.app.json", "JSON", 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 35
+"d:\Сайты\Nodes\nodes-frontend\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 1, 14
+"d:\Сайты\Nodes\nodes-frontend\tsconfig.node.json", "JSON", 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 27
+"d:\Сайты\Nodes\nodes-frontend\vercel.json", "JSON", 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 9
+"d:\Сайты\Nodes\nodes-frontend\vite.config.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 1, 2, 32
+"d:\Сайты\Nodes\nodes-frontend\vitest.config.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 2, 17
+"d:\Сайты\Nodes\vercel.json", "JSON", 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 9
+"Total", "-", 1837, 8406, 887, 157, 38, 13, 2, 1152, 400, 4410, 302, 5304, 1780, 24688

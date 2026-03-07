@@ -383,5 +383,53 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
+-- 14. Core MOC Logic (core_connectors)
+-- =====================================================
+
+-- Связь ядер с тегами (MOC mapping)
+CREATE TABLE IF NOT EXISTS core_connectors (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  core_id UUID REFERENCES cores(id) ON DELETE CASCADE NOT NULL,
+  connector_id UUID REFERENCES connectors(id) ON DELETE CASCADE NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(core_id, connector_id)
+);
+
+CREATE INDEX IF NOT EXISTS core_connectors_core_id_idx ON core_connectors(core_id);
+CREATE INDEX IF NOT EXISTS core_connectors_connector_id_idx ON core_connectors(connector_id);
+
+ALTER TABLE core_connectors ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own core_connectors"
+  ON core_connectors FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM cores
+      WHERE cores.id = core_connectors.core_id
+      AND cores.user_id = (select auth.uid())
+    )
+  );
+
+CREATE POLICY "Users can create own core_connectors"
+  ON core_connectors FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM cores
+      WHERE cores.id = core_connectors.core_id
+      AND cores.user_id = (select auth.uid())
+    )
+  );
+
+CREATE POLICY "Users can delete own core_connectors"
+  ON core_connectors FOR DELETE
+  USING (
+    EXISTS (
+      SELECT 1 FROM cores
+      WHERE cores.id = core_connectors.core_id
+      AND cores.user_id = (select auth.uid())
+    )
+  );
+
+-- =====================================================
 -- Готово!
 -- =====================================================

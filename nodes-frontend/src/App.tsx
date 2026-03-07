@@ -6,8 +6,20 @@ import Layout from "@/widgets/Layout";
 import ProtectedRoute from "@/widgets/ProtectedRoute";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { lazy, Suspense } from "react";
 import NodesListPage from "@/pages/NodesListPage";
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // Не рефетчить при возврате на вкладку
+      staleTime: 1000 * 60 * 5, // Кэш живет 5 минут
+    },
+  },
+});
 
 // Ленивая загрузка страниц
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
@@ -16,6 +28,8 @@ const CreateNodePage = lazy(() => import("@/pages/CreateNodePage"));
 const EditNodePage = lazy(() => import("@/pages/EditNodePage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 const AuthCallbackPage = lazy(() => import("@/pages/AuthCallbackPage"));
+const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
+const GraphPage = lazy(() => import("@/pages/GraphPage"));
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -37,8 +51,12 @@ function AuthRedirect() {
 
 function App() {
   return (
-    <ErrorBoundary>
-      {/* Toaster вынесен за пределы BrowserRouter для корректной работы уведомлений */}
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary>
+        {/* React Query Devtools для отладки кэша (только в dev) */}
+        <ReactQueryDevtools initialIsOpen={false} position="bottom" />
+        
+        {/* Toaster вынесен за пределы BrowserRouter для корректной работы уведомлений */}
       <Toaster
         richColors
         position="top-right"
@@ -69,18 +87,16 @@ function App() {
               <Route path="nodes" element={<NodesListPage />} />
               <Route path="nodes/new" element={<CreateNodePage />} />
               <Route path="nodes/edit/:id" element={<EditNodePage />} />
+              <Route path="profile" element={<ProfilePage />} />
               <Route
                 path="graph"
-                element={<div className="p-4">Graph Page (WIP)</div>}
+                element={<GraphPage />}
               />
               <Route
                 path="analytics"
                 element={<div className="p-4">Analytics Page (WIP)</div>}
               />
-              <Route
-                path="profile"
-                element={<div className="p-4">Profile Page (WIP)</div>}
-              />
+
             </Route>
 
             {/* 404 */}
@@ -89,8 +105,9 @@ function App() {
         </Suspense>
       </BrowserRouter>
       <Analytics />
-      <SpeedInsights />
-    </ErrorBoundary>
+        <SpeedInsights />
+      </ErrorBoundary>
+    </QueryClientProvider>
   );
 }
 

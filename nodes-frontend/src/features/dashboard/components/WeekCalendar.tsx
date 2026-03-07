@@ -76,7 +76,7 @@ export function WeekCalendar({ selectedDate, onSelectDate, className }: WeekCale
               )}>
                 {format(day, "EEEEEE", { locale: ru })}
               </span>
-              <span className="text-base sm:text-xl font-black tracking-tight">
+              <span className="text-base sm:text-xl font-bold tracking-tight">
                 {format(day, "d")}
               </span>
 

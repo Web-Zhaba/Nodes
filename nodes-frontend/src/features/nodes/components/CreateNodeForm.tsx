@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -27,11 +25,11 @@ import {
   createNodeSchema,
   type CreateNodeFormData,
 } from "../lib/createNodeSchema";
-import { createNode } from "../nodeService";
-import { getUserConnectors } from "@/features/connectors/connectorService";
+import { useCreateNodeMutation } from "../hooks/useNodesQuery";
+import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQuery";
 import { ColorPicker } from "./ColorPicker";
 import { IconPicker } from "./IconPicker";
-import { ConnectorSelector } from "./ConnectorSelector";
+import { ConnectorSelector } from "@/entities/connector/ui/ConnectorSelector";
 import { NodePreview } from "./NodePreview";
 
 /**
@@ -40,24 +38,11 @@ import { NodePreview } from "./NodePreview";
 export function CreateNodeForm() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  
+  const createMutation = useCreateNodeMutation();
+  const { data: connectors = {} } = useConnectorsQuery(user?.id);
 
   const [nodeType, setNodeType] = useState<NodeType>("binary");
-  const [connectorNames, setConnectorNames] = useState<string[]>([]);
-  const [allConnectors, setAllConnectors] = useState<
-    Array<{ id: string; name: string; color: string }>
-  >([]);
-
-  // Загружаем коннекторы пользователя
-  useEffect(() => {
-    if (user) {
-      loadConnectors(user.id);
-    }
-  }, [user]);
-
-  const loadConnectors = async (userId: string) => {
-    const data = await getUserConnectors(userId);
-    setAllConnectors(data);
-  };
 
   // React Hook Form с Zod валидацией
   const {
@@ -65,7 +50,7 @@ export function CreateNodeForm() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<CreateNodeFormData>({
     resolver: zodResolver(createNodeSchema) as any,
     defaultValues: {
@@ -84,30 +69,30 @@ export function CreateNodeForm() {
   const previewValues = watch();
 
   // Обновляем названия коннекторов при изменении выбранных ID
-  useEffect(() => {
-    const selectedNames = allConnectors
+  const connectorNames = useMemo(() => {
+    return Object.values(connectors)
       .filter((c) => previewValues.connector_ids?.includes(c.id))
       .map((c) => c.name);
-    setConnectorNames(selectedNames);
-  }, [previewValues.connector_ids, allConnectors]);
+  }, [previewValues.connector_ids, connectors]);
 
   // Обработка отправки формы
   const onSubmit = async (data: CreateNodeFormData) => {
-
-
     try {
       // Создаём узел с коннекторами
-      const newNode = await createNode({
-        name: data.name,
-        description: data.description,
-        node_type: data.node_type,
-        mass: data.mass,
-        target_value:
-          data.node_type !== "binary" ? data.target_value : undefined,
-        color: data.color,
-        icon: data.icon,
-        connector_ids: data.connector_ids,
-      }, user?.id);
+      const newNode = await createMutation.mutateAsync({
+        node: {
+          name: data.name,
+          description: data.description,
+          node_type: data.node_type,
+          mass: data.mass,
+          target_value:
+            data.node_type !== "binary" ? data.target_value : undefined,
+          color: data.color,
+          icon: data.icon,
+          connector_ids: data.connector_ids,
+        },
+        userId: user?.id,
+      });
 
       if (!newNode) {
         throw new Error("Не удалось создать узел");
@@ -437,8 +422,8 @@ export function CreateNodeForm() {
             >
               Отмена
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="flex-1">
-              {isSubmitting ? (
+            <Button type="submit" disabled={createMutation.isPending} className="flex-1">
+              {createMutation.isPending ? (
                 "Создание..."
               ) : (
                 <>

@@ -1,0 +1,155 @@
+Date : 2026-03-02 09:35:07
+Directory : d:\Сайты\Nodes
+Total : 83 files,  8996 codes, 5233 comments, 1179 blanks, all 15408 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| TypeScript JSX |         39 |      3,654 |        212 |        456 |      4,322 |
+| JSON           |          5 |      2,629 |          0 |          2 |      2,631 |
+| TypeScript     |         12 |        994 |        159 |        205 |      1,358 |
+| Skill          |          7 |        887 |          0 |        316 |      1,203 |
+| Markdown       |         16 |        347 |          0 |        100 |        447 |
+| MS SQL         |          1 |        264 |         61 |         63 |        388 |
+| HTML           |          2 |        138 |      4,792 |         21 |      4,951 |
+| PostCSS        |          1 |         83 |          9 |         16 |        108 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                        | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                           |         83 |      8,996 |      5,233 |      1,179 |     15,408 |
+| . (Files)                                                                                   |          3 |         44 |          0 |         25 |         69 |
+| .agents                                                                                     |         12 |      1,042 |          0 |        353 |      1,395 |
+| .agents\rules                                                                               |          1 |        151 |          0 |         33 |        184 |
+| .agents\skills                                                                              |         11 |        891 |          0 |        320 |      1,211 |
+| .agents\skills\brainstorm                                                                   |          1 |         73 |          0 |         23 |         96 |
+| .agents\skills\executing-plans                                                              |          1 |         62 |          0 |         23 |         85 |
+| .agents\skills\systematic-debugging                                                         |          4 |        223 |          0 |         80 |        303 |
+| .agents\skills\test-driven-development                                                      |          2 |        280 |          0 |         94 |        374 |
+| .agents\skills\using-superpowers                                                            |          1 |         70 |          0 |         26 |         96 |
+| .agents\skills\verification-before-completion                                               |          1 |        106 |          0 |         34 |        140 |
+| .agents\skills\writing-plans                                                                |          1 |         77 |          0 |         40 |        117 |
+| docs                                                                                        |          9 |        532 |         61 |        138 |        731 |
+| docs (Files)                                                                                |          8 |        491 |         61 |        130 |        682 |
+| docs\plans                                                                                  |          1 |         41 |          0 |          8 |         49 |
+| nodes-frontend                                                                              |         59 |      7,378 |      5,172 |        663 |     13,213 |
+| nodes-frontend (Files)                                                                      |          8 |      2,665 |      4,792 |        -14 |      7,443 |
+| nodes-frontend\src                                                                          |         51 |      4,713 |        380 |        677 |      5,770 |
+| nodes-frontend\src (Files)                                                                  |          2 |        101 |         11 |         17 |        129 |
+| nodes-frontend\src\components                                                               |          9 |        403 |          0 |         67 |        470 |
+| nodes-frontend\src\components (Files)                                                       |          1 |         -1 |          0 |          0 |         -1 |
+| nodes-frontend\src\components\ui                                                            |          8 |        404 |          0 |         67 |        471 |
+| nodes-frontend\src\features                                                                 |         22 |      3,035 |        265 |        384 |      3,684 |
+| nodes-frontend\src\features\connectors                                                      |          1 |         71 |          9 |         15 |         95 |
+| nodes-frontend\src\features\dashboard                                                       |          3 |        241 |          3 |         29 |        273 |
+| nodes-frontend\src\features\dashboard\components                                            |          3 |        241 |          3 |         29 |        273 |
+| nodes-frontend\src\features\nodes                                                           |         18 |      2,723 |        253 |        340 |      3,316 |
+| nodes-frontend\src\features\nodes (Files)                                                   |          1 |        344 |         52 |         75 |        471 |
+| nodes-frontend\src\features\nodes\__tests__                                                 |          1 |         72 |         10 |         20 |        102 |
+| nodes-frontend\src\features\nodes\components                                                |         15 |      2,278 |        176 |        235 |      2,689 |
+| nodes-frontend\src\features\nodes\components (Files)                                        |         11 |      1,554 |        132 |        143 |      1,829 |
+| nodes-frontend\src\features\nodes\components\__tests__                                      |          1 |        111 |         12 |         30 |        153 |
+| nodes-frontend\src\features\nodes\components\controls                                       |          3 |        613 |         32 |         62 |        707 |
+| nodes-frontend\src\features\nodes\lib                                                       |          1 |         29 |         15 |         10 |         54 |
+| nodes-frontend\src\lib                                                                      |          2 |        136 |          8 |          4 |        148 |
+| nodes-frontend\src\pages                                                                    |          6 |        394 |         28 |         50 |        472 |
+| nodes-frontend\src\store                                                                    |          3 |        287 |         36 |         69 |        392 |
+| nodes-frontend\src\store (Files)                                                            |          1 |        123 |         20 |         26 |        169 |
+| nodes-frontend\src\store\__tests__                                                          |          2 |        164 |         16 |         43 |        223 |
+| nodes-frontend\src\tests                                                                    |          5 |        296 |          4 |         76 |        376 |
+| nodes-frontend\src\types                                                                    |          1 |         23 |         27 |          9 |         59 |
+| nodes-frontend\src\widgets                                                                  |          1 |         38 |          1 |          1 |         40 |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                    | language       | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| d:\Сайты\Nodes\.agents\rules\rule.md                                                        | Markdown       |        151 |          0 |         33 |        184 |
+| d:\Сайты\Nodes\.agents\skills\brainstorm\SKILL.md                                           | Skill          |         73 |          0 |         23 |         96 |
+| d:\Сайты\Nodes\.agents\skills\executing-plans\SKILL.md                                      | Skill          |         62 |          0 |         23 |         85 |
+| d:\Сайты\Nodes\.agents\skills\systematic-debugging\SKILL.md                                 | Skill          |        220 |          0 |         77 |        297 |
+| d:\Сайты\Nodes\.agents\skills\systematic-debugging\condition-based-waiting.md               | Markdown       |          1 |          0 |          1 |          2 |
+| d:\Сайты\Nodes\.agents\skills\systematic-debugging\defense-in-depth.md                      | Markdown       |          1 |          0 |          1 |          2 |
+| d:\Сайты\Nodes\.agents\skills\systematic-debugging\root-cause-tracing.md                    | Markdown       |          1 |          0 |          1 |          2 |
+| d:\Сайты\Nodes\.agents\skills\test-driven-development\SKILL.md                              | Skill          |        279 |          0 |         93 |        372 |
+| d:\Сайты\Nodes\.agents\skills\test-driven-development\testing-anti-patterns.md              | Markdown       |          1 |          0 |          1 |          2 |
+| d:\Сайты\Nodes\.agents\skills\using-superpowers\SKILL.md                                    | Skill          |         70 |          0 |         26 |         96 |
+| d:\Сайты\Nodes\.agents\skills\verification-before-completion\SKILL.md                       | Skill          |        106 |          0 |         34 |        140 |
+| d:\Сайты\Nodes\.agents\skills\writing-plans\SKILL.md                                        | Skill          |         77 |          0 |         40 |        117 |
+| d:\Сайты\Nodes\QWEN.md                                                                      | Markdown       |        -92 |          0 |        -19 |       -111 |
+| d:\Сайты\Nodes\README.md                                                                    | Markdown       |        128 |          0 |         43 |        171 |
+| d:\Сайты\Nodes\docs\APP_STRUCTURE.md                                                        | Markdown       |         23 |          0 |          8 |         31 |
+| d:\Сайты\Nodes\docs\CONCEPT.md                                                              | Markdown       |         27 |          0 |          6 |         33 |
+| d:\Сайты\Nodes\docs\GUIDES.md                                                               | Markdown       |         39 |          0 |         14 |         53 |
+| d:\Сайты\Nodes\docs\OPTIMIZATION_PLAN.md                                                    | Markdown       |         46 |          0 |         16 |         62 |
+| d:\Сайты\Nodes\docs\ROADMAP.md                                                              | Markdown       |         51 |          0 |         13 |         64 |
+| d:\Сайты\Nodes\docs\SCHEMA.sql                                                              | MS SQL         |        264 |         61 |         63 |        388 |
+| d:\Сайты\Nodes\docs\TECHNICAL.md                                                            | Markdown       |         38 |          0 |          8 |         46 |
+| d:\Сайты\Nodes\docs\TEST_ACCOUNT.md                                                         | Markdown       |          3 |          0 |          2 |          5 |
+| d:\Сайты\Nodes\docs\plans\2026-02-28-inbox-design.md                                        | Markdown       |         41 |          0 |          8 |         49 |
+| d:\Сайты\Nodes\nodes-frontend\SETUP.md                                                      | Markdown       |       -112 |          0 |        -36 |       -148 |
+| d:\Сайты\Nodes\nodes-frontend\bundle-stats.html                                             | HTML           |        138 |      4,793 |         20 |      4,951 |
+| d:\Сайты\Nodes\nodes-frontend\components.json                                               | JSON           |          2 |          0 |          0 |          2 |
+| d:\Сайты\Nodes\nodes-frontend\index.html                                                    | HTML           |          0 |         -1 |          1 |          0 |
+| d:\Сайты\Nodes\nodes-frontend\knip.json                                                     | JSON           |         12 |          0 |          1 |         13 |
+| d:\Сайты\Nodes\nodes-frontend\package-lock.json                                             | JSON           |      2,595 |          0 |          0 |      2,595 |
+| d:\Сайты\Nodes\nodes-frontend\package.json                                                  | JSON           |         12 |          0 |          0 |         12 |
+| d:\Сайты\Nodes\nodes-frontend\src\App.tsx                                                   | TypeScript JSX |         18 |          2 |          1 |         21 |
+| d:\Сайты\Nodes\nodes-frontend\src\components\ErrorBoundary.tsx                              | TypeScript JSX |         -1 |          0 |          0 |         -1 |
+| d:\Сайты\Nodes\nodes-frontend\src\components\ui\badge.tsx                                   | TypeScript JSX |         31 |          0 |          6 |         37 |
+| d:\Сайты\Nodes\nodes-frontend\src\components\ui\card-tilt.tsx                               | TypeScript JSX |        122 |          0 |         20 |        142 |
+| d:\Сайты\Nodes\nodes-frontend\src\components\ui\dialog.tsx                                  | TypeScript JSX |        108 |          0 |         13 |        121 |
+| d:\Сайты\Nodes\nodes-frontend\src\components\ui\popover.tsx                                 | TypeScript JSX |         25 |          0 |          7 |         32 |
+| d:\Сайты\Nodes\nodes-frontend\src\components\ui\radio-group.tsx                             | TypeScript JSX |         39 |          0 |          6 |         45 |
+| d:\Сайты\Nodes\nodes-frontend\src\components\ui\scroll-area.tsx                             | TypeScript JSX |         42 |          0 |          5 |         47 |
+| d:\Сайты\Nodes\nodes-frontend\src\components\ui\skeleton.tsx                                | TypeScript JSX |         13 |          0 |          3 |         16 |
+| d:\Сайты\Nodes\nodes-frontend\src\components\ui\tooltip.tsx                                 | TypeScript JSX |         24 |          0 |          7 |         31 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\connectors\connectorService.ts                   | TypeScript     |         71 |          9 |         15 |         95 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\dashboard\components\CapacityBar.tsx             | TypeScript JSX |         41 |          0 |          6 |         47 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\dashboard\components\DailyFocusSelector.tsx      | TypeScript JSX |        117 |          2 |         13 |        132 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\dashboard\components\WeekCalendar.tsx            | TypeScript JSX |         83 |          1 |         10 |         94 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\__tests__\nodeService.test.ts              | TypeScript     |         72 |         10 |         20 |        102 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\ColorPicker.tsx                 | TypeScript JSX |         43 |          6 |          4 |         53 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\ConnectorSelector.tsx           | TypeScript JSX |        179 |         18 |         16 |        213 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\CreateNodeForm.tsx              | TypeScript JSX |        394 |         28 |         34 |        456 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\EditNodeForm.tsx                | TypeScript JSX |        342 |         20 |         30 |        392 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\IconPicker.tsx                  | TypeScript JSX |        141 |         10 |          9 |        160 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCard.tsx                    | TypeScript JSX |        139 |         14 |         12 |        165 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCardHeader.tsx              | TypeScript JSX |         74 |          8 |          9 |         91 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCardSkeleton.tsx            | TypeScript JSX |         39 |          4 |          6 |         49 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCardStability.tsx           | TypeScript JSX |         48 |          4 |          6 |         58 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodeCardStats.tsx               | TypeScript JSX |         22 |          3 |          3 |         28 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\NodePreview.tsx                 | TypeScript JSX |        133 |         17 |         14 |        164 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\__tests__\EditNodeForm.test.tsx | TypeScript JSX |        111 |         12 |         30 |        153 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\controls\BinaryControl.tsx      | TypeScript JSX |         92 |          3 |          8 |        103 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\controls\DurationControl.tsx    | TypeScript JSX |        305 |         18 |         34 |        357 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\components\controls\QuantityControl.tsx    | TypeScript JSX |        216 |         11 |         20 |        247 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\lib\createNodeSchema.ts                    | TypeScript     |         29 |         15 |         10 |         54 |
+| d:\Сайты\Nodes\nodes-frontend\src\features\nodes\nodeService.ts                             | TypeScript     |        344 |         52 |         75 |        471 |
+| d:\Сайты\Nodes\nodes-frontend\src\index.css                                                 | PostCSS        |         83 |          9 |         16 |        108 |
+| d:\Сайты\Nodes\nodes-frontend\src\lib\icons.ts                                              | TypeScript     |        130 |          7 |          3 |        140 |
+| d:\Сайты\Nodes\nodes-frontend\src\lib\supabase.ts                                           | TypeScript     |          6 |          1 |          1 |          8 |
+| d:\Сайты\Nodes\nodes-frontend\src\pages\AuthCallbackPage.tsx                                | TypeScript JSX |        112 |          9 |         13 |        134 |
+| d:\Сайты\Nodes\nodes-frontend\src\pages\CreateNodePage.tsx                                  | TypeScript JSX |          8 |          3 |          2 |         13 |
+| d:\Сайты\Nodes\nodes-frontend\src\pages\EditNodePage.tsx                                    | TypeScript JSX |         17 |          3 |          4 |         24 |
+| d:\Сайты\Nodes\nodes-frontend\src\pages\LoginPage.tsx                                       | TypeScript JSX |          2 |          0 |          0 |          2 |
+| d:\Сайты\Nodes\nodes-frontend\src\pages\NodesListPage.tsx                                   | TypeScript JSX |        249 |         13 |         31 |        293 |
+| d:\Сайты\Nodes\nodes-frontend\src\pages\SignupPage.tsx                                      | TypeScript JSX |          6 |          0 |          0 |          6 |
+| d:\Сайты\Nodes\nodes-frontend\src\store\__tests__\useAppStore.test.ts                       | TypeScript     |         22 |          4 |          7 |         33 |
+| d:\Сайты\Nodes\nodes-frontend\src\store\__tests__\useNodesStore.test.ts                     | TypeScript     |        142 |         12 |         36 |        190 |
+| d:\Сайты\Nodes\nodes-frontend\src\store\useNodesStore.ts                                    | TypeScript     |        123 |         20 |         26 |        169 |
+| d:\Сайты\Nodes\nodes-frontend\src\tests\BinaryControl.test.tsx                              | TypeScript JSX |         86 |          2 |         20 |        108 |
+| d:\Сайты\Nodes\nodes-frontend\src\tests\NodeCardStability.test.tsx                          | TypeScript JSX |         35 |          0 |         13 |         48 |
+| d:\Сайты\Nodes\nodes-frontend\src\tests\NodeCardStats.test.tsx                              | TypeScript JSX |         27 |          0 |         11 |         38 |
+| d:\Сайты\Nodes\nodes-frontend\src\tests\QuantityControl.test.tsx                            | TypeScript JSX |        134 |          0 |         29 |        163 |
+| d:\Сайты\Nodes\nodes-frontend\src\tests\setup.ts                                            | TypeScript     |         14 |          2 |          3 |         19 |
+| d:\Сайты\Nodes\nodes-frontend\src\types\index.ts                                            | TypeScript     |         23 |         27 |          9 |         59 |
+| d:\Сайты\Nodes\nodes-frontend\src\widgets\Layout.tsx                                        | TypeScript JSX |         38 |          1 |          1 |         40 |
+| d:\Сайты\Nodes\nodes-frontend\vite.config.ts                                                | TypeScript     |         18 |          0 |          0 |         18 |
+| d:\Сайты\Nodes\vercel.json                                                                  | JSON           |          8 |          0 |          1 |          9 |
+| Total                                                                                       |                |      8,996 |      5,233 |      1,179 |     15,408 |
++---------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

@@ -229,7 +229,7 @@ export function DurationControl({
             }}
             title={!isRunning ? "Кликните, чтобы ввести минуты вручную" : ""}
             className={cn(
-              "text-4xl font-mono font-black tracking-tight drop-shadow-sm transition-colors",
+              "text-4xl font-mono font-bold tracking-tight drop-shadow-sm transition-colors",
               !isRunning && "cursor-pointer hover:opacity-80 transition-opacity",
               isRunning && "text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]",
               isOverdrive && "text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]",
@@ -262,7 +262,7 @@ export function DurationControl({
                   }
                 }
               }}
-              className="w-20 bg-transparent text-center text-4xl font-mono font-black tracking-tight border-b-2 border-primary/40 outline-none focus:border-primary transition-colors appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-20 bg-transparent text-center text-4xl font-mono font-bold tracking-tight border-b-2 border-primary/40 outline-none focus:border-primary transition-colors appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               style={{ MozAppearance: "textfield" }}
               placeholder="0"
             />

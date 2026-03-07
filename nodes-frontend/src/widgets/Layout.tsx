@@ -15,9 +15,9 @@ export default function Layout() {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pb-20 md:pb-0">
+    <div className="min-h-screen bg-background flex flex-col pb-20 md:pb-0 transition-colors duration-300">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm transition-colors duration-300">
         <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
@@ -46,13 +46,14 @@ export default function Layout() {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <div className="hidden sm:block">
               <ThemeToggle />
             </div>
-            <Link to="/profile" className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors border border-white/5">
+            <Link to="/profile" className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors border border-white/5" title="Профиль">
               <User className="w-5 h-5 text-muted-foreground" />
             </Link>
+
           </div>
         </div>
       </header>
@@ -93,7 +94,7 @@ export default function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="hidden md:block border-t py-6 mt-auto">
+      <footer className="hidden md:block border-t py-6 mt-auto transition-colors duration-300">
         <div className="container mx-auto max-w-7xl px-4 text-center text-[10px] sm:text-sm text-muted-foreground font-medium tracking-wide">
           <span className="font-bold">NODES</span> — Новый взгляд на формирование привычек
         </div>

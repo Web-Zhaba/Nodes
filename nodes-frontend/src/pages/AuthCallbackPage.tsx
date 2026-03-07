@@ -28,7 +28,7 @@ export default function AuthCallbackPage() {
         return
       }
 
-      // 2. Обработка PKCE (если в URL есть ?code=...)
+      // 2. Обработка ?code=...
       const code = params.get('code')
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code)
@@ -52,8 +52,7 @@ export default function AuthCallbackPage() {
 
       if (session) {
         setStatus('success')
-        toast.success('Энергия синхронизирована. Добро пожаловать в сеть Nodes.')
-        // Маленькая задержка для визуального эффекта
+        toast.success('Данные синхронизированы. Добро пожаловать в сеть Nodes.')
         setTimeout(() => {
           navigate('/')
         }, 2000)
@@ -78,7 +77,6 @@ export default function AuthCallbackPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
-      {/* Фоновые "импульсы" для атмосферы */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
       </div>

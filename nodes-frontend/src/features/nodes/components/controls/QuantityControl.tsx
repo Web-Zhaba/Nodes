@@ -178,7 +178,7 @@ export function QuantityControl({
             }}
             disabled={isPending}
             className={cn(
-              "text-3xl font-black w-24 text-center drop-shadow-sm font-mono tracking-tight bg-transparent border-none outline-none appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all",
+              "text-3xl font-bold w-24 text-center drop-shadow-sm font-mono tracking-tight bg-transparent border-none outline-none appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all",
               isOverdrive && "text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]",
               isGoalReached && !isOverdrive && "text-green-500 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]",
             )}

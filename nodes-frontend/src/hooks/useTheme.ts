@@ -5,7 +5,7 @@ type Theme = "dark" | "light" | "system";
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      // По умолчанию тёмная тема для киберпанк-атмосферы
+      // По умолчанию тёмная тема
       return (localStorage.getItem("theme") as Theme) || "dark";
     }
     return "dark";

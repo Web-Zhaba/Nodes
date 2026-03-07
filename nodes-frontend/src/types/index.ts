@@ -3,6 +3,11 @@
 // =====================================================
 
 /**
+ * NormalizedData — словарь для быстрого доступа по ID O(1)
+ */
+export type NormalizedData<T> = Record<string, T>;
+
+/**
  * Тип узла определяет логику выполнения и расчёта стабильности
  * - binary: Да/Нет (фиксированный заряд)
  * - quantity: Количественный (пропорционален цели)
@@ -94,5 +99,14 @@ export interface CreateNodeData {
   target_value?: number;
   color?: string;
   icon?: string;
-  core_id?: string;
+}
+
+/**
+ * CoreConnector — связь ядра с тегом (MOC mapping)
+ */
+export interface CoreConnector {
+  id: string;
+  core_id: string;
+  connector_id: string;
+  created_at: string;
 }
