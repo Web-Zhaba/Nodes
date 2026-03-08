@@ -62,6 +62,9 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
     formState: { errors },
   } = useForm<CreateNodeFormData>({
     resolver: zodResolver(createNodeSchema) as any,
+    defaultValues: {
+      connector_ids: [],
+    },
   });
 
   // Инициализируем форму при загрузке данных
@@ -132,6 +135,11 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
     }
   };
 
+  // Логирование ошибок валидации (для диагностики)
+  const onValidationError = (errs: object) => {
+    console.warn("[EditNodeForm] Ошибки валидации при сохранении:", errs);
+  };
+
   if (isNodeLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
@@ -142,7 +150,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+    <form onSubmit={handleSubmit(onSubmit, onValidationError)} className="w-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <Button
@@ -202,8 +210,8 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
               onValueChange={(v) => {
                 const type = v as NodeType;
                 setNodeType(type);
-                setValue("node_type", type);
-                if (type === "binary") setValue("target_value", undefined);
+                setValue("node_type", type, { shouldDirty: true });
+                if (type === "binary") setValue("target_value", undefined, { shouldDirty: true });
               }}
               className="grid grid-cols-1 sm:grid-cols-3 gap-3"
             >
@@ -265,7 +273,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
               step="0.5"
               className="py-2"
               value={previewValues.mass || 1.0}
-              onChange={(e) => setValue("mass", parseFloat(e.target.value))}
+              onChange={(e) => setValue("mass", parseFloat(e.target.value), { shouldDirty: true })}
             />
           </div>
 
@@ -274,7 +282,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
             <Label className="text-base">Коннекторы</Label>
             <ConnectorSelector
               value={previewValues.connector_ids || []}
-              onChange={(ids) => setValue("connector_ids", ids)}
+              onChange={(ids) => setValue("connector_ids", ids, { shouldDirty: true, shouldValidate: true })}
             />
             {errors.connector_ids && (
               <p className="text-sm text-destructive">{errors.connector_ids.message}</p>
@@ -287,14 +295,14 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
               <Label className="text-base">Цвет</Label>
               <ColorPicker
                 value={previewValues.color || "#8b5cf6"}
-                onChange={(color) => setValue("color", color)}
+                onChange={(color) => setValue("color", color, { shouldDirty: true })}
               />
             </div>
             <div className="space-y-3">
               <Label className="text-base">Иконка</Label>
               <IconPicker
                 value={previewValues.icon || "Circle"}
-                onChange={(icon) => setValue("icon", icon)}
+                onChange={(icon) => setValue("icon", icon, { shouldDirty: true })}
               />
             </div>
           </div>
