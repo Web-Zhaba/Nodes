@@ -90,7 +90,7 @@ export function ForceGraph({
   const paintNode = useCallback(
     (rawNode: NodeObject, ctx: CanvasRenderingContext2D, globalScale: number) => {
       const node = rawNode as GraphNode & { x: number; y: number };
-      if (!node.x || !node.y) return;
+      if (typeof node.x !== 'number' || typeof node.y !== 'number') return;
 
       const isCore = node.nodeKind === "core";
       const radius = isCore ? CORE_RADIUS : Math.max(4, node.val ?? 4);
@@ -128,13 +128,26 @@ export function ForceGraph({
   // ── Node pointer area ────────────────────────────────────────────────────
   const paintNodePointerArea = useCallback(
     (rawNode: NodeObject, color: string, ctx: CanvasRenderingContext2D) => {
-      const node = rawNode as GraphNode & { x: number; y: number };
-      if (!node.x || !node.y) return;
+      const node = rawNode as GraphNode & { x: number; y: number; pointerArea?: any };
+      if (typeof node.x !== 'number' || typeof node.y !== 'number') return;
+      
       const radius = node.nodeKind === "core" ? CORE_RADIUS : Math.max(4, node.val ?? 4);
+      ctx.fillStyle = color;
+      
+      // Область для самого кружка
       ctx.beginPath();
       ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI);
-      ctx.fillStyle = color;
       ctx.fill();
+
+      // Добавляем область захвата для текста подписи, если она была рассчитана при рендеринге
+      if (node.pointerArea) {
+        ctx.fillRect(
+          node.pointerArea.x,
+          node.pointerArea.y,
+          node.pointerArea.width,
+          node.pointerArea.height
+        );
+      }
     },
     []
   );
@@ -150,8 +163,7 @@ export function ForceGraph({
         nodeCanvasObject={paintNode}
         nodeCanvasObjectMode={() => "replace"}
         nodePointerAreaPaint={paintNodePointerArea}
-        nodeRelSize={4}
-        nodeVal={(n) => (n as GraphNode).val}
+        nodeRelSize={30}
         nodeLabel=""
         linkColor={getLinkColor}
         linkWidth={getLinkWidth}

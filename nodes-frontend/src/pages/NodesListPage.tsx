@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -13,7 +13,8 @@ import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQue
 import { useDailyFocusQuery, useSetDailyFocusMutation } from "@/features/nodes/hooks/useDailyFocusQuery";
 import { useImpulsesQuery, useCreateImpulseMutation, useDeleteImpulseMutation, useUpdateQuantityMutation } from "@/features/nodes/hooks/useImpulsesQuery";
 import { startOfDay } from "date-fns";
-
+import { useQueryClient } from "@tanstack/react-query";
+import { calculateStability } from "@/lib/djangoApi";
 
 /**
  * Главная страница "Сегодня" (Focus Mode)
@@ -21,9 +22,41 @@ import { startOfDay } from "date-fns";
 export default function NodesListPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+
+  // Таймер дебаунса
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /**
+   * Дебаунсированный вызов Django.
+   * Если пользователь жмёт несколько узлов быстро — делаем 1 запрос через 800ms,
+   * а не по запросу на каждый клик.
+   */
+  const triggerStabilityCalc = useCallback((nodeId?: string) => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(async () => {
+      const res = await calculateStability(nodeId);
+      if (res.success) {
+        queryClient.invalidateQueries({ queryKey: ["nodes"] });
+        queryClient.invalidateQueries({ queryKey: ["connectors"] });
+      }
+    }, 800);
+  }, [queryClient]);
+
+  // Перерасчет стабильности при загрузке страницы (полный, без node_id)
+  useEffect(() => {
+    if (user?.id) {
+      triggerStabilityCalc();
+    }
+    return () => {
+      // Чистим таймер при размонтировании
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, [user?.id, triggerStabilityCalc]);
+
 
   // Queries
   const { data: nodes = {}, isLoading: isNodesLoading } = useNodesQuery(user?.id);
@@ -80,15 +113,19 @@ export default function NodesListPage() {
       } else {
         await createImpulse.mutateAsync({ nodeId, value, date: selectedDate });
       }
+      triggerStabilityCalc(nodeId);
     } catch (error) {
       console.error("Ошибка сохранения импульса:", error);
       toast.error("Ошибка сохранения");
     }
-  }, [nodes, selectedDate, createImpulse, deleteImpulse]);
+  }, [nodes, selectedDate, createImpulse, deleteImpulse, queryClient]);
 
   const handleUpdateQuantity = useCallback(async (nodeId: string, value: number) => {
     try {
       await updateQuantity.mutateAsync({ nodeId, value, date: selectedDate });
+      
+      // Пересчитываем стабильность только этого узла
+      triggerStabilityCalc(nodeId);
     } catch (error) {
       console.error("Ошибка обновления значения:", error);
       toast.error("Ошибка сохранения");
@@ -219,9 +256,7 @@ export default function NodesListPage() {
                 todayValue={todayValue.value}
                 connectors={Object.values(connectors)}
                 onImpulse={(value) => handleImpulse(node.id, value)}
-                onUpdateQuantity={(value) =>
-                  handleUpdateQuantity(node.id, value)
-                }
+                onUpdateQuantity={(value) => handleUpdateQuantity(node.id, value)}
               />
             );
           })}

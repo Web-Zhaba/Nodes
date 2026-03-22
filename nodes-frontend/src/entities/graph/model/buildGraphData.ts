@@ -5,16 +5,14 @@ const DEFAULT_NODE_COLOR = "#8888aa";
 const DEFAULT_CORE_COLOR = "#6c63ff";
 
 /**
- * Transforms normalized store data into react-force-graph-2d format.
+ * Превращает сырые данные из стора в формат, понятный движку react-force-graph-2d.
  *
- * Link logic (connector-based communities):
- * For EACH connector:
- *   1. Find all nodes that share this connector
- *   2. Link each pair of those nodes to each other (node-node)
- *   3. If this connector is attached to a core, link each node to that core (node-core)
+ * Логика связей строится на коннекторах (тегах). Для каждого коннектора мы:
+ * 1. Находим все узлы, к которым он прикреплен
+ * 2. Связываем эти узлы между собой (чтобы они группировались)
+ * 3. Тянем линии от этих узлов ко всем ядрам, которые втягивают в себя этот коннектор
  *
- * Nodes with no connectors (or connectors shared with nobody) appear
- * as isolated floating nodes without any links.
+ * Если у узла нет коннектора или он уникален, узел просто будет плавать вдали от всех.
  */
 export function buildGraphData(
   nodes: NormalizedData<Node>,
@@ -25,16 +23,19 @@ export function buildGraphData(
   const graphNodes: GraphNode[] = [];
   const graphLinks: GraphLink[] = [];
 
-  // Track unique links to avoid duplicates: "id1--id2"
+  // Сохраняем связи тут (формат: "id1--id2"), чтобы не рисовать две одинаковые линии поверх друг друга
   const linkSet = new Set<string>();
 
-  // --- 1. Build a lookup: connectorId → coreId (if any) ---
-  const connectorToCoreMap = new Map<string, string>();
+  // 1. Подготавливаем карту притяжения: id коннектора -> список подходящих ядер
+  const connectorToCoreMap = new Map<string, string[]>();
   for (const cc of Object.values(coreConnectors)) {
-    connectorToCoreMap.set(cc.connector_id, cc.core_id);
+    if (!connectorToCoreMap.has(cc.connector_id)) {
+      connectorToCoreMap.set(cc.connector_id, []);
+    }
+    connectorToCoreMap.get(cc.connector_id)!.push(cc.core_id);
   }
 
-  // --- 2. Build a lookup: connectorId → list of node IDs ---
+  // 2. Группируем узлы по коннекторам: id коннектора -> список узлов
   const connectorToNodesMap = new Map<string, string[]>();
   for (const node of Object.values(nodes)) {
     for (const connectorId of node.connector_ids ?? []) {
@@ -45,9 +46,7 @@ export function buildGraphData(
     }
   }
 
-  // --- 3. Removed: Nodes now use their own colors instead of inheriting from Cores ---
-
-  // --- 4. Add CORE graph nodes ---
+  // 3. Закидываем Ядра на полотно
   for (const core of Object.values(cores)) {
     graphNodes.push({
       id: core.id,
@@ -60,7 +59,7 @@ export function buildGraphData(
     });
   }
 
-  // --- 5. Add NODE graph nodes ---
+  // 4. Докидываем обычные действия (узлы)
   for (const node of Object.values(nodes)) {
     const color = node.color || DEFAULT_NODE_COLOR;
     graphNodes.push({
@@ -72,16 +71,28 @@ export function buildGraphData(
       val: 4 + (node.mass ?? 1) * 1.5,
       stability: node.stability_score ?? 0,
     });
+
+    // Страховка для старого функционала: если у узла напрямую захардкожено ядро, рисуем прямую связь
+    if (node.core_id && cores[node.core_id]) {
+      const key = [node.id, node.core_id].sort().join("--");
+      if (!linkSet.has(key)) {
+        linkSet.add(key);
+        graphLinks.push({
+          source: node.id,
+          target: node.core_id,
+          kind: "node-core",
+          color: (cores[node.core_id].color || DEFAULT_CORE_COLOR) + "66",
+        });
+      }
+    }
   }
 
-  // --- 6. Build LINKS from connector communities ---
+  // 5. Выстраиваем гравитационные связи (нити) на основе коннекторов
   for (const [connectorId, nodeIds] of connectorToNodesMap.entries()) {
-    const coreId = connectorToCoreMap.get(connectorId);
+    const coreIds = connectorToCoreMap.get(connectorId) || [];
     const connector = connectors[connectorId];
-    const core = coreId ? cores[coreId] : undefined;
-    const linkColor = core?.color ?? connector?.color ?? DEFAULT_NODE_COLOR;
 
-    // node-node links: connect every pair of nodes in this community
+    // Шаг А: связываем узлы друг с другом внутри одного коннектора
     for (let i = 0; i < nodeIds.length; i++) {
       for (let j = i + 1; j < nodeIds.length; j++) {
         const key = [nodeIds[i], nodeIds[j]].sort().join("--");
@@ -91,24 +102,27 @@ export function buildGraphData(
             source: nodeIds[i],
             target: nodeIds[j],
             kind: "node-node",
-            color: linkColor + "44", // ~27% opacity
+            color: (connector?.color ?? DEFAULT_NODE_COLOR) + "44", 
           });
         }
       }
     }
 
-    // node-core links: connect each node to the core (if exists)
-    if (coreId && cores[coreId]) {
-      for (const nodeId of nodeIds) {
-        const key = [nodeId, coreId].sort().join("--");
-        if (!linkSet.has(key)) {
-          linkSet.add(key);
-          graphLinks.push({
-            source: nodeId,
-            target: coreId,
-            kind: "node-core",
-            color: linkColor + "66", // ~40% opacity
-          });
+    // Шаг Б: притягиваем этот ком из узлов к каждому из Ядер, собирающих этот коннектор
+    for (const coreId of coreIds) {
+      if (cores[coreId]) {
+        const linkColor = cores[coreId].color ?? connector?.color ?? DEFAULT_NODE_COLOR;
+        for (const nodeId of nodeIds) {
+          const key = [nodeId, coreId].sort().join("--");
+          if (!linkSet.has(key)) {
+            linkSet.add(key);
+            graphLinks.push({
+              source: nodeId,
+              target: coreId,
+              kind: "node-core",
+              color: linkColor + "66", // Слегка прозрачный цвет
+            });
+          }
         }
       }
     }

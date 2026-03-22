@@ -1,208 +1,251 @@
--- =====================================================
--- Nodes Tracker — Supabase Schema
--- =====================================================
--- Этот файл содержит SQL для создания всех таблиц
--- Скопируй содержимое в SQL Editor в Supabase и запусти
--- =====================================================
+-- ============================================================
+-- NODES: Supabase Schema (актуальная версия, март 2026)
+-- ============================================================
+-- Это актуальная схема БД, синхронизированная с кодом.
+-- Таблицы Django (auth_*, django_*) создаются автоматически
+-- через `python manage.py migrate` и здесь не описаны.
+-- ============================================================
 
--- Профили пользователей
-CREATE TABLE IF NOT EXISTS profiles (
-  id UUID REFERENCES auth.users PRIMARY KEY,
-  email TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- Enum для типов узлов
+CREATE TYPE node_type AS ENUM ('binary', 'quantity', 'duration');
+
+-- ------------------------------------------------------------
+-- PROFILES (расширение auth.users от Supabase)
+-- ------------------------------------------------------------
+CREATE TABLE public.profiles (
+  id          uuid NOT NULL,
+  email       text,
+  created_at  timestamp with time zone DEFAULT now(),
+  updated_at  timestamp with time zone DEFAULT now(),
+  CONSTRAINT profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
 
--- Узлы (привычки)
-CREATE TABLE IF NOT EXISTS nodes (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-  name TEXT NOT NULL,
-  description TEXT,
-  category TEXT NOT NULL DEFAULT 'health',
-  frequency TEXT NOT NULL DEFAULT 'daily',
-  color TEXT,
-  icon TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- Импульсы (выполнения)
-CREATE TABLE IF NOT EXISTS impulses (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  node_id UUID REFERENCES nodes(id) ON DELETE CASCADE NOT NULL,
-  completed_at DATE NOT NULL DEFAULT CURRENT_DATE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(node_id, completed_at)
-);
-
--- Связи между узлами
-CREATE TABLE IF NOT EXISTS connections (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  from_node_id UUID REFERENCES nodes(id) ON DELETE CASCADE NOT NULL,
-  to_node_id UUID REFERENCES nodes(id) ON DELETE CASCADE NOT NULL,
-  type TEXT NOT NULL DEFAULT 'enhances',
-  strength INTEGER DEFAULT 1,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  CHECK (from_node_id != to_node_id)
-);
-
--- Индексы для производительности
-CREATE INDEX IF NOT EXISTS nodes_user_id_idx ON nodes(user_id);
-CREATE INDEX IF NOT EXISTS impulses_node_id_idx ON impulses(node_id);
-CREATE INDEX IF NOT EXISTS impulses_completed_at_idx ON impulses(completed_at);
-CREATE INDEX IF NOT EXISTS connections_from_node_id_idx ON connections(from_node_id);
-CREATE INDEX IF NOT EXISTS connections_to_node_id_idx ON connections(to_node_id);
-
--- RLS (Row Level Security) — включаем безопасность
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE nodes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE impulses ENABLE ROW LEVEL SECURITY;
-ALTER TABLE connections ENABLE ROW LEVEL SECURITY;
-
--- =====================================================
--- Policies для profiles
--- =====================================================
-
--- Пользователь может видеть свой профиль
 CREATE POLICY "Users can view own profile"
-  ON profiles FOR SELECT
+  ON public.profiles FOR SELECT
   USING (auth.uid() = id);
 
--- Пользователь может обновлять свой профиль
 CREATE POLICY "Users can update own profile"
-  ON profiles FOR UPDATE
+  ON public.profiles FOR UPDATE
   USING (auth.uid() = id);
 
--- =====================================================
--- Policies для nodes
--- =====================================================
-
--- Пользователь может видеть свои узлы
-CREATE POLICY "Users can view own nodes"
-  ON nodes FOR SELECT
-  USING (auth.uid() = user_id);
-
--- Пользователь может создавать свои узлы
-CREATE POLICY "Users can insert own nodes"
-  ON nodes FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
--- Пользователь может обновлять свои узлы
-CREATE POLICY "Users can update own nodes"
-  ON nodes FOR UPDATE
-  USING (auth.uid() = user_id);
-
--- Пользователь может удалять свои узлы
-CREATE POLICY "Users can delete own nodes"
-  ON nodes FOR DELETE
-  USING (auth.uid() = user_id);
-
--- =====================================================
--- Policies для impulses
--- =====================================================
-
--- Пользователь может видеть свои импульсы (через nodes)
-CREATE POLICY "Users can view own impulses"
-  ON impulses FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM nodes
-      WHERE nodes.id = impulses.node_id
-      AND nodes.user_id = auth.uid()
-    )
-  );
-
--- Пользователь может создавать свои импульсы
-CREATE POLICY "Users can insert own impulses"
-  ON impulses FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM nodes
-      WHERE nodes.id = impulses.node_id
-      AND nodes.user_id = auth.uid()
-    )
-  );
-
--- Пользователь может удалять свои импульсы
-CREATE POLICY "Users can delete own impulses"
-  ON impulses FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM nodes
-      WHERE nodes.id = impulses.node_id
-      AND nodes.user_id = auth.uid()
-    )
-  );
-
--- =====================================================
--- Policies для connections
--- =====================================================
-
--- Пользователь может видеть свои связи
-CREATE POLICY "Users can view own connections"
-  ON connections FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM nodes
-      WHERE nodes.id = connections.from_node_id
-      AND nodes.user_id = auth.uid()
-    )
-  );
-
--- Пользователь может создавать свои связи
-CREATE POLICY "Users can insert own connections"
-  ON connections FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM nodes
-      WHERE nodes.id = connections.from_node_id
-      AND nodes.user_id = auth.uid()
-    )
-  );
-
--- Пользователь может обновлять свои связи
-CREATE POLICY "Users can update own connections"
-  ON connections FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM nodes
-      WHERE nodes.id = connections.from_node_id
-      AND nodes.user_id = auth.uid()
-    )
-  );
-
--- Пользователь может удалять свои связи
-CREATE POLICY "Users can delete own connections"
-  ON connections FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM nodes
-      WHERE nodes.id = connections.from_node_id
-      AND nodes.user_id = auth.uid()
-    )
-  );
-
--- =====================================================
--- Trigger для автоматического создания profile
--- =====================================================
-
--- Функция для создания профиля при регистрации
+-- Автосоздание профиля при регистрации
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS trigger AS $$
 BEGIN
   INSERT INTO public.profiles (id, email)
-  VALUES (NEW.id, NEW.email);
-  RETURN NEW;
+  VALUES (new.id, new.email);
+  RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Trigger на создание пользователя
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
-  FOR EACH ROW
-  EXECUTE FUNCTION public.handle_new_user();
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
--- =====================================================
--- Готово!
--- =====================================================
+-- ------------------------------------------------------------
+-- CONNECTORS (семантические теги / связи между узлами)
+-- ------------------------------------------------------------
+CREATE TABLE public.connectors (
+  id          uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id     uuid NOT NULL,
+  name        text NOT NULL,
+  description text,
+  color       text NOT NULL DEFAULT '#22c55e'::text,
+  is_mainline boolean DEFAULT false,
+  created_at  timestamp with time zone DEFAULT now(),
+  updated_at  timestamp with time zone DEFAULT now(),
+  CONSTRAINT connectors_pkey PRIMARY KEY (id),
+  CONSTRAINT connectors_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+
+ALTER TABLE public.connectors ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own connectors"
+  ON public.connectors FOR ALL
+  USING (auth.uid() = user_id);
+
+-- ------------------------------------------------------------
+-- CORES (гравитационные ядра / сферы жизни)
+-- ------------------------------------------------------------
+CREATE TABLE public.cores (
+  id              uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id         uuid NOT NULL,
+  name            text NOT NULL,
+  description     text,
+  color           text NOT NULL DEFAULT '#6366f1'::text,
+  icon            text,
+  stability_score numeric DEFAULT 0,   -- Агрегированная стабильность ядра [0..100]
+  position_x      numeric,             -- Позиция в force-graph
+  position_y      numeric,
+  created_at      timestamp with time zone DEFAULT now(),
+  updated_at      timestamp with time zone DEFAULT now(),
+  CONSTRAINT cores_pkey PRIMARY KEY (id),
+  CONSTRAINT cores_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+
+ALTER TABLE public.cores ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own cores"
+  ON public.cores FOR ALL
+  USING (auth.uid() = user_id);
+
+-- ------------------------------------------------------------
+-- CORE_CONNECTORS (многие-ко-многим: Core ↔ Connector)
+-- Ядро "притягивает" узлы, у которых есть соответствующий коннектор
+-- ------------------------------------------------------------
+CREATE TABLE public.core_connectors (
+  id           uuid NOT NULL DEFAULT gen_random_uuid(),
+  core_id      uuid NOT NULL,
+  connector_id uuid NOT NULL,
+  created_at   timestamp with time zone DEFAULT now(),
+  CONSTRAINT core_connectors_pkey PRIMARY KEY (id),
+  CONSTRAINT core_connectors_core_id_fkey      FOREIGN KEY (core_id)      REFERENCES public.cores(id) ON DELETE CASCADE,
+  CONSTRAINT core_connectors_connector_id_fkey FOREIGN KEY (connector_id) REFERENCES public.connectors(id) ON DELETE CASCADE
+);
+
+ALTER TABLE public.core_connectors ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own core_connectors"
+  ON public.core_connectors FOR ALL
+  USING (
+    auth.uid() = (SELECT user_id FROM public.cores WHERE id = core_id)
+  );
+
+-- ------------------------------------------------------------
+-- NODES (узлы — единицы действия)
+-- ------------------------------------------------------------
+CREATE TABLE public.nodes (
+  id               uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id          uuid NOT NULL,
+  name             text NOT NULL,
+  description      text,
+  category         text NOT NULL DEFAULT 'health'::text,  -- Устаревшее поле (используем connectors)
+  frequency        text NOT NULL DEFAULT 'daily'::text,
+  color            text,
+  icon             text,
+  node_type        node_type NOT NULL DEFAULT 'binary'::node_type,
+  mass             numeric NOT NULL DEFAULT 1.0,          -- Сложность узла (влияет на физику графа)
+  stability_score  numeric DEFAULT 0,                     -- Текущая стабильность [0..100], пишет Django
+  target_value     numeric,                               -- Цель для quantity/duration узлов
+  core_id          uuid,                                  -- Прямая связь с ядром (устаревшая, используем node_connectors)
+  position_x       numeric,
+  position_y       numeric,
+  completion_count integer DEFAULT 0,
+  created_at       timestamp with time zone DEFAULT now(),
+  updated_at       timestamp with time zone DEFAULT now(),
+  CONSTRAINT nodes_pkey PRIMARY KEY (id),
+  CONSTRAINT nodes_user_id_fkey  FOREIGN KEY (user_id)  REFERENCES public.profiles(id),
+  CONSTRAINT nodes_core_id_fkey  FOREIGN KEY (core_id)  REFERENCES public.cores(id)
+);
+
+ALTER TABLE public.nodes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own nodes"
+  ON public.nodes FOR ALL
+  USING (auth.uid() = user_id);
+
+-- ------------------------------------------------------------
+-- NODE_CONNECTORS (многие-ко-многим: Node ↔ Connector)
+-- Узел может иметь несколько коннекторов → попадает в несколько ядер
+-- ------------------------------------------------------------
+CREATE TABLE public.node_connectors (
+  id           uuid NOT NULL DEFAULT gen_random_uuid(),
+  node_id      uuid NOT NULL,
+  connector_id uuid NOT NULL,
+  created_at   timestamp with time zone DEFAULT now(),
+  CONSTRAINT node_connectors_pkey PRIMARY KEY (id),
+  CONSTRAINT node_connectors_node_id_fkey      FOREIGN KEY (node_id)      REFERENCES public.nodes(id) ON DELETE CASCADE,
+  CONSTRAINT node_connectors_connector_id_fkey FOREIGN KEY (connector_id) REFERENCES public.connectors(id) ON DELETE CASCADE
+);
+
+ALTER TABLE public.node_connectors ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own node_connectors"
+  ON public.node_connectors FOR ALL
+  USING (
+    auth.uid() = (SELECT user_id FROM public.nodes WHERE id = node_id)
+  );
+
+-- ------------------------------------------------------------
+-- IMPULSES (импульсы — факты выполнения узла)
+-- ------------------------------------------------------------
+CREATE TABLE public.impulses (
+  id           uuid NOT NULL DEFAULT gen_random_uuid(),
+  node_id      uuid NOT NULL,
+  completed_at date NOT NULL DEFAULT CURRENT_DATE,
+  value        numeric DEFAULT 1,  -- Для quantity/duration: сколько сделано
+  created_at   timestamp with time zone DEFAULT now(),
+  CONSTRAINT impulses_pkey PRIMARY KEY (id),
+  CONSTRAINT impulses_node_id_fkey FOREIGN KEY (node_id) REFERENCES public.nodes(id) ON DELETE CASCADE
+);
+
+ALTER TABLE public.impulses ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own impulses"
+  ON public.impulses FOR ALL
+  USING (
+    auth.uid() = (SELECT user_id FROM public.nodes WHERE id = node_id)
+  );
+
+-- ------------------------------------------------------------
+-- CONNECTIONS (прямые связи между узлами — граф влияния)
+-- Пока не используется активно, зарезервировано для будущего
+-- ------------------------------------------------------------
+CREATE TABLE public.connections (
+  id           uuid NOT NULL DEFAULT gen_random_uuid(),
+  from_node_id uuid NOT NULL,
+  to_node_id   uuid NOT NULL,
+  type         text NOT NULL DEFAULT 'enhances'::text,  -- 'enhances' | 'blocks'
+  strength     integer DEFAULT 1,
+  connector_id uuid,  -- Опциональная привязка к коннектору
+  created_at   timestamp with time zone DEFAULT now(),
+  CONSTRAINT connections_pkey PRIMARY KEY (id),
+  CONSTRAINT connections_from_node_id_fkey  FOREIGN KEY (from_node_id)  REFERENCES public.nodes(id),
+  CONSTRAINT connections_to_node_id_fkey    FOREIGN KEY (to_node_id)    REFERENCES public.nodes(id),
+  CONSTRAINT connections_connector_id_fkey  FOREIGN KEY (connector_id)  REFERENCES public.connectors(id)
+);
+
+ALTER TABLE public.connections ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own connections"
+  ON public.connections FOR ALL
+  USING (
+    auth.uid() = (SELECT user_id FROM public.nodes WHERE id = from_node_id)
+  );
+
+-- ------------------------------------------------------------
+-- DAILY_FOCUS (какие узлы в фокусе на конкретный день)
+-- ------------------------------------------------------------
+CREATE TABLE public.daily_focus (
+  id         uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id    uuid NOT NULL,
+  node_id    uuid NOT NULL,
+  focus_date date NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT daily_focus_pkey PRIMARY KEY (id),
+  CONSTRAINT daily_focus_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id),
+  CONSTRAINT daily_focus_node_id_fkey FOREIGN KEY (node_id) REFERENCES public.nodes(id) ON DELETE CASCADE
+);
+
+ALTER TABLE public.daily_focus ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own daily_focus"
+  ON public.daily_focus FOR ALL
+  USING (auth.uid() = user_id);
+
+-- ============================================================
+-- ПРИМЕЧАНИЕ: Django-таблицы
+-- ============================================================
+-- Следующие таблицы создаются автоматически Django при запуске
+-- `python manage.py migrate` и не требуют ручного создания:
+--
+--   django_migrations, django_content_type, django_session,
+--   django_admin_log, auth_user, auth_group,
+--   auth_permission, auth_user_groups, auth_user_user_permissions,
+--   auth_group_permissions
+--
+-- Они используются только Django ORM и не связаны с Supabase Auth.
+-- ============================================================
