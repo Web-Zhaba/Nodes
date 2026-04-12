@@ -82,39 +82,34 @@ def recalculate_node_stability(node, prefetched_impulses=None):
     return round(current_stability, 2)
 
 
+def _recalculate_related_cores(user_profile, node):
+    """Синхронно пересчитывает ядра, связанные с узлом через коннекторы."""
+    try:
+        connector_ids = node.node_connectors.values_list('connector_id', flat=True)
+        core_ids = CoreConnector.objects.filter(
+            connector_id__in=connector_ids
+        ).values_list('core_id', flat=True).distinct()
+        for core in Core.objects.filter(id__in=core_ids):
+            recalculate_core_stability(core, user_profile)
+    except Exception as e:
+        logger.error(f"Failed to update cores for node {node.id}: {e}")
+
+
 def update_user_network_stability(user_profile, node_id=None):
     """
     Основная точка входа для обновления стабильности.
-    Вариант 1 + 3: Синхронно обновляем узел, асинхронно — связанные ядра.
+    Синхронно обновляет узел и связанные ядра.
     """
-    import threading
-
-    def _background_core_recalc(profile, n_id):
-        # Находим и пересчитываем только ядра, связанные с этим узлом
-        try:
-            node = Node.objects.get(id=n_id, user=profile)
-            node_connectors = node.node_connectors.all()
-            cores_to_update = set()
-            for nc in node_connectors:
-                c_conns = CoreConnector.objects.filter(connector=nc.connector)
-                for cc in c_conns:
-                    cores_to_update.add(cc.core)
-            for core in cores_to_update:
-                recalculate_core_stability(core, profile)
-        except Exception as e:
-            logger.error(f"Failed to update cores for node {n_id}: {e}")
-
     if node_id:
         # 1. Быстро пересчитываем только сам узел (Синхронно: 20-30 мс)
         try:
             node = Node.objects.get(id=node_id, user=user_profile)
             node.stability_score = recalculate_node_stability(node)
             node.save(update_fields=['stability_score', 'updated_at'])
-            print(f"Optimized recalculation for node '{node.name}': {node.stability_score}")
-            
-            # 2. Пересчет ядер отправляем в фон (Асинхронно)
-            thread = threading.Thread(target=_background_core_recalc, args=(user_profile, node_id))
-            thread.start()
+            logger.info(f"Recalculated node '{node.name}': {node.stability_score}")
+
+            # Синхронный пересчёт связанных ядер
+            _recalculate_related_cores(user_profile, node)
             
         except Node.DoesNotExist:
             logger.warning(f"Node {node_id} not found for user {user_profile.id}")
@@ -156,11 +151,12 @@ def recalculate_core_stability(core, user_profile):
         node_connectors__connector_id__in=connector_ids
     ).distinct()
     
-    if core_nodes.exists():
-        avg_stability = sum(n.stability_score for n in core_nodes) / core_nodes.count()
+    nodes_list = list(core_nodes)
+    if nodes_list:
+        avg_stability = sum(float(n.stability_score) for n in nodes_list) / len(nodes_list)
         core.stability_score = round(avg_stability, 2)
         core.save(update_fields=['stability_score', 'updated_at'])
-        print(f"Updated core '{core.name}' stability: {core.stability_score}")
+        logger.info(f"Updated core '{core.name}' stability: {core.stability_score}")
     else:
         core.stability_score = 0.0
         core.save(update_fields=['stability_score', 'updated_at'])

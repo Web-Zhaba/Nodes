@@ -7,16 +7,21 @@ from .models import Profile
 
 logger = logging.getLogger(__name__)
 
-# --- Кэш публичных ключей Supabase (загружаются один раз при запуске) ---
+# --- Кэш публичных ключей Supabase (с TTL для автоматического обновления) ---
+import time as _time
+
 _jwks_cache: dict = {}
+_jwks_cache_time: float = 0
+_JWKS_CACHE_TTL: int = 3600  # Обновлять ключи раз в час
 
 def _get_jwks() -> dict:
     """
     Получает JSON Web Key Set (JWKS) от Supabase.
-    Результат кэшируется в памяти на время жизни процесса.
+    Результат кэшируется в памяти с TTL = 1 час.
+    При ошибке обновления использует устаревший кэш как fallback.
     """
-    global _jwks_cache
-    if _jwks_cache:
+    global _jwks_cache, _jwks_cache_time
+    if _jwks_cache and (_time.time() - _jwks_cache_time) < _JWKS_CACHE_TTL:
         return _jwks_cache
 
     supabase_url = settings.SUPABASE_URL
@@ -26,10 +31,14 @@ def _get_jwks() -> dict:
         response = requests.get(jwks_url, timeout=5)
         response.raise_for_status()
         _jwks_cache = response.json()
-        logger.info("Successfully loaded Supabase JWKS.")
+        _jwks_cache_time = _time.time()
+        logger.info("Successfully loaded/refreshed Supabase JWKS.")
         return _jwks_cache
     except requests.RequestException as e:
         logger.error(f"Failed to fetch Supabase JWKS: {e}")
+        if _jwks_cache:
+            logger.warning("Using stale JWKS cache as fallback.")
+            return _jwks_cache
         return {}
 
 
@@ -87,7 +96,7 @@ class SupabaseJWTAuthentication(authentication.BaseAuthentication):
                 token,
                 signing_key,
                 algorithms=algorithms,
-                options={"verify_aud": False},
+                audience="authenticated",
             )
         except exceptions.AuthenticationFailed:
             raise
