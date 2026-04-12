@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
-  getImpulsesForDateBatch, 
-  createImpulse, 
+import {
+  getImpulsesForDateBatch,
+  createImpulse,
   deleteImpulse,
   updateQuantityValue
 } from "../nodeService";

@@ -42,6 +42,11 @@ export default function NodesListPage() {
       if (res.success) {
         queryClient.invalidateQueries({ queryKey: ["nodes"] });
         queryClient.invalidateQueries({ queryKey: ["connectors"] });
+        // Добавляем инвалидацию ядер, чтобы они тоже обновились на фронте
+        // Задержка 500мс нужна, чтобы Django успел асинхронно пересчитать их в фоне
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ["cores"] });
+        }, 500);
       }
     }, 800);
   }, [queryClient]);

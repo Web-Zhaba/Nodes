@@ -85,28 +85,41 @@ def recalculate_node_stability(node, prefetched_impulses=None):
 def update_user_network_stability(user_profile, node_id=None):
     """
     Основная точка входа для обновления стабильности.
-    Если передан node_id, обновляем только этот узел и зависимые ядра.
-    Иначе — весь граф пользователя.
+    Вариант 1 + 3: Синхронно обновляем узел, асинхронно — связанные ядра.
     """
+    import threading
+
+    def _background_core_recalc(profile, n_id):
+        # Находим и пересчитываем только ядра, связанные с этим узлом
+        try:
+            node = Node.objects.get(id=n_id, user=profile)
+            node_connectors = node.node_connectors.all()
+            cores_to_update = set()
+            for nc in node_connectors:
+                c_conns = CoreConnector.objects.filter(connector=nc.connector)
+                for cc in c_conns:
+                    cores_to_update.add(cc.core)
+            for core in cores_to_update:
+                recalculate_core_stability(core, profile)
+        except Exception as e:
+            logger.error(f"Failed to update cores for node {n_id}: {e}")
+
     if node_id:
-        # ПАРЦИАЛЬНОЕ ОБНОВЛЕНИЕ
+        # 1. Быстро пересчитываем только сам узел (Синхронно: 20-30 мс)
         try:
             node = Node.objects.get(id=node_id, user=user_profile)
             node.stability_score = recalculate_node_stability(node)
             node.save(update_fields=['stability_score', 'updated_at'])
             print(f"Optimized recalculation for node '{node.name}': {node.stability_score}")
             
-            # Пересчитываем только ядра, связанные с этим узлом
-            # Узел -> NodeConnector -> Connector -> CoreConnector -> Core
-            node_connectors = node.node_connectors.all()
-            for nc in node_connectors:
-                # Находим все CoreConnector, которые ссылаются на этот же коннектор
-                c_conns = CoreConnector.objects.filter(connector=nc.connector)
-                for cc in c_conns:
-                    recalculate_core_stability(cc.core, user_profile)
+            # 2. Пересчет ядер отправляем в фон (Асинхронно)
+            thread = threading.Thread(target=_background_core_recalc, args=(user_profile, node_id))
+            thread.start()
+            
         except Node.DoesNotExist:
             logger.warning(f"Node {node_id} not found for user {user_profile.id}")
             return
+
     else:
         # ПОЛНОЕ ОБНОВЛЕНИЕ: один запрос за все узлы + сразу все импульсы (prefetch)
         cutoff = timezone.now().date() - timedelta(days=30)
