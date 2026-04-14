@@ -1,6 +1,6 @@
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, Share2, BarChart3, User } from "lucide-react";
+import { Home, Share2, BarChart3, User, Github, Twitter } from "lucide-react";
 import { FloatingNavbar } from "@/components/ui/floating-navbar";
 
 export default function Layout() {
@@ -56,8 +56,21 @@ export default function Layout() {
 
       {/* Footer */}
       <footer className="hidden md:block border-t border-border/40 py-6 mt-auto transition-colors duration-300">
-        <div className="container mx-auto max-w-7xl px-4 text-center text-[10px] sm:text-xs text-muted-foreground font-medium tracking-widest uppercase">
-          NODES — Формирование связей
+        <div className="container mx-auto max-w-7xl px-4 flex items-center justify-between text-muted-foreground opacity-70 hover:opacity-100 transition-opacity">
+          <div className="text-[10px] sm:text-xs font-medium tracking-widest uppercase flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            NODES — System Online
+          </div>
+          <div className="flex items-center space-x-5">
+            <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-foreground hover:scale-110 transition-all" title="GitHub">
+              <Github className="w-4 h-4" />
+              <span className="sr-only">GitHub</span>
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-foreground hover:scale-110 transition-all" title="X (Twitter)">
+              <Twitter className="w-4 h-4" />
+              <span className="sr-only">Twitter</span>
+            </a>
+          </div>
         </div>
       </footer>
     </div>
