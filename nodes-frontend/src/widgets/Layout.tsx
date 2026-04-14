@@ -1,8 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
-import { Outlet } from "react-router-dom";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { Link, useLocation, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Home, Share2, BarChart3, User } from "lucide-react";
+import { FloatingNavbar } from "@/components/ui/floating-navbar";
 
 export default function Layout() {
   const location = useLocation();
@@ -16,54 +15,16 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20 md:pb-0 transition-colors duration-300">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm transition-colors duration-300">
-        <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 transition-opacity hover:opacity-80">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-            </div>
-            <span className="font-bold text-xl tracking-tighter">NODES</span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navItems.filter(i => i.path !== '/profile').map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "text-sm font-semibold transition-all hover:text-primary relative py-1",
-                  location.pathname === item.path
-                    ? "text-foreground after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-primary after:rounded-full"
-                    : "text-muted-foreground",
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Actions */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="hidden sm:block">
-              <ThemeToggle />
-            </div>
-            <Link to="/profile" className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors border border-white/5" title="Профиль">
-              <User className="w-5 h-5 text-muted-foreground" />
-            </Link>
-
-          </div>
-        </div>
-      </header>
+      
+      {/* Desktop & Mobile Top Navbar */}
+      <FloatingNavbar />
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background/80 backdrop-blur-xl border-t border-white/5 md:hidden px-4 safe-area-bottom">
+      <nav className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background/80 backdrop-blur-xl border-t border-border/40 md:hidden px-4 mb-[env(safe-area-inset-bottom)]">
         <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            const isActive = location.pathname === item.path || (item.path === '/' && location.pathname === '/nodes');
             return (
               <Link
                 key={item.path}
@@ -83,20 +44,20 @@ export default function Layout() {
                   {item.label}
                 </span>
               </Link>
-            )
+            );
           })}
         </div>
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto max-w-7xl px-4 py-6">
+      <main className="flex-1 container mx-auto max-w-7xl px-4 pt-24 pb-6">
         <Outlet />
       </main>
 
       {/* Footer */}
-      <footer className="hidden md:block border-t py-6 mt-auto transition-colors duration-300">
-        <div className="container mx-auto max-w-7xl px-4 text-center text-[10px] sm:text-sm text-muted-foreground font-medium tracking-wide">
-          <span className="font-bold">NODES</span> — Новый взгляд на формирование привычек
+      <footer className="hidden md:block border-t border-border/40 py-6 mt-auto transition-colors duration-300">
+        <div className="container mx-auto max-w-7xl px-4 text-center text-[10px] sm:text-xs text-muted-foreground font-medium tracking-widest uppercase">
+          NODES — Формирование связей
         </div>
       </footer>
     </div>
