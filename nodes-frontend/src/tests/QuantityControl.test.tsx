@@ -23,14 +23,12 @@ const mockNode: Node = {
 
 describe("QuantityControl", () => {
   it("должен отображать текущее значение", () => {
-    const handleImpulse = vi.fn();
     const handleUpdateValue = vi.fn();
 
     render(
       <QuantityControl
         node={mockNode}
         currentValue={3}
-        onImpulse={handleImpulse}
         onUpdateValue={handleUpdateValue}
       />,
     );
@@ -39,14 +37,12 @@ describe("QuantityControl", () => {
   });
 
   it("должен отображать прогресс", () => {
-    const handleImpulse = vi.fn();
     const handleUpdateValue = vi.fn();
 
     render(
       <QuantityControl
         node={mockNode}
         currentValue={3}
-        onImpulse={handleImpulse}
         onUpdateValue={handleUpdateValue}
       />,
     );
@@ -55,14 +51,12 @@ describe("QuantityControl", () => {
   });
 
   it("должен увеличивать значение при клике на +", () => {
-    const handleImpulse = vi.fn();
     const handleUpdateValue = vi.fn();
 
     render(
       <QuantityControl
         node={mockNode}
         currentValue={3}
-        onImpulse={handleImpulse}
         onUpdateValue={handleUpdateValue}
       />,
     );
@@ -73,14 +67,12 @@ describe("QuantityControl", () => {
   });
 
   it("должен уменьшать значение при клике на -", () => {
-    const handleImpulse = vi.fn();
     const handleUpdateValue = vi.fn();
 
     render(
       <QuantityControl
         node={mockNode}
         currentValue={3}
-        onImpulse={handleImpulse}
         onUpdateValue={handleUpdateValue}
       />,
     );
@@ -91,14 +83,12 @@ describe("QuantityControl", () => {
   });
 
   it("не должен уменьшать значение ниже 0", () => {
-    const handleImpulse = vi.fn();
     const handleUpdateValue = vi.fn();
 
     render(
       <QuantityControl
         node={mockNode}
         currentValue={0}
-        onImpulse={handleImpulse}
         onUpdateValue={handleUpdateValue}
       />,
     );
@@ -108,14 +98,12 @@ describe("QuantityControl", () => {
   });
 
   it("должен показывать 'Сохранить успех!' когда значение >= цели", () => {
-    const handleImpulse = vi.fn();
     const handleUpdateValue = vi.fn();
 
     render(
       <QuantityControl
         node={mockNode}
         currentValue={8}
-        onImpulse={handleImpulse}
         onUpdateValue={handleUpdateValue}
       />,
     );
@@ -124,14 +112,12 @@ describe("QuantityControl", () => {
   });
 
   it("должен вызывать onImpulse при сохранении", async () => {
-    const handleImpulse = vi.fn().mockResolvedValue(undefined);
     const handleUpdateValue = vi.fn();
 
     render(
       <QuantityControl
         node={mockNode}
         currentValue={5}
-        onImpulse={handleImpulse}
         onUpdateValue={handleUpdateValue}
       />,
     );
@@ -139,19 +125,17 @@ describe("QuantityControl", () => {
     fireEvent.click(screen.getByText("Сохранить прогресс"));
 
     await waitFor(() => {
-      expect(handleImpulse).toHaveBeenCalledWith(5);
+      expect(handleUpdateValue).toHaveBeenCalledWith(5);
     });
   });
 
   it("должен быть отключён когда значение 0", () => {
-    const handleImpulse = vi.fn();
     const handleUpdateValue = vi.fn();
 
     render(
       <QuantityControl
         node={mockNode}
         currentValue={0}
-        onImpulse={handleImpulse}
         onUpdateValue={handleUpdateValue}
       />,
     );

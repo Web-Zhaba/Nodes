@@ -143,7 +143,6 @@ export const NodeCard = memo(function NodeCard({
               <QuantityControl
                 node={node}
                 currentValue={todayValue}
-                onImpulse={onImpulse}
                 onUpdateValue={onUpdateQuantity || (() => { })}
               />
             )}

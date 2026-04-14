@@ -11,7 +11,7 @@ import { DailyFocusSelector } from "@/features/dashboard/components/DailyFocusSe
 import { useNodesQuery } from "@/features/nodes/hooks/useNodesQuery";
 import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQuery";
 import { useDailyFocusQuery, useSetDailyFocusMutation } from "@/features/nodes/hooks/useDailyFocusQuery";
-import { useImpulsesQuery, useRecordPulseMutation, useUpdateQuantityMutation } from "@/features/nodes/hooks/useImpulsesQuery";
+import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery";
 import { startOfDay } from "date-fns";
 import { calculateStability } from "@/lib/djangoApi";
 
