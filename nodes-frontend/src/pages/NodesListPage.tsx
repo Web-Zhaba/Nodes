@@ -50,7 +50,6 @@ export default function NodesListPage() {
   // Mutations
   const setDailyFocus = useSetDailyFocusMutation();
   const recordPulse = useRecordPulseMutation();
-  const updateQuantity = useUpdateQuantityMutation();
 
   // Data processing
   const nodesWithValues = useMemo(() => {
@@ -82,7 +81,7 @@ export default function NodesListPage() {
 
   const isLoading = isNodesLoading || isConnectorsLoading || isFocusLoading || isImpulsesLoading;
 
-  const handleImpulse = useCallback((nodeId: string, value: number) => {
+  const handleImpulse = useCallback(async (nodeId: string, value: number) => {
     perfRef.current.clickStart = performance.now();
     const node = nodes[nodeId];
     if (!node) return;

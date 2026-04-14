@@ -68,7 +68,8 @@ export function useRecordPulseMutation() {
       }
     },
     onSuccess: (res, variables) => {
-      if (res.success && res.new_stability_score !== undefined) {
+      // Сужаем тип результата через проверку на skipped
+      if (!('skipped' in res) && res.success && res.new_stability_score !== undefined) {
         // Вместо инвалидации (нового запроса) — просто вписываем точное число от сервера
         queryClient.setQueryData(["nodes"], (old: Record<string, any> = {}) => {
           const node = old[variables.nodeId];
@@ -82,7 +83,7 @@ export function useRecordPulseMutation() {
         queryClient.invalidateQueries({ queryKey: ["cores"] });
       }
     },
-    onError: (err, variables, context: any) => {
+    onError: (_err, _variables, context: any) => {
       if (context?.previousImpulses) queryClient.setQueryData(context.impulseKey, context.previousImpulses);
       if (context?.previousNodes) queryClient.setQueryData(["nodes"], context.previousNodes);
     },

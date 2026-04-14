@@ -9,8 +9,7 @@ import type { Node } from "@/types";
 interface QuantityControlProps {
   node: Node;
   currentValue: number;
-  onImpulse: (value: number) => Promise<void>;
-  onUpdateValue: (value: number) => void;
+  onUpdateValue: (value: number) => void | Promise<void>;
   className?: string;
 }
 
@@ -20,7 +19,6 @@ interface QuantityControlProps {
 export function QuantityControl({
   node,
   currentValue,
-  onImpulse,
   onUpdateValue,
   className,
 }: QuantityControlProps) {
