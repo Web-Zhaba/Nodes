@@ -21,7 +21,7 @@ export function FloatingNavbar() {
   const location = useLocation();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 sm:pt-6 pointer-events-none">
+    <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 justify-center pt-4 sm:pt-6 pointer-events-none">
       <div className="pointer-events-auto w-full max-w-5xl px-4 flex items-center justify-between gap-4">
         
         {/* Left Island: Logo */}
@@ -70,10 +70,15 @@ export function FloatingNavbar() {
           <ThemeToggle />
           <Link
             to="/profile"
-            className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-muted-foreground/20 transition-colors"
+            className={cn(
+              "w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300",
+              location.pathname === '/profile'
+                ? "bg-primary text-primary-foreground shadow-md"
+                : "text-muted-foreground hover:bg-muted-foreground/20 hover:text-foreground"
+            )}
             title="Профиль"
           >
-            <User className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />
+            <User className="w-4 h-4 md:w-5 md:h-5" />
           </Link>
         </div>
 
