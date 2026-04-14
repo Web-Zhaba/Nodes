@@ -2,6 +2,7 @@ import { Link, useLocation, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Home, Share2, BarChart3, User, Github, Twitter } from "lucide-react";
 import { FloatingNavbar } from "@/components/ui/floating-navbar";
+import { motion } from "motion/react";
 
 export default function Layout() {
   const location = useLocation();
@@ -20,8 +21,8 @@ export default function Layout() {
       <FloatingNavbar />
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background/80 backdrop-blur-xl border-t border-border/40 md:hidden px-4 mb-[env(safe-area-inset-bottom)]">
-        <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+      <nav className="fixed bottom-4 left-0 right-0 z-50 md:hidden px-4 flex justify-center pointer-events-none pb-[env(safe-area-inset-bottom)]">
+        <div className="pointer-events-auto w-full max-w-sm flex items-center justify-between p-1 bg-background/40 backdrop-blur-xl border border-border/40 rounded-full shadow-lg gap-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path || (item.path === '/' && location.pathname === '/nodes');
@@ -29,17 +30,23 @@ export default function Layout() {
               <Link
                 key={item.path}
                 to={item.path}
-                className="inline-flex flex-col items-center justify-center px-5 hover:bg-muted/30 group transition-colors"
+                className={cn(
+                  "relative group flex flex-col items-center justify-center flex-1 h-14 rounded-full transition-colors duration-300",
+                  isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                )}
               >
-                <div className={cn(
-                  "p-1.5 rounded-xl transition-all duration-300",
-                  isActive ? "bg-primary/20 text-primary scale-110" : "text-muted-foreground group-hover:text-primary"
-                )}>
-                  <Icon className="w-5 h-5" />
-                </div>
+                {isActive && (
+                  <motion.div
+                    layoutId="mobile-nav-active"
+                    className="absolute inset-0 bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)] border border-primary/30 rounded-full opacity-90"
+                    transition={{ type: 'spring', stiffness: 300, damping: 20, mass: 0.8 }}
+                    style={{ zIndex: 0 }}
+                  />
+                )}
+                <Icon className={cn("relative z-10 w-5 h-5 transition-transform duration-300", isActive ? "-translate-y-1" : "")} />
                 <span className={cn(
-                  "text-[10px] mt-1 font-bold tracking-tight transition-colors",
-                  isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-70 group-hover:text-primary"
+                  "relative z-10 text-[10px] font-bold tracking-tight transition-all duration-300",
+                  isActive ? "opacity-100 translate-y-0.5" : "opacity-0 absolute translate-y-4 pointer-events-none"
                 )}>
                   {item.label}
                 </span>
@@ -62,13 +69,9 @@ export default function Layout() {
             NODES — System Online
           </div>
           <div className="flex items-center space-x-5">
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-foreground hover:scale-110 transition-all" title="GitHub">
+            <a href="https://github.com/Web-Zhaba/Nodes" target="_blank" rel="noreferrer" className="hover:text-foreground hover:scale-110 transition-all" title="GitHub">
               <Github className="w-4 h-4" />
               <span className="sr-only">GitHub</span>
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-foreground hover:scale-110 transition-all" title="X (Twitter)">
-              <Twitter className="w-4 h-4" />
-              <span className="sr-only">Twitter</span>
             </a>
           </div>
         </div>
