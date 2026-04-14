@@ -1,6 +1,6 @@
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, Share2, BarChart3, User, Github, Twitter } from "lucide-react";
+import { Home, Share2, BarChart3, User, Github } from "lucide-react";
 import { FloatingNavbar } from "@/components/ui/floating-navbar";
 import { motion } from "motion/react";
 
@@ -16,7 +16,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20 md:pb-0 transition-colors duration-300">
-      
+
       {/* Desktop & Mobile Top Navbar */}
       <FloatingNavbar />
 
