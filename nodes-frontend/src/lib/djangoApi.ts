@@ -5,7 +5,7 @@ const TIMEOUT_MS = 10_000; // 10 секунд — если Django завис, о
 
 export async function calculateStability(
   nodeId?: string
-): Promise<{ success: boolean; data?: any; error?: string }> {
+): Promise<{ success: boolean; data?: any; error?: string; backendMs?: string }> {
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
@@ -33,7 +33,8 @@ export async function calculateStability(
     }
 
     const data = await response.json();
-    return { success: true, data };
+    const backendMs = response.headers.get('X-Backend-Runtime-MS') || 'unknown';
+    return { success: true, data, backendMs };
 
   } catch (err: any) {
     if (err.name === 'AbortError') {
@@ -44,5 +45,73 @@ export async function calculateStability(
     return { success: false, error: err.message };
   } finally {
     clearTimeout(timeoutId); // Всегда чистим таймаут
+  }
+}
+
+/**
+ * Вариант 3: Оптимистичный UI ("Django Дирижер")
+ * Отправляет запрос на создание/удаление импульса и сразу 
+ * получает пересчитанную стабильность за один HTTP цикл.
+ */
+// Кеш сессии, чтобы не дергать LocalStorage при каждом клике
+let cachedSession: { token: string; expires: number } | null = null;
+
+async function getAuthToken() {
+  const now = Date.now();
+  if (cachedSession && cachedSession.expires > now) {
+    return cachedSession.token;
+  }
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    // Кешируем на 1 минуту
+    cachedSession = {
+      token: session.access_token,
+      expires: now + 60 * 1000
+    };
+    return session.access_token;
+  }
+  return null;
+}
+
+export async function recordImpulse(nodeId: string, value: number, date: string): Promise<{ success: boolean; new_stability_score?: number; backendMs?: number; error?: string }> {
+  try {
+    const token = await getAuthToken();
+
+    if (!token) {
+      console.warn('No active session, cannot send impulse to Django.');
+      return { success: false, error: 'No auth' };
+    }
+
+    const payload = {
+      node_id: nodeId,
+      value: value,
+      date: date
+    };
+
+    const response = await fetch(`${DJANGO_API_URL}/impulses/action/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const runtimeMsStr = response.headers.get("X-Backend-Runtime-MS");
+    const runtimeMs = runtimeMsStr ? parseFloat(runtimeMsStr) : undefined;
+    
+    if (!response.ok) {
+      const errPayload = await response.json().catch(() => ({}));
+      console.error('Django API Impulse Error:', response.status, errPayload);
+      return { success: false, backendMs: runtimeMs };
+    }
+    
+    const data = await response.json();
+    return { success: true, new_stability_score: data.new_stability_score, backendMs: runtimeMs };
+
+  } catch (error) {
+    console.error('Fetch error (Django API):', error);
+    return { success: false, error: String(error) };
   }
 }

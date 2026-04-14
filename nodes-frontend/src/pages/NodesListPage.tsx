@@ -11,9 +11,8 @@ import { DailyFocusSelector } from "@/features/dashboard/components/DailyFocusSe
 import { useNodesQuery } from "@/features/nodes/hooks/useNodesQuery";
 import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQuery";
 import { useDailyFocusQuery, useSetDailyFocusMutation } from "@/features/nodes/hooks/useDailyFocusQuery";
-import { useImpulsesQuery, useCreateImpulseMutation, useDeleteImpulseMutation, useUpdateQuantityMutation } from "@/features/nodes/hooks/useImpulsesQuery";
+import { useImpulsesQuery, useRecordPulseMutation, useUpdateQuantityMutation } from "@/features/nodes/hooks/useImpulsesQuery";
 import { startOfDay } from "date-fns";
-import { useQueryClient } from "@tanstack/react-query";
 import { calculateStability } from "@/lib/djangoApi";
 
 /**
@@ -22,45 +21,21 @@ import { calculateStability } from "@/lib/djangoApi";
 export default function NodesListPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
 
-  // Таймер дебаунса
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Профилировщик для замеров
+  const perfRef = useRef<{ clickStart: number }>({ clickStart: 0 });
 
-  /**
-   * Дебаунсированный вызов Django.
-   * Если пользователь жмёт несколько узлов быстро — делаем 1 запрос через 800ms,
-   * а не по запросу на каждый клик.
-   */
-  const triggerStabilityCalc = useCallback((nodeId?: string) => {
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(async () => {
-      const res = await calculateStability(nodeId);
-      if (res.success) {
-        queryClient.invalidateQueries({ queryKey: ["nodes"] });
-        queryClient.invalidateQueries({ queryKey: ["connectors"] });
-        // Добавляем инвалидацию ядер, чтобы они тоже обновились на фронте
-        // Задержка 500мс нужна, чтобы Django успел асинхронно пересчитать их в фоне
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: ["cores"] });
-        }, 500);
-      }
-    }, 800);
-  }, [queryClient]);
-
-  // Перерасчет стабильности при загрузке страницы (полный, без node_id)
+  // Полный пересчет стабильности при загрузке страницы (фоновый, не блокирует UI)
   useEffect(() => {
     if (user?.id) {
-      triggerStabilityCalc();
+      calculateStability().then(res => {
+        if (res.success) console.log('[INIT] Full stability recalc complete');
+      });
     }
-    return () => {
-      // Чистим таймер при размонтировании
-      if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    };
-  }, [user?.id, triggerStabilityCalc]);
+  }, [user?.id]);
 
 
   // Queries
@@ -74,8 +49,7 @@ export default function NodesListPage() {
 
   // Mutations
   const setDailyFocus = useSetDailyFocusMutation();
-  const createImpulse = useCreateImpulseMutation();
-  const deleteImpulse = useDeleteImpulseMutation();
+  const recordPulse = useRecordPulseMutation();
   const updateQuantity = useUpdateQuantityMutation();
 
   // Data processing
@@ -108,34 +82,24 @@ export default function NodesListPage() {
 
   const isLoading = isNodesLoading || isConnectorsLoading || isFocusLoading || isImpulsesLoading;
 
-  const handleImpulse = useCallback(async (nodeId: string, value: number) => {
+  const handleImpulse = useCallback((nodeId: string, value: number) => {
+    perfRef.current.clickStart = performance.now();
     const node = nodes[nodeId];
     if (!node) return;
 
-    try {
-      if (value < 0 || (node.node_type === "binary" && value === 0)) {
-        await deleteImpulse.mutateAsync({ nodeId, date: selectedDate });
-      } else {
-        await createImpulse.mutateAsync({ nodeId, value, date: selectedDate });
-      }
-      triggerStabilityCalc(nodeId);
-    } catch (error) {
-      console.error("Ошибка сохранения импульса:", error);
-      toast.error("Ошибка сохранения");
-    }
-  }, [nodes, selectedDate, createImpulse, deleteImpulse, queryClient]);
+    // Оптимистичный UI мгновенно обновит галочку и ПОЛОСКУ.
+    // Не ждем ответа, запускаем в фоне.
+    recordPulse.mutate({ nodeId, value, date: selectedDate });
+    
+    console.log(`[FRONTEND] Action triggered instantly for ${nodeId}`);
+  }, [nodes, selectedDate, recordPulse]);
 
   const handleUpdateQuantity = useCallback(async (nodeId: string, value: number) => {
-    try {
-      await updateQuantity.mutateAsync({ nodeId, value, date: selectedDate });
-      
-      // Пересчитываем стабильность только этого узла
-      triggerStabilityCalc(nodeId);
-    } catch (error) {
-      console.error("Ошибка обновления значения:", error);
-      toast.error("Ошибка сохранения");
-    }
-  }, [selectedDate, updateQuantity]);
+    perfRef.current.clickStart = performance.now();
+    // Ждем старта мутации, чтобы локальный стейт компонента не сбросился раньше времени
+    await recordPulse.mutateAsync({ nodeId, value, date: selectedDate });
+    console.log(`[FRONTEND] Quantity update completed for ${nodeId}`);
+  }, [selectedDate, recordPulse]);
 
   const handleSaveFocusNodes = async (selectedIds: string[]) => {
     try {

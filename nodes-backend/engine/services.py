@@ -82,34 +82,69 @@ def recalculate_node_stability(node, prefetched_impulses=None):
     return round(current_stability, 2)
 
 
+from django.db.models import Avg, OuterRef, Subquery, DecimalField
+from django.db.models.functions import Coalesce
+
 def _recalculate_related_cores(user_profile, node):
-    """Синхронно пересчитывает ядра, связанные с узлом через коннекторы."""
+    """Синхронно пересчитывает все затронутые ядра одним запросом на уровне БД (Bulk Update)."""
     try:
-        connector_ids = node.node_connectors.values_list('connector_id', flat=True)
-        core_ids = CoreConnector.objects.filter(
-            connector_id__in=connector_ids
-        ).values_list('core_id', flat=True).distinct()
-        for core in Core.objects.filter(id__in=core_ids):
-            recalculate_core_stability(core, user_profile)
+        # Используем ленивые запросы (QuerySet), чтобы Django склеил все в 1 запрос к БД:
+        # 1. Запрос на затронутые ядра (без .distinct() вызова в память)
+        affected_cores_qs = Core.objects.filter(
+            core_connectors__connector__node_connectors__node=node
+        )
+        
+        # 2. Тот же подзапрос
+        avg_score_subquery = Node.objects.filter(
+            user=user_profile,
+            node_connectors__connector_id__in=CoreConnector.objects.filter(
+                core_id=OuterRef('pk')
+            ).values('connector_id')
+        ).values('user').annotate(
+            avg_val=Avg('stability_score')
+        ).values('avg_val')
+        
+        # 3. Обновляем все ядра одним UPDATE запросом БЕЗ предварительного получения ID ядер
+        affected_cores_qs.update(
+            stability_score=Coalesce(Subquery(avg_score_subquery, output_field=DecimalField()), 0.0, output_field=DecimalField()),
+            updated_at=timezone.now()
+        )
+        logger.info(f"Bulk updated cores for node '{node.name}'")
+            
     except Exception as e:
         logger.error(f"Failed to update cores for node {node.id}: {e}")
 
 
-def update_user_network_stability(user_profile, node_id=None):
+import time as _time
+
+def update_user_network_stability(user_profile, node_or_id=None):
     """
     Основная точка входа для обновления стабильности.
     Синхронно обновляет узел и связанные ядра.
     """
-    if node_id:
+    if node_or_id:
         # 1. Быстро пересчитываем только сам узел (Синхронно: 20-30 мс)
         try:
-            node = Node.objects.get(id=node_id, user=user_profile)
+            t0 = _time.perf_counter()
+            if isinstance(node_or_id, Node):
+                node = node_or_id
+            else:
+                node = Node.objects.get(id=node_or_id, user=user_profile)
+            t1 = _time.perf_counter()
+
             node.stability_score = recalculate_node_stability(node)
+            t2 = _time.perf_counter()
+
             node.save(update_fields=['stability_score', 'updated_at'])
+            t3 = _time.perf_counter()
+            
             logger.info(f"Recalculated node '{node.name}': {node.stability_score}")
 
             # Синхронный пересчёт связанных ядер
             _recalculate_related_cores(user_profile, node)
+            t4 = _time.perf_counter()
+            
+            logger.info(f"[PERF DETAILED] Node Fetch: {(t1-t0)*1000:.2f}ms, Calc Stability: {(t2-t1)*1000:.2f}ms, Node Save: {(t3-t2)*1000:.2f}ms, Cores Bulk Update: {(t4-t3)*1000:.2f}ms")
             
         except Node.DoesNotExist:
             logger.warning(f"Node {node_id} not found for user {user_profile.id}")

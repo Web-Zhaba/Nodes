@@ -55,10 +55,8 @@ export function QuantityControl({
 
     try {
       if (localValue !== null || overrideValue !== undefined) {
-        onUpdateValue(valueToSubmit);
+        await onUpdateValue(valueToSubmit);
       }
-      // onImpulse здесь нужен для фиксации события (инкремента счетчика выполнений).
-      await onImpulse(0);
 
       if (valueToSubmit >= targetValue) {
         toast.success(

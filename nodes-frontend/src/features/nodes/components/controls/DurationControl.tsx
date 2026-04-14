@@ -86,8 +86,11 @@ export function DurationControl({
     setIsPending(true);
 
     try {
-      await onImpulse(finalElapsed);
-      const totalElapsed = elapsedToday + finalElapsed;
+      // Отправляем СУММУ: то, что уже было за сегодня + текущая сессия
+      const totalToSave = elapsedToday + finalElapsed;
+      await onImpulse(totalToSave);
+      
+      const totalElapsed = totalToSave;
 
       const newIsOverdrive = totalElapsed > targetValue;
 
