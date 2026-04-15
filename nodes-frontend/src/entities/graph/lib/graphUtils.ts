@@ -71,21 +71,36 @@ export function drawNodeCircle({
   ctx,
   radius,
 }: DrawNodeCircleProps): void {
-  const { x, y, color, nodeKind } = node;
+  const { x, y, color, nodeKind, stability = 0 } = node;
   const isCore = nodeKind === "core";
 
-  // Заливка (прозрачная, ≈ 13–20%)
+  // Стабильность влияет на общую прозрачность (от 0.3 до 1.0)
+  // Ядра всегда на 100% стабильны визуально (или используем их собственный score)
+  const stabilityFactor = isCore ? 1 : 0.3 + (stability / 100) * 0.7;
+  
+  ctx.save();
+  
+  // Эффект свечения для очень стабильных узлов
+  if (stability > 80 || isCore) {
+    ctx.shadowBlur = isCore ? 15 : 10;
+    ctx.shadowColor = color;
+  }
+
+  // Заливка (прозрачная, ≈ 13–20% от текущего фактора стабильности)
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.fillStyle = color + (isCore ? "33" : "22");
+  const alphaHex = Math.floor(stabilityFactor * (isCore ? 51 : 34)).toString(16).padStart(2, '0');
+  ctx.fillStyle = color + alphaHex;
   ctx.fill();
 
   // Граница
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.strokeStyle = color;
+  ctx.strokeStyle = color + Math.floor(stabilityFactor * 255).toString(16).padStart(2, '0');
   ctx.lineWidth = isCore ? 2.5 : 1.5;
   ctx.stroke();
+
+  ctx.restore();
 }
 
 export const drawNodeLabel = ({
@@ -105,8 +120,17 @@ export const drawNodeLabel = ({
   const nodeX = node.x || 0;
   const nodeY = node.y || 0;
   
-  // Для Core берем фиксированный размер, для Node - вычисляем
+  const LABEL_VISIBILITY_THRESHOLD = 1.2;
   const isCore = node.nodeKind === "core";
+
+  // Скрываем текст обычных узлов при сильном отдалении, 
+  // но оставляем его для Ядер (Cores) для навигации.
+  if (globalScale < LABEL_VISIBILITY_THRESHOLD && !isCore) {
+    node.pointerArea = undefined;
+    return;
+  }
+
+  // Для Core берем фиксированный размер, для Node - вычисляем
   const nodeSize = isCore ? CORE_RADIUS : Math.max(4, node.val ?? 4);
 
   // Кастомные размеры для Core vs Node
@@ -135,14 +159,18 @@ export const drawNodeLabel = ({
   // Цвет подписи зависит от состояния узла (и типа)
   const _labelColor = isCore ? node.color : labelColor;
   const labelActiveColor = activeNodeColor;
-  
+
   ctx.fillStyle =
     hoverNodes.includes(node) || clickNodes.includes(node)
       ? labelActiveColor
       : _labelColor;
-      
+
+  // Прозрачность подписи отражает стабильность (мин. 40%)
+  ctx.globalAlpha = isCore ? 1 : 0.4 + (node.stability / 100) * 0.6;
+
   // 3. Отступы уже учтены в translate(), поэтому рисуем строго в (0,0)
   ctx.fillText(label, 0, 0);
+  ctx.globalAlpha = 1;
 
   // Вычисляем значения для области выделения/клика
   // measureText теперь возвращает ширину в ЭКРАННЫХ пикселях, нужно перевести обратно в граф

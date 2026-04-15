@@ -61,10 +61,10 @@ export function CoreSidebarCard({
         </h4>
         
         <div className="mt-2 space-y-2">
-          <p className="text-xs text-muted-foreground flex items-center gap-1.5 font-medium">
+          <span className="text-xs text-muted-foreground flex items-center gap-1.5 font-medium">
             <Sparkles className="w-3 h-3 text-primary" />
             Узлов в системе: <Badge variant="secondary" className="px-1.5 h-4.5 font-bold">{affectedNodes.length}</Badge>
-          </p>
+          </span>
 
           {coreConns.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-1">

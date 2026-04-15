@@ -17,8 +17,8 @@ interface ForceGraphProps {
   onNodeClick?: (nodeId: string, kind: "node" | "core") => void;
 }
 
-export function ForceGraph({ 
-  graphData, 
+export function ForceGraph({
+  graphData,
   backgroundColor = "transparent",
   onNodeClick
 }: ForceGraphProps) {
@@ -78,7 +78,7 @@ export function ForceGraph({
     // Следим за изменением класса .dark на html
     const observer = new MutationObserver(updateColors);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    
+
     return () => {
       observer.disconnect();
       clearIconCache(); // Возвращаем очистку кэша
@@ -108,9 +108,9 @@ export function ForceGraph({
 
       // 3. Подпись (логика в graphUtils.drawNodeLabel)
       // Передаем вычисленный цвет из CSS переменных
-      drawNodeLabel({ 
-        node, 
-        ctx, 
+      drawNodeLabel({
+        node,
+        ctx,
         globalScale,
         labelColor: isCore ? node.color : colors.label // Ядра всегда своего цвета, узлы — цвета текста
       });
@@ -130,10 +130,10 @@ export function ForceGraph({
     (rawNode: NodeObject, color: string, ctx: CanvasRenderingContext2D) => {
       const node = rawNode as GraphNode & { x: number; y: number; pointerArea?: any };
       if (typeof node.x !== 'number' || typeof node.y !== 'number') return;
-      
+
       const radius = node.nodeKind === "core" ? CORE_RADIUS : Math.max(4, node.val ?? 4);
       ctx.fillStyle = color;
-      
+
       // Область для самого кружка
       ctx.beginPath();
       ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI);
@@ -176,6 +176,8 @@ export function ForceGraph({
             onNodeClick(gn.id, gn.nodeKind);
           }
         }}
+        minZoom={1}
+        maxZoom={8}
       />
     </div>
   );
