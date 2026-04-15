@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Icons } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { Node } from "@/types";
-import { CapacityBar } from "./CapacityBar";
+import { Badge } from "@/components/ui/badge";
 
 interface DailyFocusSelectorProps {
   isOpen: boolean;
@@ -41,6 +41,13 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
     );
   };
 
+  const loadDefaults = () => {
+    const defaultIds = allNodes
+      .filter(n => n.is_focus_default)
+      .map(n => n.id);
+    setSelectedIds(defaultIds);
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     await onSave(selectedIds);
@@ -49,7 +56,6 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
   };
 
   const formattedDate = format(date, "d MMMM", { locale: ru });
-  const totalMass = allNodes.filter(n => selectedIds.includes(n.id)).reduce((sum, n) => sum + (n.mass || 1), 0);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -61,8 +67,23 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
           </DialogDescription>
         </DialogHeader>
 
+        <div className="flex items-center justify-between mb-4">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={loadDefaults}
+            className="text-[10px] uppercase font-bold tracking-widest border-white/5 bg-background/50 h-8 rounded-lg"
+          >
+            <Icons.Zap className="w-3 h-3 mr-1.5 text-primary" />
+            Загрузить по умолчанию
+          </Button>
+          <div className="text-[10px] uppercase font-bold tracking-widest opacity-40">
+            {selectedIds.length} выбрано
+          </div>
+        </div>
+
         <div className="mb-2 pr-4 -mr-2">
-          <CapacityBar currentMass={totalMass} maxCapacity={10} className="shadow-none border-white/5 bg-background/50" />
+          {/* CapacityBar удален по просьбе пользователя */}
         </div>
 
         <ScrollArea className="h-[45vh] pr-4 -mr-2">
@@ -93,6 +114,11 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
                       <div className="flex flex-col">
                         <span className={cn("font-bold text-sm tracking-tight", isSelected ? "text-foreground" : "")}>{node.name}</span>
                         <span className="text-[10px] uppercase opacity-40 font-bold tracking-widest">{node.node_type}</span>
+                        {node.is_focus_default && (
+                          <Badge variant="outline" className="w-fit h-4 text-[8px] uppercase font-bold tracking-tighter border-primary/20 text-primary px-1 mt-0.5">
+                            Default
+                          </Badge>
+                        )}
                       </div>
                     </div>
 

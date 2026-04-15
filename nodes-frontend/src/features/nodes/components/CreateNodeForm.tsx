@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import {
   createNodeSchema,
@@ -62,6 +63,7 @@ export function CreateNodeForm() {
       connector_ids: [],
       color: "#8b5cf6",
       icon: "Circle",
+      is_focus_default: false,
     },
   });
 
@@ -90,6 +92,7 @@ export function CreateNodeForm() {
           color: data.color,
           icon: data.icon,
           connector_ids: data.connector_ids,
+          is_focus_default: data.is_focus_default,
         },
         userId: user?.id,
       });
@@ -373,6 +376,26 @@ export function CreateNodeForm() {
                 {errors.description.message}
               </p>
             )}
+          </div>
+
+          {/* Фокус по умолчанию */}
+          <div className="flex items-center space-x-2 p-4 rounded-xl border border-white/5 bg-background/50">
+            <Checkbox 
+              id="is_focus_default" 
+              checked={watch("is_focus_default")}
+              onCheckedChange={(checked) => setValue("is_focus_default", checked === true)}
+            />
+            <div className="grid gap-1.5 leading-none">
+              <Label
+                htmlFor="is_focus_default"
+                className="text-sm font-medium leading-none cursor-pointer"
+              >
+                Узел по умолчанию для фокуса
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Этот узел будет автоматически предлагаться при планировании нового дня.
+              </p>
+            </div>
           </div>
         </div>
 

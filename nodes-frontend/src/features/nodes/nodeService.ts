@@ -85,6 +85,7 @@ export async function createNode(
       node_type: nodeFields.node_type,
       mass: nodeFields.mass ?? 1.0,
       target_value: nodeFields.target_value,
+      is_focus_default: nodeFields.is_focus_default ?? false,
       color: nodeFields.color || "#8b5cf6",
       icon: nodeFields.icon || "Circle",
       category: "default", // Для обратной совместимости

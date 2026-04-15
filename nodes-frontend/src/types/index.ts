@@ -50,6 +50,9 @@ export interface Node {
   // Массив ID коннекторов (множественные связи)
   connector_ids?: string[];
 
+  // Фокус по умолчанию
+  is_focus_default: boolean;
+
   // Метаданные
   created_at: string;
   updated_at: string;
@@ -97,6 +100,7 @@ export interface CreateNodeData {
   node_type: NodeType;
   mass?: number;
   target_value?: number;
+  is_focus_default?: boolean;
   color?: string;
   icon?: string;
   core_id?: string;

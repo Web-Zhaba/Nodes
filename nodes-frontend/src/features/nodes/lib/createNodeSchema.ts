@@ -15,7 +15,9 @@ export const createNodeSchema = z.object({
   description: z
     .string()
     .max(500, "Описание не должно превышать 500 символов")
-    .optional(),
+    .nullable()
+    .optional()
+    .transform((val) => val || ""),
 
   // Тип узла (обязательно)
   node_type: z.enum(["binary", "quantity", "duration"]),
@@ -29,7 +31,7 @@ export const createNodeSchema = z.object({
 
   // Целевое значение (опционально, только для quantity/duration) - строка или число, трансформируется в число
   target_value: z
-    .union([z.string(), z.number()])
+    .union([z.string(), z.number(), z.null(), z.undefined()])
     .transform((val) => {
       if (val === "" || val === null || val === undefined) return undefined;
       const num = typeof val === "string" ? parseFloat(val) : val;
@@ -41,10 +43,13 @@ export const createNodeSchema = z.object({
   connector_ids: z.array(z.string()).min(1, "Выберите хотя бы один коннектор"),
 
   // Цвет узла (HEX)
-  color: z.string().default("#8b5cf6"),
+  color: z.string().nullable().optional().default("#8b5cf6").transform(val => val || "#8b5cf6"),
 
   // Название иконки (Lucide)
-  icon: z.string().default("Circle"),
+  icon: z.string().nullable().optional().default("Circle").transform(val => val || "Circle"),
+
+  // Фокус по умолчанию
+  is_focus_default: z.boolean().default(false),
 });
 
 /**
