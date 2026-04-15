@@ -1,5 +1,5 @@
 import { Icons } from "@/lib/icons";
-import { Sparkles, Settings2 } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ConnectorTag } from "@/components/ui/connector-tag";
 import { Card, CardContent } from "@/components/ui/card";

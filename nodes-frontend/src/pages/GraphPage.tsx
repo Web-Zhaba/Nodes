@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Sparkles, Settings2, Plus, Pencil, ArrowLeft, X } from "lucide-react";
-import { Icons } from "@/lib/icons";
+
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { CreateCoreForm } from "@/features/core-management/components/CreateCoreForm";
@@ -13,7 +13,7 @@ import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQue
 import { ForceGraph } from "@/entities/graph/ui/ForceGraph";
 import { useGraphData } from "@/features/graph-visualization/hooks/useGraphData";
 import { CoreSidebarCard } from "@/features/core-management/components/CoreSidebarCard";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+
 import { useCallback } from "react";
 import { startOfDay } from "date-fns";
 import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery";
@@ -62,7 +62,7 @@ export default function GraphPage() {
       : todayValue >= (node.target_value || 0);
   }
 
-  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   if (isLoading) {
