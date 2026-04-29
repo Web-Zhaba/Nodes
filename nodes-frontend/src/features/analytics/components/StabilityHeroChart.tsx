@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAnalyticsStore } from '@/store/useAnalyticsStore';
+import { useProcessedAnalytics } from '@/features/analytics/hooks/useProcessedAnalytics';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -18,15 +19,35 @@ const PERIODS = [
 ];
 
 export function StabilityHeroChart() {
-  const { focusEntity, setFocus, clearFocus, chartData, nodes, isLoading, selectedDays, setSelectedDays } = useAnalyticsStore();
+  const { focusEntity, setFocus, clearFocus, nodes, isLoading, selectedDays, setSelectedDays } = useAnalyticsStore();
+  const { chartData } = useProcessedAnalytics();
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
   if (isLoading && chartData.length === 0) {
     return (
       <div className="w-full border border-border/50 bg-background/50 backdrop-blur-sm rounded-xl p-6 shadow-sm">
-        <h3 className="font-semibold mb-2 text-lg tracking-wide">Стабильность — загрузка...</h3>
-        <div className="h-[280px] flex items-center justify-center text-muted-foreground animate-pulse">
-          Получение данных с сервера...
+        <div className="flex items-center justify-between mb-4">
+          <div className="h-6 w-48 bg-muted/50 rounded-md animate-pulse" />
+          <div className="h-8 w-64 bg-muted/30 rounded-lg animate-pulse" />
+        </div>
+        <div className="flex gap-3 mb-6">
+          <div className="h-4 w-24 bg-muted/40 rounded animate-pulse" />
+          <div className="h-4 w-32 bg-muted/40 rounded animate-pulse" />
+        </div>
+        <div className="h-[280px] w-full flex flex-col justify-end gap-0 opacity-50">
+          <div className="flex justify-between items-end h-full px-2">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
+              <div 
+                key={i} 
+                className="w-[5%] bg-primary/10 rounded-t-sm animate-pulse" 
+                style={{ 
+                  height: `${20 + Math.sin(i) * 30 + 40}%`, 
+                  animationDelay: `${i * 100}ms` 
+                }} 
+              />
+            ))}
+          </div>
+          <div className="w-full h-px bg-border/30 mt-2" />
         </div>
       </div>
     );
@@ -35,17 +56,15 @@ export function StabilityHeroChart() {
   // Если нет данных — показываем пустой стейт
   const hasData = chartData.length > 0 && nodes.length > 0;
 
-  // Обработчик клика по графику
-  const handleChartClick = (e: any) => {
-    // Кликнули в пустоту
-    if (!e || !e.activePayload) {
-      clearFocus();
-    }
-  };
-
   return (
-    <div className="w-full border border-border/50 bg-background/50 backdrop-blur-sm rounded-xl p-6 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+    <div 
+      className="w-full border border-border/50 bg-background/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-sm overflow-hidden"
+      onClick={clearFocus}
+    >
+      <div 
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4"
+        onClick={(e) => e.stopPropagation()} // Предотвращаем сброс фокуса при клике на хедер
+      >
         <h3 className="font-semibold text-lg tracking-wide">
           Стабильность {focusEntity ? `— ${focusEntity.type === 'node' ? 'Фокус на узле' : 'Ядро'}` : '— Общая'}
         </h3>
@@ -72,39 +91,49 @@ export function StabilityHeroChart() {
 
       {/* Legend with Hover/Click */}
       {nodes.length > 0 && (
-        <div className="flex flex-wrap gap-3 mb-4 text-sm text-muted-foreground">
-          {nodes.map((node, i) => {
-            const isFocused = focusEntity?.id === node.id;
-            const isDimmed = focusEntity?.id ? !isFocused : (hoveredNodeId ? hoveredNodeId !== node.id : false);
-            return (
-              <div 
-                key={node.id} 
-                className={cn(
-                  "flex items-center gap-1.5 cursor-pointer transition-opacity duration-300",
-                  isDimmed ? "opacity-30" : "opacity-100 font-medium text-foreground"
-                )}
-                onMouseEnter={() => setHoveredNodeId(node.id)}
-                onMouseLeave={() => setHoveredNodeId(null)}
-                onClick={() => setFocus({ type: 'node', id: node.id })}
-              >
-                <span
-                  className="block w-3 h-3 rounded-sm transition-transform hover:scale-110"
-                  style={{ backgroundColor: node.color || FALLBACK_COLORS[i % FALLBACK_COLORS.length] }}
-                />
-                {node.name}
-              </div>
-            );
-          })}
+        <div className="relative mb-4 group">
+          <div 
+            className="flex flex-nowrap sm:flex-wrap items-center gap-3 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0 no-scrollbar"
+            onClick={(e) => e.stopPropagation()} 
+          >
+            {nodes.map((node, i) => {
+              const isFocused = focusEntity?.id === node.id;
+              const isDimmed = focusEntity?.id ? !isFocused : (hoveredNodeId ? hoveredNodeId !== node.id : false);
+              return (
+                <div 
+                  key={node.id} 
+                  className={cn(
+                    "flex items-center gap-1.5 cursor-pointer transition-all duration-300 shrink-0 whitespace-nowrap px-2 py-1 rounded-md",
+                    isDimmed ? "opacity-30 scale-95" : "opacity-100 font-medium text-foreground bg-primary/5 border border-primary/10 shadow-sm"
+                  )}
+                  onMouseEnter={() => setHoveredNodeId(node.id)}
+                  onMouseLeave={() => setHoveredNodeId(null)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFocus({ type: 'node', id: node.id });
+                  }}
+                >
+                  <span
+                    className="block w-2.5 h-2.5 rounded-full ring-2 ring-background shadow-[0_0_8px_rgba(0,0,0,0.2)]"
+                    style={{ backgroundColor: node.color || FALLBACK_COLORS[i % FALLBACK_COLORS.length] }}
+                  />
+                  <span className="text-xs sm:text-sm">{node.name}</span>
+                </div>
+              );
+            })}
+          </div>
+          {/* Subtle gradient for scroll indication on mobile */}
+          <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-background/50 to-transparent pointer-events-none sm:hidden" />
         </div>
       )}
 
-      <div style={{ width: '100%', height: 280 }}>
+      <div className="w-full h-[240px] sm:h-[320px]">
         {hasData ? (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={chartData} 
               margin={{ top: 5, right: 10, left: -10, bottom: 5 }}
-              onClick={handleChartClick}
+              // Удаляем onClick отсюда, так как родительский div перехватывает клик по пустому пространству
             >
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
               <XAxis dataKey="date" stroke="rgba(255,255,255,0.4)" fontSize={12} tickLine={false} axisLine={false} />
@@ -142,9 +171,16 @@ export function StabilityHeroChart() {
                       r: 6, 
                       strokeWidth: 0,
                       fill: color,
-                      onClick: () => setFocus({ type: 'node', id: node.id })
+                      onClick: (e: any) => {
+                        // Recharts может передавать (event, payload). 
+                        // Если e - событие, то вызываем stopPropagation
+                        if (e && e.stopPropagation) {
+                          e.stopPropagation();
+                        }
+                        setFocus({ type: 'node', id: node.id });
+                      }
                     }}
-                    style={{ transition: 'stroke-opacity 0.3s ease, stroke-width 0.3s ease' }}
+                    style={{ transition: 'stroke-opacity 0.3s ease, stroke-width 0.3s ease', cursor: 'pointer' }}
                     connectNulls
                   />
                 );

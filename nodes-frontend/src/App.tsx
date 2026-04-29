@@ -30,6 +30,7 @@ const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 const AuthCallbackPage = lazy(() => import("@/pages/AuthCallbackPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const GraphPage = lazy(() => import("@/pages/GraphPage"));
+const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
 
 function AuthRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -94,7 +95,7 @@ function App() {
               />
               <Route
                 path="analytics"
-                element={<div className="p-4">Analytics Page (WIP)</div>}
+                element={<AnalyticsPage />}
               />
 
             </Route>

@@ -1,0 +1,46 @@
+import { useAnalyticsStore } from '../../../store/useAnalyticsStore';
+import { useProcessedAnalytics } from '@/features/analytics/hooks/useProcessedAnalytics';
+import { ContributionGraph } from '../../../components/ui/smoothui/contribution-graph';
+
+export function PulseHeatmap() {
+  const { focusEntity, isLoading } = useAnalyticsStore();
+  const { heatmapData } = useProcessedAnalytics();
+
+  if (isLoading && heatmapData.length === 0) {
+    return (
+      <div className="w-full border border-border/50 bg-background/50 backdrop-blur-sm rounded-xl p-6 shadow-sm">
+        <div className="h-6 w-48 bg-muted/50 rounded-md animate-pulse mb-6" />
+        <div className="flex gap-2">
+          {/* Day labels column */}
+          <div className="flex flex-col justify-between py-1 pr-2 opacity-30 text-[11px]">
+            <div /><div>Пн</div><div /><div>Ср</div><div /><div>Пт</div><div />
+          </div>
+          {/* Grid skeleton */}
+          <div className="grid grid-rows-7 grid-flow-col gap-[3px] flex-1 opacity-20">
+            {Array.from({ length: 53 * 7 }).map((_, i) => (
+              <div 
+                key={i} 
+                className="w-full pb-[100%] bg-muted-foreground/30 rounded-[2px] animate-pulse" 
+                style={{ animationDelay: `${(i % 53) * 10}ms` }} 
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full border border-border/50 bg-background/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-lg tracking-wide">
+          Активность — {focusEntity ? `${focusEntity.type === 'node' ? 'Узел' : 'Ядро'}` : 'Общая'}
+        </h3>
+      </div>
+      
+      <div className="w-full">
+        <ContributionGraph data={heatmapData} />
+      </div>
+    </div>
+  );
+}

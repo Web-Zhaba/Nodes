@@ -1,7 +1,7 @@
 import { useAnalyticsStore } from '../../../store/useAnalyticsStore';
-import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Globe } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function GlobalControlBar() {
   const { focusEntity, clearFocus, nodes, error } = useAnalyticsStore();
@@ -12,64 +12,62 @@ export function GlobalControlBar() {
     : null;
 
   return (
-    <header className="flex justify-between items-center mb-8 h-12">
-      <div className="flex items-center gap-4">
-        <h1 className="text-2xl font-bold text-foreground">Аналитика</h1>
+    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8 min-h-12">
+      <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">Аналитика</h1>
         
         {/* Separator */}
         <div className="h-6 w-px bg-border/50 hidden md:block"></div>
 
-        {/* Current Context Indicator */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-md border border-border/50">
-          <Globe className="w-4 h-4" />
-          <AnimatePresence mode="popLayout">
+        {/* Current Context Indicator / Reset Button */}
+        <button 
+          onClick={focusedNode ? clearFocus : undefined}
+          className={cn(
+            "flex items-center gap-2 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 rounded-md border transition-all truncate max-w-[200px] sm:max-w-none",
+            focusedNode 
+              ? "bg-primary/10 border-primary/30 text-primary cursor-pointer hover:bg-primary/20 hover:border-primary/50 shadow-[0_0_15px_rgba(var(--primary),0.1)]" 
+              : "bg-muted/30 border-border/50 text-muted-foreground cursor-default"
+          )}
+        >
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={focusedNode ? 'x' : 'globe'}
+              initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+              transition={{ duration: 0.2 }}
+              className="shrink-0"
+            >
+              {focusedNode ? <X className="w-3.5 h-3.5 sm:w-4 h-4" /> : <Globe className="w-3.5 h-3.5 sm:w-4 h-4" />}
+            </motion.div>
+          </AnimatePresence>
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
               key={focusedNode ? focusedNode.id : 'global'}
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
               transition={{ duration: 0.2 }}
+              className="truncate"
             >
               {focusedNode ? (
-                <span className="flex items-center gap-2">
-                  Фокус: <span style={{ color: focusedNode.color }} className="font-semibold">{focusedNode.name}</span>
+                <span className="flex items-center gap-1.5 sm:gap-2 truncate">
+                  <span className="hidden xs:inline">Фокус:</span> <span style={{ color: focusedNode.color ?? undefined }} className="font-semibold truncate">{focusedNode.name}</span>
                 </span>
               ) : (
-                <span>Глобальный вид (Все узлы)</span>
+                <span>Все узлы</span>
               )}
             </motion.span>
           </AnimatePresence>
-        </div>
+        </button>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
         {error && (
-          <span className="text-sm text-destructive bg-destructive/10 px-3 py-1.5 rounded-md border border-destructive/20">
+          <span className="text-xs sm:text-sm text-destructive bg-destructive/10 px-3 py-1.5 rounded-md border border-destructive/20 w-full sm:w-auto text-center">
             {error}
           </span>
         )}
-        
-        {/* Reset Button */}
-        <AnimatePresence>
-          {focusEntity && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, x: 20 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.95, x: 20 }}
-              transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-            >
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearFocus}
-                className="gap-2 border-primary/20 hover:border-primary/50 hover:bg-primary/10 text-primary transition-all shadow-[0_0_15px_rgba(var(--primary),0.1)]"
-              >
-                <X className="w-4 h-4" />
-                Вернуться к обычному виду
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </header>
   );

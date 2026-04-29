@@ -12,7 +12,7 @@ import { useNodesQuery } from "@/features/nodes/hooks/useNodesQuery";
 import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQuery";
 import { useDailyFocusQuery, useSetDailyFocusMutation } from "@/features/nodes/hooks/useDailyFocusQuery";
 import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery";
-import { startOfDay } from "date-fns";
+import { startOfDay, format } from "date-fns";
 import { calculateStability } from "@/lib/djangoApi";
 
 /**
@@ -36,6 +36,9 @@ export default function NodesListPage() {
       });
     }
   }, [user?.id]);
+
+  // Хранит ключи дат, которые уже были инициализированы в этой сессии
+  const initializedDays = useRef<Set<string>>(new Set());
 
 
   // Queries
@@ -114,6 +117,30 @@ export default function NodesListPage() {
     selectedDate < startOfDay(new Date()),
     [selectedDate]
   );
+
+  // Автоматическое добавление дефолтных узлов для новых дней
+  useEffect(() => {
+    if (isLoading || isPastDate || focusNodeIds.length > 0 || !user?.id) return;
+    
+    // Проверяем, есть ли вообще дефолтные узлы
+    const defaultNodes = Object.values(nodes).filter(n => n.is_focus_default);
+    if (defaultNodes.length === 0) return;
+
+    const dateKey = format(selectedDate, "yyyy-MM-dd");
+    const lsKey = `focus_init_${user.id}_${dateKey}`;
+    
+    // Если для этой даты фокус еще не инициализировался (ни в этой сессии, ни в localStorage)
+    if (!initializedDays.current.has(dateKey) && !localStorage.getItem(lsKey)) {
+      initializedDays.current.add(dateKey);
+      localStorage.setItem(lsKey, "true");
+      
+      const defaultIds = defaultNodes.map(n => n.id);
+      console.log(`[FRONTEND] Auto-populating ${defaultIds.length} default focus nodes for ${dateKey}`);
+      
+      // Вызываем мутацию для сохранения
+      setDailyFocus.mutate({ nodeIds: defaultIds, date: selectedDate, userId: user.id });
+    }
+  }, [isLoading, isPastDate, focusNodeIds.length, nodes, selectedDate, user?.id, setDailyFocus]);
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 pt-8 pb-24 md:pb-12 space-y-8 min-h-[calc(100vh-4rem)] relative">
