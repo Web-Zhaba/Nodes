@@ -52,7 +52,6 @@ class ImpulseActionSerializer(serializers.Serializer):
 
 class ImpulseActionView(APIView):
     """
-    Атомарный эндпоинт "Django Дирижер":
     1 HTTP-запрос от фронтенда → 1 SQL-вызов к Postgres → всё готово.
     
     Вся логика (impulse save + stability calc + core update) выполняется 
