@@ -17,6 +17,7 @@ const mockNode: Node = {
   frequency: "daily",
   color: "#22c55e",
   icon: "Droplet",
+  is_focus_default: false,
   created_at: "2026-02-27T00:00:00Z",
   updated_at: "2026-02-27T00:00:00Z",
 };

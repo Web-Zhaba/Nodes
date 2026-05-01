@@ -82,6 +82,7 @@ class Node(models.Model):
     position_x = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
     position_y = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
     completion_count = models.IntegerField(default=0)
+    is_focus_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

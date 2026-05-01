@@ -24,5 +24,6 @@ export function createDefaultNode(
     position_y: undefined,
     core_id: undefined,
     target_value: nodeType === "binary" ? undefined : 10,
+    is_focus_default: false,
   };
 }

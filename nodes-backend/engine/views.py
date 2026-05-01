@@ -2,10 +2,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers
 from django.db import connection
+from django.db.models import Count, Sum
+from django.db.models.functions import TruncDate
 from .services import update_user_network_stability
 import logging
 import time
 import json
+from datetime import timedelta
+from django.utils import timezone
+from rest_framework.decorators import api_view
+from .models import Impulse, Node
 
 logger = logging.getLogger(__name__)
 
@@ -104,3 +110,115 @@ class ImpulseActionView(APIView):
         except Exception as e:
             logger.error(f"Impulse action failed: {str(e)}", exc_info=True)
             return Response({"status": "error", "message": "Action failed"}, status=500)
+
+@api_view(['GET'])
+def get_analytics_history(request):
+    try:
+        start_time = time.perf_counter()
+        user = request.user
+        days = min(int(request.query_params.get('days', 365)), 730)  # макс 2 года
+        limit_date = (timezone.now() - timedelta(days=days)).date()
+
+        user_nodes = Node.objects.filter(user=user).values('id', 'name', 'color', 'target_value')
+        nodes_list = [
+            {'id': str(n['id']), 'name': n['name'], 'color': n['color']}
+            for n in user_nodes
+        ]
+
+        from engine.services import DECAY_RATE_PER_DAY, calculate_pulse_impact, MAX_STABILITY
+        
+        # --- 2. Симуляция исторической стабильности по дням ---
+        today = timezone.now().date()
+        
+        # Вытягиваем сырые словари вместо ORM объектов (ускорение в ~5-10 раз, экономия памяти)
+        all_impulses = Impulse.objects.filter(node__user=user).values(
+            'node_id', 'completed_at', 'value'
+        ).order_by('completed_at')
+        
+        node_impulses = {}
+        for imp in all_impulses:
+            node_impulses.setdefault(imp['node_id'], []).append(imp)
+            
+        stability_series = []
+        
+        for n in user_nodes:
+            n_id = n['id']
+            t_val = float(n['target_value'] or 0)
+            imps = node_impulses.get(n_id, [])
+            
+            current_stability = 0.0
+            
+            # 1. Считаем начальную стабильность до limit_date
+            pre_limit = [i for i in imps if i['completed_at'] < limit_date]
+            post_limit_dict = {}
+            for i in [i for i in imps if i['completed_at'] >= limit_date]:
+                post_limit_dict.setdefault(i['completed_at'], []).append(i)
+                
+            if pre_limit:
+                last_date = pre_limit[0]['completed_at']
+                for p in pre_limit:
+                    days_passed = (p['completed_at'] - last_date).days
+                    if days_passed > 0:
+                        current_stability *= (1 - DECAY_RATE_PER_DAY) ** days_passed
+                    current_stability += calculate_pulse_impact(p['value'], t_val)
+                    if current_stability > MAX_STABILITY: current_stability = MAX_STABILITY
+                    last_date = p['completed_at']
+                    
+                # Охлаждение от последнего импульса до limit_date
+                days_passed = (limit_date - last_date).days
+                if days_passed > 0:
+                    current_stability *= (1 - DECAY_RATE_PER_DAY) ** days_passed
+            
+            # 2. Фиксируем стабильность для каждого дня в периоде графика
+            last_date = limit_date
+            for day_offset in range((today - limit_date).days + 1):
+                current_day = limit_date + timedelta(days=day_offset)
+                
+                days_passed = (current_day - last_date).days
+                if days_passed > 0:
+                    current_stability *= (1 - DECAY_RATE_PER_DAY) ** days_passed
+                    
+                day_imps = post_limit_dict.get(current_day, [])
+                for p in day_imps:
+                    current_stability += calculate_pulse_impact(p['value'], t_val)
+                    if current_stability > MAX_STABILITY: current_stability = MAX_STABILITY
+                    
+                last_date = current_day
+                
+                stability_series.append({
+                    'date': str(current_day),
+                    'node_id': str(n_id),
+                    'stability_score': round(current_stability, 2),
+                    'pulse_count': len(day_imps),
+                })
+
+        # --- 3. Группировка импульсов по дню (суммарно) ---
+        daily_totals = (
+            Impulse.objects
+            .filter(node__user=user, completed_at__gte=limit_date)
+            .values('completed_at')
+            .annotate(count=Count('id'))
+            .order_by('completed_at')
+        )
+
+        heatmap = [
+            {
+                'date': str(row['completed_at']),
+                'count': row['count'],
+            }
+            for row in daily_totals
+        ]
+        
+        runtime_ms = (time.perf_counter() - start_time) * 1000
+        logger.info(f"Analytics generated in {runtime_ms:.2f}ms")
+
+        return Response({
+            'status': 'ok',
+            'nodes': nodes_list,
+            'stability_series': stability_series,
+            'heatmap': heatmap,
+            'debug': {'runtime_ms': round(runtime_ms, 2)}
+        })
+    except Exception as e:
+        import traceback
+        return Response({"status": "error", "message": str(e), "traceback": traceback.format_exc()}, status=500)

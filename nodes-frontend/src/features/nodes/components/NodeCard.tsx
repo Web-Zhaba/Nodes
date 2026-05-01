@@ -63,7 +63,7 @@ export const NodeCard = memo(function NodeCard({
           className={cn(
             "relative h-full flex flex-col bg-background/80 overflow-hidden",
             "border transition-all duration-700",
-            !isEffectivelyCompleted && "border-white/5 shadow-sm",
+            !isEffectivelyCompleted && "border-white/5 shadow-sm hover:border-white/20",
             isEffectivelyCompleted && !isOverdrive && "border-white/20 shadow-[0_0_20px_rgba(255,255,256,0.03)]",
             isOverdrive && "border-orange-500/40 shadow-[0_4px_20px_rgba(249,115,22,0.1)]",
             className
@@ -77,7 +77,7 @@ export const NodeCard = memo(function NodeCard({
           <div
             className={cn(
               "absolute inset-0 z-0 pointer-events-none transition-opacity duration-1000",
-              isEffectivelyCompleted ? "opacity-15" : "opacity-0"
+              isEffectivelyCompleted ? "opacity-25" : "opacity-5 group-hover:opacity-15"
             )}
             style={{
               background: `radial-gradient(circle at 50% 0%, ${node.color}, transparent 80%)`

@@ -134,6 +134,7 @@ CREATE TABLE public.nodes (
   position_x       numeric,
   position_y       numeric,
   completion_count integer DEFAULT 0,
+  is_focus_default boolean DEFAULT false,
   created_at       timestamp with time zone DEFAULT now(),
   updated_at       timestamp with time zone DEFAULT now(),
   CONSTRAINT nodes_pkey PRIMARY KEY (id),
