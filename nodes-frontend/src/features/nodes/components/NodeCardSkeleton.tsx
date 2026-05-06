@@ -12,17 +12,17 @@ export function NodeCardSkeleton({ className }: NodeCardSkeletonProps) {
       <Card className="relative h-full flex flex-col bg-background/95 overflow-hidden border border-white/10 shadow-sm min-h-[220px]">
         <CardContent className="p-4 flex-1 mt-2 flex flex-col gap-4">
           {/* Header */}
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <Skeleton className="w-10 h-10 rounded-full bg-primary/20" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-28 bg-primary/20" />
-                <div className="flex gap-2">
-                  <Skeleton className="h-5 w-16 rounded-full bg-primary/20" />
-                </div>
+          <div className="flex items-start gap-3 mb-3">
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <Skeleton className="w-6 h-6 rounded-md bg-primary/20" />
+            </div>
+            <div className="flex-1 space-y-2 min-w-0">
+              <Skeleton className="h-5 w-3/4 bg-primary/20" />
+              <div className="flex gap-1.5 mt-1.5">
+                <Skeleton className="h-3 w-16 rounded-full bg-primary/20" />
+                <Skeleton className="h-3 w-12 rounded-full bg-primary/20" />
               </div>
             </div>
-            <Skeleton className="w-8 h-8 rounded-full bg-primary/20 shrink-0" />
           </div>
 
           {/* Description */}
@@ -39,7 +39,7 @@ export function NodeCardSkeleton({ className }: NodeCardSkeletonProps) {
         </CardContent>
 
         {/* Controls block */}
-        <div className="p-4 pt-0 mt-auto">
+        <div className="p-4 bg-gradient-to-t from-muted/20 to-transparent border-t border-muted/30 mt-auto min-h-[80px] flex items-center">
           <Skeleton className="h-12 w-full rounded-xl bg-primary/20 shadow-sm" />
         </div>
       </Card>

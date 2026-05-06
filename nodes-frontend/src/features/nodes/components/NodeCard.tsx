@@ -62,7 +62,7 @@ export const NodeCard = memo(function NodeCard({
         <Card
           className={cn(
             "relative h-full flex flex-col bg-background/80 overflow-hidden",
-            "border transition-all duration-700",
+            "border transition-all duration-700 min-h-[220px]",
             !isEffectivelyCompleted && "border-white/5 shadow-sm hover:border-white/20",
             isEffectivelyCompleted && !isOverdrive && "border-white/20 shadow-[0_0_20px_rgba(255,255,256,0.03)]",
             isOverdrive && "border-orange-500/40 shadow-[0_4px_20px_rgba(249,115,22,0.1)]",
@@ -128,7 +128,7 @@ export const NodeCard = memo(function NodeCard({
           </CardContent>
 
           {/* Footer с кнопками — легкий градиент вместо жесткого разделителя */}
-          <CardFooter className="p-4 bg-gradient-to-t from-muted/20 to-transparent border-t border-muted/30 mt-auto">
+          <CardFooter className="p-4 bg-gradient-to-t from-muted/20 to-transparent border-t border-muted/30 mt-auto min-h-[80px] flex flex-col justify-center">
             {/* Элементы управления по типу узла */}
             {node.node_type === "binary" && (
               <BinaryControl

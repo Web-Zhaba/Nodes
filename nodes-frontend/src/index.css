@@ -257,6 +257,9 @@
   body {
     @apply bg-background text-foreground transition-colors duration-300;
     letter-spacing: var(--tracking-normal);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
