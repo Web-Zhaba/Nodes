@@ -2,7 +2,6 @@ import React, { lazy, Suspense } from 'react';
 import type { LucideProps } from 'lucide-react';
 import dynamicIconImports from 'lucide-react/dynamicIconImports';
 
-const fallbackIcon = dynamicIconImports['circle'];
 
 interface DynamicIconProps extends Omit<LucideProps, 'ref'> {
   name?: string;
