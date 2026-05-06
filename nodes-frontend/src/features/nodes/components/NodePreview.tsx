@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Icons } from "@/lib/icons";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { ConnectorTag } from "@/components/ui/connector-tag";
 import type { NodeType } from "@/types";
 
@@ -27,8 +27,7 @@ export function NodePreview({
   targetValue,
   className,
 }: NodePreviewProps) {
-  // Получаем иконку из Lucide
-  const IconComponent = Icons[icon] || Icons.Circle;
+  // Получаем иконку динамически
 
   // Рассчитываем процент стабильности (для примера 60%)
   const stabilityPercent = 60;
@@ -59,7 +58,7 @@ export function NodePreview({
           className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center"
           style={{ backgroundColor: color + "20" }}
         >
-          <IconComponent className="w-6 h-6" style={{ color }} />
+          <DynamicIcon name={icon || 'circle'} className="w-6 h-6" style={{ color }} />
         </div>
 
         {/* Информация */}
@@ -142,19 +141,19 @@ export function NodePreview({
       <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
         {nodeType === "binary" && (
           <>
-            <Icons.Zap className="h-3 w-3" />
+            <DynamicIcon name="zap" className="h-3 w-3" />
             <span>Binary</span>
           </>
         )}
         {nodeType === "quantity" && (
           <>
-            <Icons.BarChart3 className="h-3 w-3" />
+            <DynamicIcon name="bar-chart-3" className="h-3 w-3" />
             <span>Quantity</span>
           </>
         )}
         {nodeType === "duration" && (
           <>
-            <Icons.Timer className="h-3 w-3" />
+            <DynamicIcon name="timer" className="h-3 w-3" />
             <span>Duration</span>
           </>
         )}

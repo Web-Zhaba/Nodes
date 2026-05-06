@@ -1,4 +1,4 @@
-import { Icons } from "@/lib/icons";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ConnectorTag } from "@/components/ui/connector-tag";
@@ -29,7 +29,7 @@ export function CoreSidebarCard({
   actionButtons,
 }: CoreSidebarCardProps) {
   const affectedNodes = getNodesForCore(nodes, coreConnectors, core.id);
-  const CoreIcon = Icons[core.icon as keyof typeof Icons] || Icons.Circle;
+
 
   // Получаем коннекторы этого ядра
   const coreConnIds = Object.values(coreConnectors)
@@ -93,7 +93,7 @@ export function CoreSidebarCard({
                   boxShadow: isSelected ? `inset 0 0 10px ${core.color}20` : undefined
                 }}
               >
-                <CoreIcon
+                <DynamicIcon name={core.icon || "circle"}
                   className={cn("w-6 h-6 transition-transform duration-500", isSelected && "scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]")}
                   style={{ color: core.color }}
                 />

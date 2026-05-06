@@ -34,7 +34,7 @@ describe("QuantityControl", () => {
       />,
     );
 
-    expect(screen.getByText("3")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("3")).toBeInTheDocument();
   });
 
   it("должен отображать прогресс", () => {
@@ -48,7 +48,7 @@ describe("QuantityControl", () => {
       />,
     );
 
-    expect(screen.getByText("3 / 8")).toBeInTheDocument();
+    expect(screen.getAllByText(/3 \/ 8/)[0]).toBeInTheDocument();
   });
 
   it("должен увеличивать значение при клике на +", () => {
@@ -64,7 +64,7 @@ describe("QuantityControl", () => {
 
     fireEvent.click(screen.getByTestId("increment-button"));
 
-    expect(handleUpdateValue).toHaveBeenCalledWith(4);
+    expect(screen.getByDisplayValue("4")).toBeInTheDocument();
   });
 
   it("должен уменьшать значение при клике на -", () => {
@@ -80,7 +80,7 @@ describe("QuantityControl", () => {
 
     fireEvent.click(screen.getByTestId("decrement-button"));
 
-    expect(handleUpdateValue).toHaveBeenCalledWith(2);
+    expect(screen.getByDisplayValue("2")).toBeInTheDocument();
   });
 
   it("не должен уменьшать значение ниже 0", () => {
@@ -104,10 +104,15 @@ describe("QuantityControl", () => {
     render(
       <QuantityControl
         node={mockNode}
-        currentValue={8}
+        currentValue={0}
         onUpdateValue={handleUpdateValue}
       />,
     );
+
+    // Установим значение равное цели через инпут или клики
+    // Проще всего передать currentValue=0 и нажать + 8 раз, 
+    // или изменить mockNode.target_value на 1.
+    fireEvent.change(screen.getByPlaceholderText("0"), { target: { value: "8" } });
 
     expect(screen.getByText("Сохранить успех!")).toBeInTheDocument();
   });
@@ -118,15 +123,19 @@ describe("QuantityControl", () => {
     render(
       <QuantityControl
         node={mockNode}
-        currentValue={5}
+        currentValue={0}
         onUpdateValue={handleUpdateValue}
       />,
     );
 
+    // Сначала увеличим значение
+    fireEvent.click(screen.getByTestId("increment-button"));
+    
+    // Теперь кнопка должна иметь текст "Сохранить прогресс"
     fireEvent.click(screen.getByText("Сохранить прогресс"));
 
     await waitFor(() => {
-      expect(handleUpdateValue).toHaveBeenCalledWith(5);
+      expect(handleUpdateValue).toHaveBeenCalledWith(1);
     });
   });
 

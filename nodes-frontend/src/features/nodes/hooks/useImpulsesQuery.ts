@@ -4,7 +4,7 @@ import {
   getImpulsesForDateBatch,
   updateQuantityValue
 } from "../nodeService";
-import { recordImpulse } from "@/lib/djangoApi";
+import { recordImpulse } from "@/lib/api/stability";
 import { format } from "date-fns";
 
 export const impulseKeys = {

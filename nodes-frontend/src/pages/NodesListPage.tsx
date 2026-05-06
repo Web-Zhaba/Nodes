@@ -13,7 +13,7 @@ import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQue
 import { useDailyFocusQuery, useSetDailyFocusMutation } from "@/features/nodes/hooks/useDailyFocusQuery";
 import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery";
 import { startOfDay, format } from "date-fns";
-import { calculateStability } from "@/lib/djangoApi";
+import { calculateStability } from "@/lib/api/stability";
 
 /**
  * Главная страница "Сегодня" (Focus Mode)

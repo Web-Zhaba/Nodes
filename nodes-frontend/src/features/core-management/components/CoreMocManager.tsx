@@ -1,5 +1,5 @@
 import { getNodesForCore } from "@/entities/core/model/coreSelectors";
-import { Icons } from "@/lib/icons";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { useCoreConnectorsQuery, useToggleCoreConnectorMutation } from "@/features/core-management/hooks/useCoresQuery";
 import { useNodesQuery } from "@/features/nodes/hooks/useNodesQuery";
 import { useAuth } from "@/hooks/useAuth";
@@ -74,10 +74,10 @@ export function CoreMocManager({ coreId }: CoreMocManagerProps) {
           ) : (
             <ul className="text-sm text-muted-foreground space-y-2 pl-2 mt-2">
               {linkedNodes.map(node => {
-                const NodeIcon = Icons[node.icon as keyof typeof Icons] || Icons.Circle;
+
                 return (
                   <li key={node.id} className="flex items-center gap-2">
-                    <NodeIcon className="w-4 h-4 opacity-70" style={{ color: node.color }} />
+                    <DynamicIcon name={node.icon || "circle"} className="w-4 h-4 opacity-70" style={{ color: node.color }} />
                     <span>{node.name}</span>
                   </li>
                 );

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Icons } from "@/lib/icons";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Node, Connector } from "@/types";
@@ -19,7 +19,7 @@ export function NodeCardHeader({
   className,
 }: NodeCardHeaderProps) {
   const navigate = useNavigate();
-  const IconComponent = Icons[node.icon || "Circle"] || Icons.Circle;
+
 
   // Получаем названия коннекторов по ID
   const getConnectorName = (connectorId: string) => {
@@ -39,7 +39,7 @@ export function NodeCardHeader({
         className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-transform hover:scale-105"
         style={{ backgroundColor: `${node.color}20` }}
       >
-        <IconComponent className="w-6 h-6" style={{ color: node.color }} />
+        <DynamicIcon name={node.icon || "circle"} className="w-6 h-6" style={{ color: node.color }} />
       </div>
 
       {/* Информация */}
@@ -57,7 +57,7 @@ export function NodeCardHeader({
               navigate(`/nodes/edit/${node.id}`);
             }}
           >
-            <Icons.Settings className="w-4 h-4" />
+            <DynamicIcon name="settings" className="w-4 h-4" />
           </Button>
         </div>
 

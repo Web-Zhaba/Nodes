@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Icons } from "@/lib/icons";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import {
   Popover,
   PopoverContent,
@@ -66,7 +66,7 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
   const [open, setOpen] = useState(false);
 
   // Получаем выбранную иконку
-  const SelectedIcon = Icons[value] || Icons.Circle;
+
 
   // Фильтруем категории по поиску
   const filteredCategories = searchQuery.trim()
@@ -86,17 +86,17 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
           className={cn("w-full justify-between font-normal", className)}
         >
           <div className="flex items-center gap-2">
-            <SelectedIcon className="h-4 w-4" />
+            <DynamicIcon name={value || 'circle'} className="h-4 w-4" />
             <span>{value}</span>
           </div>
-          <Icons.ChevronDown className="h-4 w-4 opacity-50" />
+          <DynamicIcon name="chevron-down" className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[320px] p-0" align="start">
         <div className="space-y-3 p-3">
           {/* Поле поиска */}
           <div className="relative">
-            <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <DynamicIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Поиск иконки..."
@@ -118,7 +118,7 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
                     </h4>
                     <div className="grid grid-cols-6 gap-1.5">
                       {icons.map((iconName) => {
-                        const IconComponent = Icons[iconName] || Icons.Circle;
+
                         const isSelected = value === iconName;
 
                         return (
@@ -137,7 +137,7 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
                             )}
                             title={iconName}
                           >
-                            <IconComponent className="h-4 w-4" />
+                            <DynamicIcon name={iconName} className="h-4 w-4" />
                           </Button>
                         );
                       })}
@@ -148,7 +148,7 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
             </ScrollArea>
           ) : (
             <div className="text-center text-sm text-muted-foreground py-8">
-              <Icons.Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <DynamicIcon name="search" className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p>Иконки не найдены</p>
             </div>
           )}

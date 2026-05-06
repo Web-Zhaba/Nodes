@@ -6,6 +6,9 @@ import { supabase } from '@/lib/supabase';
 vi.mock('@/lib/supabase', () => ({
   supabase: {
     from: vi.fn(),
+    auth: {
+      getSession: vi.fn().mockResolvedValue({ data: { session: { user: { id: 'test-user-id' } } } }),
+    },
   },
 }));
 
@@ -18,11 +21,16 @@ describe('nodeService', () => {
     it('должен успешно обновлять узел без коннекторов', async () => {
       // Подготавливаем мок для builder-а Supabase
       const updateMock = vi.fn().mockReturnThis();
-      const eqMock = vi.fn().mockResolvedValue({ error: null });
+      const eqMock = vi.fn().mockReturnThis();
+      // Чтобы await query работал, объект должен быть Thenable
+      const thenMock = vi.fn().mockImplementation((onFulfilled) => {
+        return Promise.resolve({ error: null }).then(onFulfilled);
+      });
 
       (supabase.from as any).mockReturnValue({
         update: updateMock,
         eq: eqMock,
+        then: thenMock,
       });
 
       const result = await updateNode('node-1', { name: 'New Name' });
@@ -36,29 +44,18 @@ describe('nodeService', () => {
 
     it('должен успешно обновлять узел вместе с коннекторами', async () => {
       // 1. Моки для обновления базового узла
-      const updateMock = vi.fn().mockReturnThis();
-      const eqMock = vi.fn().mockResolvedValue({ error: null });
+      // Универсальный мок для цепочки вызовов
+      const chainMock = {
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        delete: vi.fn().mockReturnThis(),
+        insert: vi.fn().mockResolvedValue({ error: null }),
+        then: vi.fn().mockImplementation((onFulfilled) => {
+          return Promise.resolve({ error: null }).then(onFulfilled);
+        }),
+      };
 
-      // 2. Моки для очистки старых коннекторов
-      const deleteMock = vi.fn().mockReturnThis();
-      const deleteEqMock = vi.fn().mockResolvedValue({ error: null });
-
-      // 3. Моки для добавления новых коннекторов
-      const insertMock = vi.fn().mockResolvedValue({ error: null });
-
-      // Настраиваем поведение from() в зависимости от названия таблицы
-      (supabase.from as any).mockImplementation((table: string) => {
-        if (table === 'nodes') {
-          return { update: updateMock, eq: eqMock };
-        }
-        if (table === 'node_connectors') {
-          return {
-            delete: deleteMock,
-            eq: deleteEqMock,
-            insert: insertMock
-          };
-        }
-      });
+      (supabase.from as any).mockReturnValue(chainMock);
 
       const result = await updateNode('node-1', {
         name: 'New Node Name',
@@ -67,16 +64,16 @@ describe('nodeService', () => {
 
       // Проверки обновления "nodes"
       expect(supabase.from).toHaveBeenCalledWith('nodes');
-      expect(updateMock).toHaveBeenCalledWith({ name: 'New Node Name' });
-      expect(eqMock).toHaveBeenCalledWith('id', 'node-1');
+      expect(chainMock.update).toHaveBeenCalledWith({ name: 'New Node Name' });
+      expect(chainMock.eq).toHaveBeenCalledWith('id', 'node-1');
 
       // Проверки очистки "node_connectors"
       expect(supabase.from).toHaveBeenCalledWith('node_connectors');
-      expect(deleteMock).toHaveBeenCalled();
-      expect(deleteEqMock).toHaveBeenCalledWith('node_id', 'node-1');
+      expect(chainMock.delete).toHaveBeenCalled();
+      expect(chainMock.eq).toHaveBeenCalledWith('node_id', 'node-1');
 
       // Проверки добавления в "node_connectors"
-      expect(insertMock).toHaveBeenCalledWith([
+      expect(chainMock.insert).toHaveBeenCalledWith([
         { node_id: 'node-1', connector_id: 'conn-1' },
         { node_id: 'node-1', connector_id: 'conn-2' },
       ]);
@@ -86,11 +83,15 @@ describe('nodeService', () => {
 
     it('должен возвращать false при ошибке обновления базы', async () => {
       const updateMock = vi.fn().mockReturnThis();
-      const eqMock = vi.fn().mockResolvedValue({ error: new Error('DB Error') });
+      const eqMock = vi.fn().mockReturnThis();
+      const thenMock = vi.fn().mockImplementation((onFulfilled) => {
+        return Promise.resolve({ error: new Error('DB Error') }).then(onFulfilled);
+      });
 
       (supabase.from as any).mockReturnValue({
         update: updateMock,
         eq: eqMock,
+        then: thenMock,
       });
 
       const result = await updateNode('node-1', { name: 'New Name' });

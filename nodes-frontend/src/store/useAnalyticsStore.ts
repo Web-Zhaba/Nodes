@@ -4,7 +4,7 @@ import {
   type AnalyticsNodeInfo,
   type StabilitySeriesItem,
   type HeatmapItem,
-} from '../lib/djangoApi';
+} from '../lib/api/analytics';
 
 export type FocusEntity = { type: 'node' | 'core'; id: string } | null;
 

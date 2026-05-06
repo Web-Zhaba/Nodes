@@ -4,7 +4,7 @@ import { ru } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Icons } from "@/lib/icons";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { cn } from "@/lib/utils";
 import type { Node } from "@/types";
 import { Badge } from "@/components/ui/badge";
@@ -20,8 +20,7 @@ interface DailyFocusSelectorProps {
 
 // Вспомогательная функция для рендера иконки по имени
 const renderIcon = (iconName: string, className?: string) => {
-  const IconComponent = Icons[iconName || "Circle"] || Icons.Circle;
-  return <IconComponent className={className} />;
+  return <DynamicIcon name={iconName || "circle"} className={className} />;
 };
 
 export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFocusIds, onSave }: DailyFocusSelectorProps) {
@@ -74,7 +73,7 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
             onClick={loadDefaults}
             className="text-[10px] uppercase font-bold tracking-widest border-white/5 bg-background/50 h-8 rounded-lg"
           >
-            <Icons.Zap className="w-3 h-3 mr-1.5 text-primary" />
+            <DynamicIcon name="zap" className="w-3 h-3 mr-1.5 text-primary" />
             Загрузить по умолчанию
           </Button>
           <div className="text-[10px] uppercase font-bold tracking-widest opacity-40">
@@ -128,7 +127,7 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
                         "w-6 h-6 rounded-lg flex items-center justify-center transition-all shadow-sm",
                         isSelected ? "bg-primary text-primary-foreground scale-110" : "bg-muted text-transparent"
                       )}>
-                        <Icons.Check className="w-4 h-4 font-bold" />
+                        <DynamicIcon name="check" className="w-4 h-4 font-bold" />
                       </div>
                     </div>
                   </div>

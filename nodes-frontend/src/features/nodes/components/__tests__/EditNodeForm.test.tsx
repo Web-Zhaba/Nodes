@@ -24,11 +24,26 @@ vi.mock('sonner', () => ({
   },
 }));
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Suspense } from 'react';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
 const renderComponent = () => {
   return render(
-    <MemoryRouter>
-      <EditNodeForm nodeId="test-node-1" />
-    </MemoryRouter>
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        <Suspense fallback={<div>Loading icons...</div>}>
+          <EditNodeForm nodeId="test-node-1" />
+        </Suspense>
+      </MemoryRouter>
+    </QueryClientProvider>
   );
 };
 
