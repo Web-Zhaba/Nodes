@@ -39,7 +39,7 @@ async function renderIconToCache(
 ): Promise<void> {
   if (cache.has(key)) return;
 
-  // Placeholder
+  // Placeholder to prevent duplicate renders
   const placeholder = new OffscreenCanvas(size, size);
   cache.set(key, placeholder);
 
@@ -49,7 +49,8 @@ async function renderIconToCache(
     const IconModule = await loadIcon();
     const IconComponent = IconModule.default;
 
-    // 1. Render Lucide React component to SVG string
+    // 1. Render Lucide React component to SVG string using react-dom/server
+    // This is the most reliable way to get the SVG markup for Canvas drawing
     const svgString = renderToStaticMarkup(
       createElement(IconComponent, {
         color,

@@ -23,7 +23,10 @@ export default defineConfig({
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-ui': ['motion', 'zustand'],
+          'vendor-ui': ['zustand', '@tanstack/react-query'],
+          'vendor-animation': ['motion'],
+          'vendor-lucide': ['lucide-react'],
+          'vendor-graph': ['react-force-graph-2d'],
         }
       }
     }

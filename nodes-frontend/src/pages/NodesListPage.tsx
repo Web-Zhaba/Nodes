@@ -31,9 +31,18 @@ export default function NodesListPage() {
   // Полный пересчет стабильности при загрузке страницы (фоновый, не блокирует UI)
   useEffect(() => {
     if (user?.id) {
-      calculateStability().then(res => {
-        if (res.success) console.log('[INIT] Full stability recalc complete');
-      });
+      const lastRecalc = localStorage.getItem(`last_stability_recalc_${user.id}`);
+      const now = Date.now();
+      
+      // Пересчитываем только если прошло более 5 минут с последнего раза
+      if (!lastRecalc || now - parseInt(lastRecalc) > 1000 * 60 * 5) {
+        calculateStability().then(res => {
+          if (res.success) {
+            console.log('[INIT] Full stability recalc complete');
+            localStorage.setItem(`last_stability_recalc_${user.id}`, now.toString());
+          }
+        });
+      }
     }
   }, [user?.id]);
 

@@ -13,22 +13,20 @@ interface DynamicIconProps extends Omit<LucideProps, 'ref'> {
 const toKebabCase = (str: string) => 
   str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
+const iconCache: Record<string, React.LazyExoticComponent<any>> = {};
+
 export function DynamicIcon({ name, fallback, ...props }: DynamicIconProps) {
   const kebabName = name ? toKebabCase(name) : undefined;
+  const iconName = (kebabName && kebabName in dynamicIconImports) ? kebabName : 'circle';
 
-  if (!kebabName || !(kebabName in dynamicIconImports)) {
-    const FallbackIcon = lazy(fallbackIcon);
-    return (
-      <Suspense fallback={fallback || <div style={{ width: props.size, height: props.size }} />}>
-        <FallbackIcon {...props} />
-      </Suspense>
-    );
+  if (!iconCache[iconName]) {
+    iconCache[iconName] = lazy(dynamicIconImports[iconName as keyof typeof dynamicIconImports]);
   }
 
-  const LucideIcon = lazy(dynamicIconImports[kebabName as keyof typeof dynamicIconImports]);
+  const LucideIcon = iconCache[iconName];
 
   return (
-    <Suspense fallback={fallback || <div style={{ width: props.size, height: props.size }} />}>
+    <Suspense fallback={fallback || <div className="animate-pulse bg-muted rounded-full" style={{ width: props.size || 24, height: props.size || 24 }} />}>
       <LucideIcon {...props} />
     </Suspense>
   );
