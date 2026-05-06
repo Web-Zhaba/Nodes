@@ -16,7 +16,7 @@ interface UseGraphDataResult {
 /**
  * Composes React Query data sources and builds graph-ready data.
  *
- * Memoized: only recomputes when the underlying normalized data changes.
+ * Мемоизированно, обновляется тольько после нормализации данных
  * Each of the four queries is already cached by React Query (5min staleTime),
  * so this hook adds zero extra network requests.
  */
