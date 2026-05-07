@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { User, Session } from '@supabase/supabase-js'
+import { useThemeStore } from '@/store/useThemeStore'
 
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null)
@@ -13,6 +14,10 @@ export function useAuth() {
       setSession(session)
       setUser(session?.user ?? null)
       setIsLoading(false)
+      
+      if (session?.user) {
+        useThemeStore.getState().loadFromCloud(session.user.id);
+      }
     })
 
     // Подписываемся на изменения аутентификации
@@ -22,6 +27,10 @@ export function useAuth() {
       setSession(session)
       setUser(session?.user ?? null)
       setIsLoading(false)
+      
+      if (session?.user) {
+        useThemeStore.getState().loadFromCloud(session.user.id);
+      }
     })
 
     return () => subscription.unsubscribe()

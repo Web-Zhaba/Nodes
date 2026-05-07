@@ -106,6 +106,8 @@
   --font-serif: Lora, serif;
   --font-mono: IBM Plex Mono, monospace;
   --radius: 1.4rem;
+  --glow-strength: 0.4;
+  --effects-opacity: 0;
   --shadow-x: 0px;
   --shadow-y: 2px;
   --shadow-blur: 3px;
@@ -138,6 +140,8 @@
   --popover-foreground: oklch(0.9551 0 0);
   --primary: oklch(0.6132 0.2294 291.7437);
   --primary-foreground: oklch(1 0 0);
+  --glow-strength: 0.8;
+  --effects-opacity: 0;
   --secondary: oklch(0.294 0.013 272.9312);
   --secondary-foreground: oklch(0.9551 0 0);
   --muted: oklch(0.294 0.013 272.9312);
@@ -250,6 +254,28 @@
 }
 
 @layer base {
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.05) 50%
+    ), linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.02),
+      rgba(0, 255, 0, 0.01),
+      rgba(0, 0, 255, 0.02)
+    );
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: var(--effects-opacity, 0);
+    mix-blend-mode: overlay;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

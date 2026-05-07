@@ -27,13 +27,13 @@ export function FloatingNavbar() {
         {/* Left Island: Logo */}
         <Link
           to="/"
-          className="flex items-center justify-center h-10 md:h-12 px-4 bg-background/40 backdrop-blur-xl border border-border/40 rounded-2xl hover:bg-white/5 transition-colors shadow-sm shrink-0"
+          className="flex items-center justify-center h-10 md:h-12 px-4 bg-background/40 backdrop-blur-xl border border-border/40 rounded-xl hover:bg-white/5 transition-colors shadow-sm shrink-0"
         >
           <span className="font-bold text-lg md:text-xl tracking-widest text-foreground">NODES</span>
         </Link>
 
         {/* Center Island: Primary Navigation */}
-        <nav className="hidden md:flex items-center p-1 bg-background/40 backdrop-blur-xl border border-border/40 rounded-full shadow-sm text-foreground gap-2">
+        <nav className="hidden md:flex items-center p-1 bg-background/40 backdrop-blur-xl border border-border/40 rounded-2xl shadow-sm text-foreground gap-2">
           {NAV_ITEMS.map((item) => {
             const isActive = location.pathname === item.href || (item.href === '/' && location.pathname === '/nodes');
 
@@ -42,7 +42,7 @@ export function FloatingNavbar() {
                 key={item.href}
                 to={item.href}
                 className={cn(
-                  'relative group flex items-center justify-center px-4 h-10 rounded-full transition-colors duration-300',
+                  'relative group flex items-center justify-center px-4 h-10 rounded-xl transition-colors duration-300',
                   isActive
                     ? 'text-primary-foreground font-medium hover:-translate-y-0.5 transition-all duration-500'
                     : 'text-muted-foreground hover:bg-muted-foreground/20 hover:text-foreground'
@@ -51,7 +51,7 @@ export function FloatingNavbar() {
                 {isActive && (
                   <motion.div
                     layoutId="navbar-active"
-                    className="absolute inset-0 bg-primary/90 border border-primary/30 rounded-full shadow-md"
+                    className="absolute inset-0 bg-primary/90 border border-primary/30 rounded-xl shadow-md"
                     transition={{ type: 'spring', stiffness: 300, damping: 20, mass: 0.8 }}
                     style={{ zIndex: 0 }}
                   />
@@ -66,12 +66,11 @@ export function FloatingNavbar() {
         </nav>
 
         {/* Right Island: Theme & Profile */}
-        <div className="flex items-center justify-center bg-background/40 backdrop-blur-xl border border-border/40 rounded-full p-1 shadow-sm h-10 md:h-12 px-2 gap-2 shrink-0">
-          <ThemeToggle />
+        <div className="flex items-center justify-center bg-background/40 backdrop-blur-xl border border-border/40 rounded-2xl p-1 shadow-sm h-10 md:h-12 px-2 gap-2 shrink-0">
           <Link
             to="/profile"
             className={cn(
-              "w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300",
+              "w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-all duration-300",
               location.pathname === '/profile'
                 ? "bg-primary text-primary-foreground shadow-md"
                 : "text-muted-foreground hover:bg-muted-foreground/20 hover:text-foreground"

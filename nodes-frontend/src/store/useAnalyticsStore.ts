@@ -52,6 +52,10 @@ export const useAnalyticsStore = create<AnalyticsState>((set) => ({
 
   // --- Fetch ---
   fetchData: async (days) => {
+    // Если уже грузим — не запрашиваем повторно
+    const state = useAnalyticsStore.getState();
+    if (state.isLoading) return;
+
     // Мы всегда запрашиваем максимум (365), чтобы переключение было мгновенным
     // и чтобы тепловая карта всегда была полной.
     const targetDays = days || 365; 

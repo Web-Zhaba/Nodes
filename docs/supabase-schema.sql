@@ -13,10 +13,11 @@ CREATE TYPE node_type AS ENUM ('binary', 'quantity', 'duration');
 -- PROFILES (расширение auth.users от Supabase)
 -- ------------------------------------------------------------
 CREATE TABLE public.profiles (
-  id          uuid NOT NULL,
-  email       text,
-  created_at  timestamp with time zone DEFAULT now(),
-  updated_at  timestamp with time zone DEFAULT now(),
+  id           uuid NOT NULL,
+  email        text,
+  theme_config jsonb DEFAULT '{}'::jsonb,
+  created_at   timestamp with time zone DEFAULT now(),
+  updated_at   timestamp with time zone DEFAULT now(),
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );

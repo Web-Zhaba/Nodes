@@ -161,19 +161,12 @@ export function StabilityHeroChart() {
                     stroke={color}
                     strokeWidth={isFocused || (hoveredNodeId === node.id) ? 3 : 2}
                     strokeOpacity={isDimmed ? 0.15 : 1}
-                    dot={{ 
-                      r: isFocused ? 4 : 3, 
-                      fill: color, 
-                      fillOpacity: isDimmed ? 0.15 : 1, 
-                      strokeOpacity: isDimmed ? 0.15 : 1 
-                    }}
+                    dot={false}
                     activeDot={{ 
                       r: 6, 
                       strokeWidth: 0,
                       fill: color,
                       onClick: (e: any) => {
-                        // Recharts может передавать (event, payload). 
-                        // Если e - событие, то вызываем stopPropagation
                         if (e && e.stopPropagation) {
                           e.stopPropagation();
                         }

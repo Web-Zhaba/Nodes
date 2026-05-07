@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useShallow } from 'zustand/shallow';
 import { useAnalyticsStore } from '@/store/useAnalyticsStore';
 
 /**
@@ -25,8 +26,76 @@ function computeLevel(count: number, maxCount: number): number {
   return 4;
 }
 
+/**
+ * Агрегирует данные по неделям для уменьшения количества точек на графике.
+ * Вместо 365 точек за год — 52 (одна в неделю, среднее за 7 дней).
+ * Это критично для производительности Recharts.
+ */
+function aggregateByWeek(
+  dateMap: Map<string, Record<string, number>>,
+  sortedDates: string[]
+): StabilityChartRow[] {
+  if (sortedDates.length === 0) return [];
+
+  const result: StabilityChartRow[] = [];
+  let weekBucket: Record<string, number[]> = {};
+  let weekDayCount = 0;
+
+  const flush = (endDate: string) => {
+    if (Object.keys(weekBucket).length > 0) {
+      const [, m, d] = endDate.split('-');
+      const row: StabilityChartRow = { date: `${d}.${m}` };
+      for (const nodeId in weekBucket) {
+        const vals = weekBucket[nodeId];
+        row[nodeId] = parseFloat((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1));
+      }
+      result.push(row);
+    }
+    weekBucket = {};
+    weekDayCount = 0;
+  };
+
+  for (const date of sortedDates) {
+    const values = dateMap.get(date)!;
+    for (const nodeId in values) {
+      if (!weekBucket[nodeId]) weekBucket[nodeId] = [];
+      weekBucket[nodeId].push(values[nodeId]);
+    }
+    weekDayCount++;
+    if (weekDayCount >= 7) {
+      flush(date);
+    }
+  }
+  // Сбрасываем остаток последней неполной недели
+  if (weekDayCount > 0 && sortedDates.length > 0) {
+    flush(sortedDates[sortedDates.length - 1]);
+  }
+
+  return result;
+}
+
 export function useProcessedAnalytics() {
-  const { rawStabilitySeries, rawHeatmap, selectedDays, focusEntity } = useAnalyticsStore();
+  // useShallow — оптимальный способ получить несколько полей из Zustand:
+  // компонент ре-рендерится только если изменилось хотя бы одно из этих полей,
+  // а не при любом изменении стора. При этом сохраняется ровно 1 хук-вызов.
+  const {
+    rawStabilitySeries,
+    rawHeatmap,
+    selectedDays,
+    focusEntityId,
+    focusEntityType,
+  } = useAnalyticsStore(
+    useShallow(s => ({
+      rawStabilitySeries: s.rawStabilitySeries,
+      rawHeatmap: s.rawHeatmap,
+      selectedDays: s.selectedDays,
+      // Берём только примитивы из focusEntity, а не весь объект.
+      // Это предотвращает ложные инвалидации useMemo: если id/type не изменились,
+      // мемо остаётся в кеше, даже если ссылка на объект focusEntity обновилась.
+      focusEntityId: s.focusEntity?.id ?? null,
+      focusEntityType: s.focusEntity?.type ?? null,
+    }))
+  );
 
   const chartData = useMemo(() => {
     if (!rawStabilitySeries || rawStabilitySeries.length === 0) return [];
@@ -49,9 +118,15 @@ export function useProcessedAnalytics() {
       row[item.node_id] = item.stability_score;
     }
 
-    // Собираем массив для Recharts, предварительно отсортировав ключи
     const sortedDates = Array.from(dateMap.keys()).sort();
-    
+
+    // Для годового вида (90+ дней) агрегируем по неделям:
+    // 365 точек → 52 точки — нагрузка на Recharts снижается в ~7 раз
+    if (selectedDays >= 90) {
+      return aggregateByWeek(dateMap, sortedDates);
+    }
+
+    // Для коротких периодов — ежедневные данные
     const result: StabilityChartRow[] = [];
     for (const date of sortedDates) {
       const values = dateMap.get(date)!;
@@ -68,12 +143,11 @@ export function useProcessedAnalytics() {
   const heatmapData = useMemo(() => {
     let sourceData: { date: string; count: number; stability?: number }[];
 
-    if (focusEntity?.type === 'node' && rawStabilitySeries.length > 0) {
+    if (focusEntityType === 'node' && focusEntityId && rawStabilitySeries.length > 0) {
       // Группируем по дате только для выбранного узла
-      const focusNodeId = focusEntity.id;
       const dateMap = new Map<string, { count: number; stability: number }>();
       for (const item of rawStabilitySeries) {
-        if (item.node_id !== focusNodeId) continue;
+        if (item.node_id !== focusEntityId) continue;
         dateMap.set(item.date, { 
           count: (item.pulse_count || 0), 
           stability: item.stability_score 
@@ -96,7 +170,7 @@ export function useProcessedAnalytics() {
       level: computeLevel(d.count, maxCount),
       stability: d.stability,
     }));
-  }, [rawHeatmap, rawStabilitySeries, focusEntity]);
+  }, [rawHeatmap, rawStabilitySeries, focusEntityId, focusEntityType]);
 
   return { chartData, heatmapData };
 }

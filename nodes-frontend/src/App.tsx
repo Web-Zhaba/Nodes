@@ -8,8 +8,9 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import NodesListPage from "@/pages/NodesListPage";
+import { useThemeStore } from "@/store/useThemeStore";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -51,6 +52,12 @@ function AuthRedirect() {
 }
 
 function App() {
+  const applyTheme = useThemeStore((state) => state.applyTheme);
+
+  useEffect(() => {
+    applyTheme();
+  }, [applyTheme]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>

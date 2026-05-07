@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { supabase } from '@/lib/supabase'
+import { authService } from '@/services/auth.service'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -38,10 +38,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true)
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      })
+      const { error } = await authService.signInWithPassword(data.email, data.password)
 
       if (error) {
         throw error

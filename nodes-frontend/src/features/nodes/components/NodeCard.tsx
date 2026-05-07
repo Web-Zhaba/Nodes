@@ -70,7 +70,7 @@ export const NodeCard = memo(function NodeCard({
           )}
           style={isEffectivelyCompleted && !isOverdrive ? {
             borderColor: `${node.color}40`,
-            boxShadow: `inset 0 0 20px ${node.color}10`
+            boxShadow: `inset 0 0 calc(20px * var(--glow-strength, 1)) ${node.color}10, 0 0 calc(15px * var(--glow-strength, 1)) ${node.color}15`
           } : {}}
         >
           {/* Внутреннее мягкое свечение (Inner Radiance) - перенесено внутрь для clipping */}

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { supabase } from '@/lib/supabase'
+import { authService } from '@/services/auth.service'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -45,13 +45,11 @@ export default function SignupPage() {
   const onSubmit = async (data: SignupForm) => {
     setIsLoading(true)
     try {
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
+      const { error } = await authService.signUp(
+        data.email, 
+        data.password, 
+        `${window.location.origin}/auth/callback`
+      )
 
       if (error) {
         throw error

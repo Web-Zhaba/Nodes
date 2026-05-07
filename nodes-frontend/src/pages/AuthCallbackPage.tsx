@@ -4,11 +4,16 @@ import { supabase } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate()
-  const [status, setStatus] = useState<'loading' | 'error' | 'success'>('loading')
+  const [status, setStatus] = useState<'loading' | 'error' | 'success' | 'recovery'>('loading')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [isUpdating, setIsUpdating] = useState(false)
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -51,6 +56,15 @@ export default function AuthCallbackPage() {
       }
 
       if (session) {
+        // Check if this was a password recovery request
+        const isRecovery = params.get('type') === 'recovery' || new URLSearchParams(hash.substring(1)).get('type') === 'recovery'
+        
+        if (isRecovery) {
+          setStatus('recovery')
+          toast.info('Пожалуйста, введите новый пароль')
+          return
+        }
+
         setStatus('success')
         toast.success('Данные синхронизированы. Добро пожаловать в сеть Nodes.')
         setTimeout(() => {
@@ -75,6 +89,34 @@ export default function AuthCallbackPage() {
     handleAuthCallback()
   }, [navigate])
 
+  const handleUpdatePassword = async () => {
+    if (newPassword.length < 6) {
+      toast.error('Пароль должен быть не менее 6 символов')
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error('Пароли не совпадают')
+      return
+    }
+
+    setIsUpdating(true)
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword })
+      if (error) throw error
+      
+      toast.success('Пароль успешно обновлен!')
+      setStatus('success')
+      setTimeout(() => {
+        navigate('/')
+      }, 2000)
+    } catch (error: any) {
+      toast.error(error.message || 'Ошибка при обновлении пароля')
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -87,16 +129,19 @@ export default function AuthCallbackPage() {
             {status === 'loading' && <Loader2 className="w-8 h-8 text-primary animate-spin" />}
             {status === 'success' && <div className="w-4 h-4 bg-primary rounded-full animate-ping" />}
             {status === 'error' && <div className="text-destructive text-2xl font-bold">!</div>}
+            {status === 'recovery' && <div className="w-4 h-4 bg-yellow-500 rounded-full animate-pulse" />}
           </div>
           <CardTitle className="text-2xl tracking-tight">
             {status === 'loading' && 'Синхронизация узла...'}
             {status === 'success' && 'Соединение установлено'}
             {status === 'error' && 'Ошибка подключения'}
+            {status === 'recovery' && 'Сброс пароля'}
           </CardTitle>
           <CardDescription className="mt-2 text-muted-foreground/80">
             {status === 'loading' && 'Устанавливаем безопасный канал связи с вашей нейронной сетью...'}
             {status === 'success' && 'Ваша личность подтверждена. Перенаправляем в интерфейс управления.'}
             {status === 'error' && (errorMessage || 'Не удалось подтвердить email. Ссылка могла устареть.')}
+            {status === 'recovery' && 'Придумайте новый ключ доступа для вашей системы.'}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -111,6 +156,36 @@ export default function AuthCallbackPage() {
           {status === 'loading' && (
             <div className="w-full h-1 bg-muted overflow-hidden rounded-full">
               <div className="h-full bg-primary animate-progress-flow" />
+            </div>
+          )}
+          {status === 'recovery' && (
+            <div className="space-y-4 w-full">
+              <div className="space-y-2">
+                <Input
+                  type="password"
+                  placeholder="Новый пароль (мин. 6 символов)"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  disabled={isUpdating}
+                  className="rounded-xl w-full"
+                />
+                <Input
+                  type="password"
+                  placeholder="Подтвердите новый пароль"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isUpdating}
+                  className="rounded-xl w-full"
+                />
+              </div>
+              <Button 
+                onClick={handleUpdatePassword}
+                disabled={isUpdating}
+                className="w-full rounded-xl"
+              >
+                {isUpdating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                Сохранить новый пароль
+              </Button>
             </div>
           )}
         </CardContent>

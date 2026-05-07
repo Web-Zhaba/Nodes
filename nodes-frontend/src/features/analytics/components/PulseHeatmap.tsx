@@ -15,15 +15,18 @@ export function PulseHeatmap() {
           <div className="flex flex-col justify-between py-1 pr-2 opacity-30 text-[11px]">
             <div /><div>Пн</div><div /><div>Ср</div><div /><div>Пт</div><div />
           </div>
-          {/* Grid skeleton */}
-          <div className="grid grid-rows-7 grid-flow-col gap-[3px] flex-1 opacity-20">
-            {Array.from({ length: 53 * 7 }).map((_, i) => (
-              <div 
-                key={i} 
-                className="w-full pb-[100%] bg-muted-foreground/30 rounded-[2px] animate-pulse" 
-                style={{ animationDelay: `${(i % 53) * 10}ms` }} 
-              />
-            ))}
+          {/* Grid skeleton: One div instead of 371, using CSS pattern */}
+          <div className="flex-1 min-h-[110px] bg-muted/10 rounded-md animate-pulse overflow-hidden relative">
+            <div 
+              className="absolute inset-0 opacity-20" 
+              style={{
+                backgroundImage: `
+                  linear-gradient(to right, currentColor 1px, transparent 1px),
+                  linear-gradient(to bottom, currentColor 1px, transparent 1px)
+                `,
+                backgroundSize: 'calc(100% / 53) calc(100% / 7)'
+              }}
+            />
           </div>
         </div>
       </div>

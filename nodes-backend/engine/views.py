@@ -11,6 +11,7 @@ import json
 from datetime import timedelta
 from django.utils import timezone
 from rest_framework.decorators import api_view
+from django.core.cache import cache
 from .models import Impulse, Node
 
 logger = logging.getLogger(__name__)
@@ -98,6 +99,15 @@ class ImpulseActionView(APIView):
                     status=404
                 )
 
+            # Инвалидируем кэш аналитики пользователя
+            cache_key = f"analytics_history_{user_id}_*"
+            # В Django нельзя удалять по маске напрямую в дефолтном кэше (LocMem/Redis), 
+            # но мы знаем, что обычно запрашивают 365 дней.
+            cache.delete(f"analytics_history_{user_id}_365")
+            cache.delete(f"analytics_history_{user_id}_30")
+            cache.delete(f"analytics_history_{user_id}_90")
+            cache.delete(f"analytics_history_{user_id}_7")
+
             response = Response({
                 "status": "success",
                 "node_id": result.get('node_id'),
@@ -116,7 +126,18 @@ def get_analytics_history(request):
     try:
         start_time = time.perf_counter()
         user = request.user
-        days = min(int(request.query_params.get('days', 365)), 730)  # макс 2 года
+        days = min(int(request.query_params.get('days', 365)), 730)
+        
+        # 0. Проверка кэша
+        cache_key = f"analytics_history_{user.id}_{days}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            runtime_ms = (time.perf_counter() - start_time) * 1000
+            logger.info(f"[CACHE HIT] Analytics for user {user.id} returned in {runtime_ms:.2f}ms")
+            cached_data['debug']['runtime_ms'] = round(runtime_ms, 2)
+            cached_data['debug']['cached'] = True
+            return Response(cached_data)
+
         limit_date = (timezone.now() - timedelta(days=days)).date()
 
         user_nodes = Node.objects.filter(user=user).values('id', 'name', 'color', 'target_value')
@@ -127,10 +148,12 @@ def get_analytics_history(request):
 
         from engine.services import DECAY_RATE_PER_DAY, calculate_pulse_impact, MAX_STABILITY
         
+        # Константа затухания для одного дня
+        DECAY_FACTOR = (1 - DECAY_RATE_PER_DAY)
+        
         # --- 2. Симуляция исторической стабильности по дням ---
         today = timezone.now().date()
         
-        # Вытягиваем сырые словари вместо ORM объектов (ускорение в ~5-10 раз, экономия памяти)
         all_impulses = Impulse.objects.filter(node__user=user).values(
             'node_id', 'completed_at', 'value'
         ).order_by('completed_at')
@@ -148,43 +171,41 @@ def get_analytics_history(request):
             
             current_stability = 0.0
             
-            # 1. Считаем начальную стабильность до limit_date
+            # Предварительная фильтрация импульсов до и после лимита
             pre_limit = [i for i in imps if i['completed_at'] < limit_date]
             post_limit_dict = {}
-            for i in [i for i in imps if i['completed_at'] >= limit_date]:
-                post_limit_dict.setdefault(i['completed_at'], []).append(i)
+            for i in imps:
+                if i['completed_at'] >= limit_date:
+                    post_limit_dict.setdefault(i['completed_at'], []).append(i)
                 
             if pre_limit:
                 last_date = pre_limit[0]['completed_at']
                 for p in pre_limit:
                     days_passed = (p['completed_at'] - last_date).days
                     if days_passed > 0:
-                        current_stability *= (1 - DECAY_RATE_PER_DAY) ** days_passed
+                        current_stability *= (DECAY_FACTOR ** days_passed)
                     current_stability += calculate_pulse_impact(p['value'], t_val)
                     if current_stability > MAX_STABILITY: current_stability = MAX_STABILITY
                     last_date = p['completed_at']
                     
-                # Охлаждение от последнего импульса до limit_date
                 days_passed = (limit_date - last_date).days
                 if days_passed > 0:
-                    current_stability *= (1 - DECAY_RATE_PER_DAY) ** days_passed
+                    current_stability *= (DECAY_FACTOR ** days_passed)
             
-            # 2. Фиксируем стабильность для каждого дня в периоде графика
-            last_date = limit_date
+            # Основной цикл по дням (оптимизирован)
             for day_offset in range((today - limit_date).days + 1):
                 current_day = limit_date + timedelta(days=day_offset)
                 
-                days_passed = (current_day - last_date).days
-                if days_passed > 0:
-                    current_stability *= (1 - DECAY_RATE_PER_DAY) ** days_passed
+                # Мы идем по дням шагом в 1 день, поэтому просто умножаем на DECAY_FACTOR
+                # Пропускаем умножение только для самого первого дня (limit_date)
+                if current_day > limit_date:
+                    current_stability *= DECAY_FACTOR
                     
                 day_imps = post_limit_dict.get(current_day, [])
                 for p in day_imps:
                     current_stability += calculate_pulse_impact(p['value'], t_val)
                     if current_stability > MAX_STABILITY: current_stability = MAX_STABILITY
                     
-                last_date = current_day
-                
                 stability_series.append({
                     'date': str(current_day),
                     'node_id': str(n_id),
@@ -192,7 +213,6 @@ def get_analytics_history(request):
                     'pulse_count': len(day_imps),
                 })
 
-        # --- 3. Группировка импульсов по дню (суммарно) ---
         daily_totals = (
             Impulse.objects
             .filter(node__user=user, completed_at__gte=limit_date)
@@ -210,15 +230,20 @@ def get_analytics_history(request):
         ]
         
         runtime_ms = (time.perf_counter() - start_time) * 1000
-        logger.info(f"Analytics generated in {runtime_ms:.2f}ms")
-
-        return Response({
+        logger.info(f"[PERF] Analytics GENERATED in {runtime_ms:.2f}ms for user {user.id}")
+        
+        response_data = {
             'status': 'ok',
             'nodes': nodes_list,
             'stability_series': stability_series,
             'heatmap': heatmap,
-            'debug': {'runtime_ms': round(runtime_ms, 2)}
-        })
+            'debug': {'runtime_ms': round(runtime_ms, 2), 'cached': False}
+        }
+
+        # Сохраняем в кэш на 5 минут
+        cache.set(cache_key, response_data, 60 * 5)
+
+        return Response(response_data)
     except Exception as e:
         import traceback
         return Response({"status": "error", "message": str(e), "traceback": traceback.format_exc()}, status=500)
