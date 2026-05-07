@@ -3,7 +3,6 @@ import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { Home, Share2, BarChart3, User } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface NavItem {
   icon: React.ElementType;

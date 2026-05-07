@@ -23,14 +23,6 @@ interface ThemeState {
   loadFromCloud: (userId: string) => Promise<void>;
 }
 
-const DEFAULT_CONFIG: ThemeConfig = {
-  mode: "light",
-  colors: {
-    light: {},
-    dark: {},
-  },
-};
-
 // Variable to store the timeout ID for debouncing
 let syncTimeoutId: ReturnType<typeof setTimeout> | null = null;
 

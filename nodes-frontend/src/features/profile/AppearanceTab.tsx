@@ -179,7 +179,7 @@ export function AppearanceTab() {
                   key={preset.name}
                   variant={isSelected ? "default" : "outline"}
                   onClick={() => {
-                    applyPalette(preset.light, preset.dark);
+                    applyPalette(preset.light as Record<string, string>, preset.dark as Record<string, string>);
                     toast.success(`Применена палитра: ${preset.name}`);
                   }}
                   className="rounded-xl text-xs"

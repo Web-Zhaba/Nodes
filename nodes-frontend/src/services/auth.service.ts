@@ -1,12 +1,13 @@
 import { supabase } from "@/lib/supabase";
-import { User, Session } from "@supabase/supabase-js";
+import type { Session } from "@supabase/supabase-js";
 
 export const authService = {
   /**
    * Получение текущей сессии
    */
   async getSession(): Promise<{ session: Session | null, error: any }> {
-    return await supabase.auth.getSession();
+    const { data, error } = await supabase.auth.getSession();
+    return { session: data?.session ?? null, error };
   },
 
   /**
