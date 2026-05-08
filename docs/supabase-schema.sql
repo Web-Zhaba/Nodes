@@ -13,11 +13,17 @@ CREATE TYPE node_type AS ENUM ('binary', 'quantity', 'duration');
 -- PROFILES (расширение auth.users от Supabase)
 -- ------------------------------------------------------------
 CREATE TABLE public.profiles (
-  id           uuid NOT NULL,
-  email        text,
-  theme_config jsonb DEFAULT '{}'::jsonb,
-  created_at   timestamp with time zone DEFAULT now(),
-  updated_at   timestamp with time zone DEFAULT now(),
+  id                uuid NOT NULL,
+  email             text,
+  display_name      text,
+  daily_reset_time  text DEFAULT '00:00',
+  first_day_of_week integer DEFAULT 1,
+  language          text DEFAULT 'ru',
+  show_greeting     boolean DEFAULT true,
+  custom_greeting   text DEFAULT 'Привет, {name}',
+  theme_config      jsonb DEFAULT '{}'::jsonb,
+  created_at        timestamp with time zone DEFAULT now(),
+  updated_at        timestamp with time zone DEFAULT now(),
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
@@ -36,8 +42,8 @@ CREATE POLICY "Users can update own profile"
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email)
-  VALUES (new.id, new.email);
+  INSERT INTO public.profiles (id, email, display_name)
+  VALUES (new.id, new.email, split_part(new.email, '@', 1));
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

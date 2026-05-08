@@ -3,19 +3,30 @@ import { ru } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 
 interface WeekCalendarProps {
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   className?: string;
 }
 
-export function WeekCalendar({ selectedDate, onSelectDate, className }: WeekCalendarProps) {
+export function WeekCalendar({ 
+  selectedDate, 
+  onSelectDate, 
+  weekStartsOn = 1, 
+  className 
+}: WeekCalendarProps) {
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
-    startOfWeek(selectedDate, { weekStartsOn: 1 })
+    startOfWeek(selectedDate, { weekStartsOn })
   );
+
+  // Обновляем начало недели при изменении настроек профиля
+  useEffect(() => {
+    setCurrentWeekStart(startOfWeek(selectedDate, { weekStartsOn }));
+  }, [weekStartsOn, selectedDate]);
 
   const days = Array.from({ length: 7 }).map((_, i) => addDays(currentWeekStart, i));
   const today = startOfDay(new Date());
@@ -24,7 +35,7 @@ export function WeekCalendar({ selectedDate, onSelectDate, className }: WeekCale
   const handleNextWeek = () => setCurrentWeekStart(addDays(currentWeekStart, 7));
   const handleJumpToToday = () => {
     onSelectDate(today);
-    setCurrentWeekStart(startOfWeek(today, { weekStartsOn: 1 }));
+    setCurrentWeekStart(startOfWeek(today, { weekStartsOn }));
   };
 
   return (

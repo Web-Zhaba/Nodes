@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { authService } from "@/services/auth.service";
 import { Button } from "@/components/ui/button";
-import { Globe } from "lucide-react";
+import { Globe, Github, Chrome, Link2, Unlink2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+import { cn } from "@/lib/utils";
 
 export function SecurityTab() {
   const { user } = useAuth();
@@ -83,6 +85,69 @@ export function SecurityTab() {
           </Button>
         </div>
         
+        {/* Connected Accounts Section */}
+        <div className="p-4 rounded-2xl border border-border/40 bg-muted/10 space-y-4">
+          <div>
+            <h3 className="font-bold">Связанные аккаунты</h3>
+            <p className="text-xs text-muted-foreground">Дополнительные способы входа в систему</p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { id: 'google', name: 'Google', icon: Chrome, color: 'text-orange-500' },
+              { id: 'github', name: 'GitHub', icon: Github, color: 'text-foreground' }
+            ].map((provider) => {
+              const identity = user?.identities?.find(i => i.provider === provider.id);
+              const isLinked = !!identity;
+
+              return (
+                <div key={provider.id} className="flex items-center justify-between p-3 bg-background rounded-xl border border-border/50">
+                  <div className="flex items-center gap-3">
+                    <provider.icon className={cn("w-5 h-5", provider.color)} />
+                    <div>
+                      <p className="text-sm font-bold">{provider.name}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {isLinked ? 'Подключено' : 'Не подключено'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {isLinked ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 text-[10px] text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                      onClick={async () => {
+                        if (!identity) return;
+                        const { error } = await supabase.auth.unlinkIdentity(identity);
+                        if (error) {
+                          toast.error("Ошибка при отвязке: " + error.message);
+                        } else {
+                          toast.success(`${provider.name} отвязан`);
+                          window.location.reload(); // Reload to refresh identities
+                        }
+                      }}
+                    >
+                      <Unlink2 className="w-3 h-3 mr-1" />
+                      Отвязать
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 px-2 text-[10px] rounded-lg border-border/40"
+                      onClick={() => authService.signInWithOAuth(provider.id as any)}
+                    >
+                      <Link2 className="w-3 h-3 mr-1" />
+                      Привязать
+                    </Button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="p-4 rounded-2xl border border-border/40 bg-muted/10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
             <div>

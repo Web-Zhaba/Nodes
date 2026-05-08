@@ -14,6 +14,7 @@ export interface ThemeConfig {
 
 interface ThemeState {
   config: ThemeConfig;
+  isInitialized: boolean;
   setMode: (mode: ThemeMode) => void;
   setColor: (token: string, value: string | null, mode?: ThemeMode) => void;
   applyTheme: () => void;
@@ -33,8 +34,12 @@ export const useThemeStore = create<ThemeState>()(
         mode: (localStorage.getItem("theme") as ThemeMode) || "light",
         colors: { light: {}, dark: {} },
       },
+      isInitialized: false,
       setMode: (mode) => {
-        set((state) => ({ config: { ...state.config, mode } }));
+        set((state) => ({ 
+          isInitialized: true,
+          config: { ...state.config, mode } 
+        }));
         get().applyTheme();
         get().syncToCloud();
       },
@@ -50,6 +55,7 @@ export const useThemeStore = create<ThemeState>()(
           }
 
           return {
+            isInitialized: true,
             config: {
               ...state.config,
               colors: {
@@ -64,6 +70,7 @@ export const useThemeStore = create<ThemeState>()(
       },
       applyPalette: (lightColors, darkColors) => {
         set((state) => ({
+          isInitialized: true,
           config: {
             ...state.config,
             colors: { light: lightColors, dark: darkColors }
@@ -133,20 +140,28 @@ export const useThemeStore = create<ThemeState>()(
         }, 1000);
       },
       loadFromCloud: async (userId: string) => {
+        if (get().isInitialized) return;
+        
         const { data, error } = await supabase
           .from("profiles")
           .select("theme_config")
           .eq("id", userId)
           .single();
           
-        if (error || !data?.theme_config) return;
+        if (error || !data?.theme_config) {
+          set({ isInitialized: true });
+          return;
+        }
         
         const cloudConfig = data.theme_config as Partial<ThemeConfig>;
         if (cloudConfig.colors) {
            set((state) => ({
+             isInitialized: true,
              config: { ...state.config, ...cloudConfig } as ThemeConfig
            }));
            get().applyTheme();
+        } else {
+          set({ isInitialized: true });
         }
       }
     }),

@@ -15,12 +15,15 @@ import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks
 import { startOfDay, format } from "date-fns";
 import { calculateStability } from "@/lib/api/stability";
 
+import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
+
 /**
  * Главная страница "Сегодня" (Focus Mode)
  */
 export default function NodesListPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { data: profile } = useProfileQuery(user?.id);
   
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
@@ -127,6 +130,13 @@ export default function NodesListPage() {
     [selectedDate]
   );
 
+  const greetingText = useMemo(() => {
+    if (profile?.show_greeting === false) return null;
+    const formatStr = profile?.custom_greeting || "Привет, {name}";
+    const name = profile?.display_name || "Оператор";
+    return formatStr.replace("{name}", name);
+  }, [profile]);
+
   // Автоматическое добавление дефолтных узлов для новых дней
   useEffect(() => {
     if (isLoading || isPastDate || focusNodeIds.length > 0 || !user?.id) return;
@@ -167,6 +177,11 @@ export default function NodesListPage() {
       <div className="space-y-6 relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
+            {greetingText && (
+              <p className="text-xs font-medium text-muted-foreground mb-1">
+                {greetingText}
+              </p>
+            )}
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/50">
               {isPastDate ? "Архив" : (selectedDate > startOfDay(new Date()) ? "План" : "Сегодня")}
             </h1>
@@ -198,6 +213,7 @@ export default function NodesListPage() {
         <WeekCalendar
           selectedDate={selectedDate}
           onSelectDate={setSelectedDate}
+          weekStartsOn={profile?.first_day_of_week as 0 | 1 | 2 | 3 | 4 | 5 | 6}
         />
 
         <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 flex items-start gap-3">

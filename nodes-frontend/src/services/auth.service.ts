@@ -65,5 +65,54 @@ export const authService = {
     const { data, error } = await supabase.rpc('get_active_sessions');
     if (error) return { data: [], error };
     return { data: data || [], error: null };
+  },
+
+  /**
+   * Вход через OAuth (Google, GitHub и т.д.)
+   */
+  async signInWithOAuth(provider: 'google' | 'github'): Promise<{ error: any }> {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    return { error };
+  },
+
+  /**
+   * Централизованная обработка callback после OAuth или сброса пароля
+   */
+  async handleAuthCallback() {
+    const hash = window.location.hash;
+    const params = new URLSearchParams(window.location.search);
+    
+    // 1. Проверка ошибок в URL
+    const errorFromUrl = params.get('error') || new URLSearchParams(hash.substring(1)).get('error');
+    if (errorFromUrl) {
+      const errorDescription = params.get('error_description') || new URLSearchParams(hash.substring(1)).get('error_description');
+      return { type: 'error', message: errorDescription || 'Ошибка аутентификации' };
+    }
+
+    // 2. Обработка кода авторизации
+    const code = params.get('code');
+    if (code) {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error) return { type: 'error', message: error.message };
+    }
+
+    // 3. Проверка сессии
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error) return { type: 'error', message: error.message };
+    
+    if (session) {
+      const isRecovery = params.get('type') === 'recovery' || new URLSearchParams(hash.substring(1)).get('type') === 'recovery';
+      return { 
+        type: isRecovery ? 'recovery' : 'success', 
+        session 
+      };
+    }
+
+    return { type: 'loading' };
   }
 };

@@ -115,3 +115,19 @@ export interface CoreConnector {
   connector_id: string;
   created_at: string;
 }
+/**
+ * Profile (Профиль) — расширенные данные пользователя
+ */
+export interface Profile {
+  id: string;
+  email: string;
+  display_name?: string;
+  daily_reset_time: string; // Формат 'HH:mm'
+  first_day_of_week: number; // 0 - Воскресенье, 1 - Понедельник
+  language: string; // 'ru', 'en', etc.
+  show_greeting: boolean;
+  custom_greeting: string;
+  theme_config?: any;
+  created_at: string;
+  updated_at: string;
+}

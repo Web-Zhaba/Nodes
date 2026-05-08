@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Github, Chrome, Loader2 } from 'lucide-react'
 
 const signupSchema = z
   .object({
@@ -62,6 +63,17 @@ export default function SignupPage() {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Ошибка регистрации')
     } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSocialLogin = async (provider: 'google' | 'github') => {
+    setIsLoading(true)
+    try {
+      const { error } = await authService.signInWithOAuth(provider)
+      if (error) throw error
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Ошибка входа через соцсеть')
       setIsLoading(false)
     }
   }
@@ -128,10 +140,49 @@ export default function SignupPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
+            <Button type="submit" className="w-full rounded-xl" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Регистрация...
+                </>
+              ) : (
+                'Зарегистрироваться'
+              )}
             </Button>
           </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/50"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground font-medium tracking-widest">
+                или продолжить через
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              variant="outline"
+              className="rounded-xl border-border/40 hover:bg-muted/50"
+              onClick={() => handleSocialLogin('google')}
+              disabled={isLoading}
+            >
+              <Chrome className="w-4 h-4 mr-2 text-orange-500" />
+              Google
+            </Button>
+            <Button
+              variant="outline"
+              className="rounded-xl border-border/40 hover:bg-muted/50"
+              onClick={() => handleSocialLogin('github')}
+              disabled={isLoading}
+            >
+              <Github className="w-4 h-4 mr-2" />
+              GitHub
+            </Button>
+          </div>
 
           <div className="mt-4 text-center text-sm">
             <Link to="/login" className="text-primary hover:underline">

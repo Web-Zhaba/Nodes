@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { authService } from '@/services/auth.service'
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate()
@@ -16,78 +17,41 @@ export default function AuthCallbackPage() {
   const [isUpdating, setIsUpdating] = useState(false)
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      // Supabase автоматически обрабатывает хеш с токенами при загрузке страницы,
-      // если библиотека инициализирована.
+    const handleAuth = async () => {
+      const result = await authService.handleAuthCallback();
 
-      // 1. Проверяем наличие ошибок в URL (например, expired link)
-      const hash = window.location.hash
-      const params = new URLSearchParams(window.location.search)
-      const errorFromUrl = params.get('error') || new URLSearchParams(hash.substring(1)).get('error')
-
-      if (errorFromUrl) {
-        const errorDescription = params.get('error_description') || new URLSearchParams(hash.substring(1)).get('error_description')
-        setErrorMessage(errorDescription || 'Ошибка аутентификации')
-        setStatus('error')
-        toast.error('Ошибка подтверждения: ' + errorDescription)
-        return
+      if (result.type === 'error') {
+        setErrorMessage(result.message || 'Произошла ошибка');
+        setStatus('error');
+        toast.error('Ошибка: ' + result.message);
+        return;
       }
 
-      // 2. Обработка ?code=...
-      const code = params.get('code')
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
-        if (error) {
-          setErrorMessage(error.message)
-          setStatus('error')
-          toast.error('Ошибка обмена кода: ' + error.message)
-          return
-        }
+      if (result.type === 'recovery') {
+        setStatus('recovery');
+        toast.info('Пожалуйста, введите новый пароль');
+        return;
       }
 
-      // 3. Получаем сессию (она могла установиться автоматически из хеша или через exchangeCodeForSession)
-      const { data: { session }, error } = await supabase.auth.getSession()
-
-      if (error) {
-        setErrorMessage(error.message)
-        setStatus('error')
-        toast.error('Ошибка сессии: ' + error.message)
-        return
+      if (result.type === 'success') {
+        setStatus('success');
+        toast.success('Данные синхронизированы. Добро пожаловать.');
+        setTimeout(() => navigate('/'), 2000);
+        return;
       }
 
-      if (session) {
-        // Check if this was a password recovery request
-        const isRecovery = params.get('type') === 'recovery' || new URLSearchParams(hash.substring(1)).get('type') === 'recovery'
-        
-        if (isRecovery) {
-          setStatus('recovery')
-          toast.info('Пожалуйста, введите новый пароль')
-          return
-        }
-
-        setStatus('success')
-        toast.success('Данные синхронизированы. Добро пожаловать в сеть Nodes.')
-        setTimeout(() => {
-          navigate('/')
-        }, 2000)
-      } else {
-        // Если сессии нет, возможно это просто переход на страницу без данных
-        // Или Supabase еще обрабатывает. Дадим время.
-        setTimeout(async () => {
-          const { data: { session: secondTry } } = await supabase.auth.getSession()
-          if (secondTry) {
-            setStatus('success')
-            navigate('/')
-          } else {
-            setErrorMessage('Сессия не найдена. Попробуйте войти еще раз.')
-            setStatus('error')
-          }
-        }, 1500)
+      if (result.type === 'loading') {
+        // Если через 3 секунды всё еще loading, значит что-то пошло не так
+        const timer = setTimeout(() => {
+          setStatus('error');
+          setErrorMessage('Время ожидания истекло. Попробуйте войти снова.');
+        }, 3000);
+        return () => clearTimeout(timer);
       }
-    }
+    };
 
-    handleAuthCallback()
-  }, [navigate])
+    handleAuth();
+  }, [navigate]);
 
   const handleUpdatePassword = async () => {
     if (newPassword.length < 6) {

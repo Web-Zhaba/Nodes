@@ -251,11 +251,26 @@ export default function GraphPage() {
 
   return (
     <div className={cn(
-      "w-full flex flex-col md:flex-row relative gap-4 p-2 md:p-4",
-      "h-[calc(100vh-11rem)] md:h-[calc(100vh-9rem)]" // Вычитаем высоту хедера, навбара и отступов
+      "w-full max-w-7xl mx-auto flex flex-col relative gap-4 p-4",
+      "h-[calc(100vh-6rem)] md:h-[calc(100vh-4rem)] pb-24 md:pb-4"
     )}>
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+        <div>
+          <p className="text-xs font-medium text-muted-foreground mb-1">
+            Визуализация
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/50">
+            Орбита
+          </h1>
+          <p className="text-xs sm:text-sm font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1 opacity-80 text-primary">
+            <Sparkles className="w-3.5 h-3.5" />
+            Нейронная сеть
+          </p>
+        </div>
+      </header>
+
       {/* Левая панель: Graph */}
-      <div className="mt-12 flex-1 rounded-[2rem] md:rounded-3xl border border-primary/10 overflow-hidden relative bg-background/50 backdrop-blur-sm shadow-inner">
+      <div className="flex-1 rounded-[2rem] md:rounded-3xl border border-primary/10 overflow-hidden relative bg-background/50 backdrop-blur-sm shadow-inner min-h-0">
         {graphData.nodes.length === 0 && !isLoading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center p-6">
             <Sparkles className="w-10 h-10 text-primary opacity-40" />

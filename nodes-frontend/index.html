@@ -11,6 +11,34 @@
   <link rel="preload" href="/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script>
+          (function() {
+            try {
+              const storage = localStorage.getItem('nodes-theme-storage');
+              let mode = 'dark';
+              let colors = null;
+              if (storage) {
+                const parsed = JSON.parse(storage);
+                mode = parsed.state?.config?.mode || 'dark';
+                colors = parsed.state?.config?.colors?.[mode];
+              }
+              const root = document.documentElement;
+              if (mode === 'dark') root.classList.add('dark');
+              else root.classList.remove('dark');
+              
+              const bgColor = colors?.['--background'] || (mode === 'dark' ? '#030303' : '#ffffff');
+              const fgColor = colors?.['--foreground'] || (mode === 'dark' ? '#ffffff' : '#000000');
+              
+              document.write('<style id="fouc-fix">html { background-color: ' + bgColor + ' !important; color: ' + fgColor + ' !important; }</style>');
+              
+              if (colors) {
+                Object.entries(colors).forEach(([token, value]) => {
+                  root.style.setProperty(token, value);
+                });
+              }
+            } catch (e) {}
+          })();
+        </script>
   <title>Nodes — Новый взгляд на формирование привычек</title>
 </head>
 

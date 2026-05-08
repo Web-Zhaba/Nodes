@@ -152,10 +152,10 @@ export function AppearanceTab() {
             <p className="text-sm text-muted-foreground">Настройте визуальный резонанс интерфейса.</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{isDark ? "Dark Mode" : "Light Mode"}</span>
             <Button variant="outline" size="icon" onClick={toggleTheme} className="rounded-xl shrink-0 h-10 w-10 shadow-sm">
-              {isDark ? <Sun className="w-4 h-4 text-orange-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
+              {isDark ? <Moon className="w-4 h-4 text-indigo-400" /> : <Sun className="w-4 h-4 text-orange-400" />}
             </Button>
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{isDark ? "Dark Mode" : "Light Mode"}</span>
           </div>
         </div>
       </section>
