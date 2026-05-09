@@ -5,6 +5,7 @@ import { Minus, Plus, Check } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import type { Node } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface QuantityControlProps {
   node: Node;
@@ -26,6 +27,7 @@ export function QuantityControl({
   const [localValue, setLocalValue] = useState<number | null>(null);
   const [hasSavedToday, setHasSavedToday] = useState(false);
   const [savedValue, setSavedValue] = useState<number | null>(null);
+  const { t } = useTranslation();
 
   // Используем локальное значение если оно есть, иначе значение из пропсов
   const displayValue = localValue ?? currentValue;
@@ -58,13 +60,15 @@ export function QuantityControl({
 
       if (valueToSubmit >= targetValue) {
         toast.success(
-          valueToSubmit > targetValue ? "Перевыполнение!" : "Цель достигнута!",
+          valueToSubmit > targetValue 
+            ? t("nodes.controls.quantity.overdriveReached", "Перевыполнение!") 
+            : t("nodes.controls.quantity.goalReached", "Цель достигнута!"),
           {
-            description: `${valueToSubmit}/${targetValue} — отлично!`,
+            description: `${valueToSubmit}/${targetValue} — ${t("nodes.controls.binary.keepGoing", "отлично!")}`,
           },
         );
       } else {
-        toast.success("Прогресс сохранён", {
+        toast.success(t("nodes.controls.quantity.progressSaved", "Прогресс сохранён"), {
           description: `${valueToSubmit}/${targetValue}`,
         });
       }
@@ -74,8 +78,8 @@ export function QuantityControl({
       setHasSavedToday(true);
       setSavedValue(valueToSubmit); // Фиксируем значение
     } catch (error) {
-      toast.error("Ошибка", {
-        description: "Не удалось сохранить прогресс",
+      toast.error(t("common.error"), {
+        description: t("nodes.controls.quantity.errorSaving", "Не удалось сохранить прогресс"),
       });
     } finally {
       setIsPending(false);
@@ -88,12 +92,23 @@ export function QuantityControl({
   const isChanged = displayValue !== recordedValue;
   const showSavedState = !isChanged && recordedValue > 0;
 
+  const getButtonText = () => {
+    if (showSavedState) return t("nodes.controls.quantity.saved", "Сохранено!");
+    if (recordedValue > 0) {
+      if (isOverdrive) return t("nodes.controls.quantity.overwriteOverdrive", "Перезаписать Overdrive!");
+      return t("nodes.controls.quantity.overwrite", "Перезаписать");
+    }
+    if (isOverdrive) return t("nodes.controls.quantity.saveOverdrive", "Сохранить Overdrive!");
+    if (isGoalReached) return t("nodes.controls.quantity.saveSuccess", "Сохранить успех!");
+    return t("nodes.controls.quantity.saveProgress", "Сохранить прогресс");
+  };
+
   return (
     <div className={cn("w-full", className)}>
       {/* Прогресс бар */}
       <div className="space-y-1 h-12.5 text-shadow-sm">
         <div className="flex items-center justify-between text-xs mb-1">
-          <span className="text-muted-foreground font-medium">Прогресс количества</span>
+          <span className="text-muted-foreground font-medium">{t("nodes.controls.quantity.progress", "Прогресс количества")}</span>
           <span
             className={cn(
               "font-medium",
@@ -129,7 +144,7 @@ export function QuantityControl({
         </div>
         {isOverdrive && (
           <p className="text-[10px] text-orange-500 text-center font-bold tracking-wider uppercase mt-1">
-            +{displayValue - targetValue} OVERDRIVE
+            +{displayValue - targetValue} {t("nodes.controls.quantity.overdrive", "OVERDRIVE")}
           </p>
         )}
       </div>
@@ -214,26 +229,21 @@ export function QuantityControl({
             size="lg"
           >
             <Check className="w-5 h-5 mr-2" />
-            {showSavedState
-              ? "Сохранено!"
-              : recordedValue > 0
-                ? (isOverdrive ? "Перезаписать Overdrive!" : "Перезаписать")
-                : isOverdrive
-                  ? "Сохранить Overdrive!"
-                  : isGoalReached
-                    ? "Сохранить успех!"
-                    : "Сохранить прогресс"}
+            {getButtonText()}
           </Button>
         </motion.div>
 
         {(hasSavedToday || currentValue > 0) ? (
           <p className="text-xs text-center text-green-500/80 font-medium flex items-center justify-center gap-1">
             <Check className="w-3 h-3" />
-            Уже зафиксировано: {hasSavedToday && savedValue !== null ? savedValue : currentValue} / {targetValue}
+            {t("nodes.controls.quantity.alreadyRecorded", { 
+              current: hasSavedToday && savedValue !== null ? savedValue : currentValue, 
+              target: targetValue 
+            })}
           </p>
         ) : (
           <p className="text-xs text-center text-muted-foreground/70">
-            Сегодня еще не фиксировалось
+            {t("nodes.controls.quantity.notRecorded", "Сегодня еще не фиксировалось")}
           </p>
         )}
       </div>

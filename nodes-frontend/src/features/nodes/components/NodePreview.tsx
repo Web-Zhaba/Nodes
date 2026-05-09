@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { ConnectorTag } from "@/components/ui/connector-tag";
 import type { NodeType } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface NodePreviewProps {
   name: string;
@@ -27,7 +28,7 @@ export function NodePreview({
   targetValue,
   className,
 }: NodePreviewProps) {
-  // Получаем иконку динамически
+  const { t } = useTranslation();
 
   // Рассчитываем процент стабильности (для примера 60%)
   const stabilityPercent = 60;
@@ -37,9 +38,9 @@ export function NodePreview({
 
   // Отображение типа узла
   const typeLabels: Record<NodeType, string> = {
-    binary: "Да/Нет",
-    quantity: "Количество",
-    duration: "Время",
+    binary: t("nodes.type.binary"),
+    quantity: t("nodes.type.quantity"),
+    duration: t("nodes.type.duration"),
   };
 
   return (
@@ -64,7 +65,7 @@ export function NodePreview({
         {/* Информация */}
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-lg truncate">
-            {name || "Название узла"}
+            {name || t("nodes.form.fields.name")}
           </h3>
 
           {/* Коннекторы */}
@@ -97,7 +98,7 @@ export function NodePreview({
       <div className="space-y-2 mb-3">
         {/* Масса */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>Масса:</span>
+          <span>{t("nodes.preview.mass")}:</span>
           <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
             <div
               className="h-full rounded-full transition-all"
@@ -113,9 +114,9 @@ export function NodePreview({
         {/* Целевое значение */}
         {nodeType !== "binary" && targetValue && (
           <div className="text-xs text-muted-foreground">
-            Цель:{" "}
+            {t("nodes.preview.target")}:{" "}
             <span className="font-medium text-foreground">{targetValue}</span>
-            {nodeType === "duration" && " мин"}
+            {nodeType === "duration" && ` ${t("nodes.form.fields.units.minutes")}`}
           </div>
         )}
       </div>
@@ -123,7 +124,7 @@ export function NodePreview({
       {/* Стабильность (превью) */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">Стабильность</span>
+          <span className="text-muted-foreground">{t("nodes.preview.stability")}</span>
           <span className="font-medium">{stabilityPercent}/100</span>
         </div>
         <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -142,19 +143,19 @@ export function NodePreview({
         {nodeType === "binary" && (
           <>
             <DynamicIcon name="zap" className="h-3 w-3" />
-            <span>Binary</span>
+            <span>{t("nodes.type.binary")}</span>
           </>
         )}
         {nodeType === "quantity" && (
           <>
             <DynamicIcon name="bar-chart-3" className="h-3 w-3" />
-            <span>Quantity</span>
+            <span>{t("nodes.type.quantity")}</span>
           </>
         )}
         {nodeType === "duration" && (
           <>
             <DynamicIcon name="timer" className="h-3 w-3" />
-            <span>Duration</span>
+            <span>{t("nodes.type.duration")}</span>
           </>
         )}
       </div>

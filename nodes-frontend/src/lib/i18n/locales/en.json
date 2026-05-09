@@ -1,0 +1,436 @@
+{
+  "dashboard": {
+    "calendar": {
+      "backToToday": "Back to Today"
+    },
+    "greeting": "Hello, {{name}}",
+    "operator": "Anonymous",
+    "states": {
+      "today": "Today",
+      "archive": "Archive",
+      "plan": "Plan"
+    },
+    "subtitles": {
+      "focus": "Focus Mode",
+      "history": "Orbit History"
+    },
+    "buttons": {
+      "createNode": "Node",
+      "create": "Create",
+      "setupFocus": "Configure Focus"
+    },
+    "empty": {
+      "title": "No Plans",
+      "description": "No nodes assigned. Define the main vectors of development for this day.",
+      "setup": "Configure Focus"
+    },
+    "messages": {
+      "history": "History view mode. You can track past activities.",
+      "waiting": "System is waiting. Configure focus to start.",
+      "active": "Great pace. The system is stable. Maintain your focus."
+    },
+    "notifications": {
+      "focusUpdated": "Daily focus updated"
+    },
+    "selector": {
+      "title": "Tasks for {{date}}",
+      "description": "Select nodes to focus on for the selected day.",
+      "loadDefaults": "Load defaults",
+      "selectedCount": "{{count}} selected",
+      "noNodes": "No available nodes. Create them first.",
+      "saveFocus": "Save focus",
+      "syncing": "Syncing..."
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "errorSaving": "Failed to save",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
+    },
+    "footer": {
+      "systemOnline": "NODES — System Online"
+    }
+  },
+  "nav": {
+    "dashboard": "Today",
+    "nodes": "Nodes",
+    "graph": "Graph",
+    "analytics": "Analytics",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "nodes": {
+    "type": {
+      "binary": "Binary",
+      "quantity": "Quantity",
+      "duration": "Duration"
+    },
+    "stability": "Stability",
+    "pulse": "Pulse",
+    "mass": "Mass",
+    "target": "Target",
+    "completedCount": "Completed",
+    "controls": {
+      "binary": {
+        "marked": "Mark removed",
+        "markedDescription": "Completion for today cancelled",
+        "completed": "Node completed!",
+        "completedDescription": "+ to stability of \"{{name}}\"",
+        "buttonCompleted": "Completed today",
+        "buttonCancel": "Cancel completion",
+        "buttonMark": "Mark completion",
+        "keepGoing": "Keep it up!",
+        "notDone": "Not completed today yet"
+      },
+      "quantity": {
+        "progress": "Quantity Progress",
+        "overdrive": "OVERDRIVE",
+        "goalReached": "Goal reached!",
+        "overdriveReached": "Overdrive!",
+        "progressSaved": "Progress saved",
+        "saved": "Saved!",
+        "overwrite": "Overwrite",
+        "overwriteOverdrive": "Overwrite Overdrive!",
+        "saveOverdrive": "Save Overdrive!",
+        "saveSuccess": "Save Success!",
+        "saveProgress": "Save Progress",
+        "alreadyRecorded": "Already recorded: {{current}} / {{target}}",
+        "notRecorded": "Not recorded today yet"
+      },
+      "duration": {
+        "progress": "Time Progress",
+        "timerStarted": "Timer started",
+        "timerTarget": "Target: {{minutes}} min",
+        "tooLittleTime": "Too little time",
+        "minimumTime": "Minimum 10 seconds to record",
+        "timeRecorded": "Time recorded!",
+        "overdriveSuccess": "{{time}} over the goal!",
+        "greatResult": "{{time}} — great result!",
+        "progressReset": "Progress reset",
+        "progressResetDescription": "Saved time for today removed",
+        "resetError": "Failed to reset time",
+        "manualInput": "Click to enter minutes manually",
+        "minutesShort": "min",
+        "recording": "Recording",
+        "start": "Start",
+        "pause": "Pause",
+        "stop": "Stop",
+        "reset": "Reset"
+      }
+    },
+    "form": {
+      "create": {
+        "title": "Create Node",
+        "subtitle": "Add a new action unit to your network",
+        "submit": "Create Node",
+        "submitting": "Creating...",
+        "success": "Node created",
+        "successDesc": "\"{{name}}\" added to your network",
+        "error": "Error",
+        "errorDesc": "Failed to create node"
+      },
+      "edit": {
+        "title": "Edit Node",
+        "subtitle": "Change action unit parameters",
+        "submit": "Save changes",
+        "submitting": "Saving...",
+        "success": "Node updated",
+        "successDesc": "Changes saved",
+        "error": "Error",
+        "errorDesc": "Failed to update node",
+        "delete": "Delete Node",
+        "deleteConfirm": "Are you sure? This action cannot be undone."
+      },
+      "fields": {
+        "name": "Node Name",
+        "namePlaceholder": "Example: Morning Meditation",
+        "type": "Node Type",
+        "targetValue": "Target Value",
+        "targetPlaceholder": {
+          "duration": "30 (min)",
+          "quantity": "10 (units)"
+        },
+        "units": {
+          "minutes": "min",
+          "units": "units"
+        },
+        "targetHint": "Example: 30 minutes for meditation or 2 liters for water",
+        "mass": "Mass (complexity): {{value}}",
+        "massLevels": {
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
+        },
+        "connectors": "Connectors",
+        "color": "Node Color",
+        "icon": "Icon",
+        "description": "Description (optional)",
+        "descriptionPlaceholder": "Short node description...",
+        "isFocusDefault": "Default Focus Node",
+        "isFocusDefaultDesc": "This node will be automatically suggested when planning a new day."
+      }
+    },
+    "preview": {
+      "title": "Preview",
+      "stability": "Stability",
+      "mass": "Mass",
+      "target": "Target",
+      "stabilityAuto": "Stability is calculated automatically",
+      "connectorsLogic": "Connectors link nodes semantically",
+      "massLogic": "Mass affects the speed of stability accumulation"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "settingsLabel": "System Settings",
+    "controlCenterLabel": "Control Center",
+    "tabs": {
+      "general": "General",
+      "appearance": "Appearance",
+      "security": "Security",
+      "integrations": "Integrations"
+    },
+    "regional": {
+      "resetTime": "Reset Time",
+      "resetTimeDesc": "When the system considers a new day has started.",
+      "firstDayOfWeek": "First Day of Week",
+      "language": "Interface Language",
+      "langRu": "Russian",
+      "langEn": "English"
+    },
+    "security": {
+      "title": "Security",
+      "subtitle": "Digital footprint management.",
+      "resetPassword": "Reset Password",
+      "resetPasswordDesc": "Send reset link to your email",
+      "resetButton": "Reset",
+      "resetEmailSent": "Reset link sent to your email",
+      "resetEmailError": "Error sending email",
+      "emailNotFound": "Email not found",
+      "connectedAccounts": "Connected Accounts",
+      "connectedAccountsDesc": "Additional login methods",
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "unlink": "Unlink",
+      "link": "Link",
+      "unlinkSuccess": "{{provider}} unlinked",
+      "unlinkError": "Unlink error: {{error}}",
+      "sessionManagement": "Session Management",
+      "sessionManagementDesc": "Devices with access to your account",
+      "signOutOthers": "Sign Out Others",
+      "signOutOthersSuccess": "Signed out on all other devices",
+      "signOutOthersError": "Error signing out other sessions",
+      "currentSession": "Current Session",
+      "mobileDevice": "Mobile Device",
+      "computer": "Computer",
+      "unknownDevice": "Unknown Device",
+      "webClient": "Web Client (This device)",
+      "updatedAt": "Updated: {{date}}",
+      "active": "Active"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "subtitle": "Customize the visual resonance of the interface.",
+      "themeMode": "{{mode}} Mode",
+      "light": "Light",
+      "dark": "Dark",
+      "themeApplied": "{{mode}} mode enabled",
+      "presets": "Theme Presets",
+      "presetApplied": "Palette applied: {{name}}",
+      "fineTuning": "Fine Tuning",
+      "personalization": "Variables personalization ({{mode}} theme)",
+      "resetSuccess": "Reset to defaults",
+      "font": "Font",
+      "radius": "Radius",
+      "effects": "Effects (Scanlines)",
+      "resetColor": "Reset color",
+      "reset": "Reset",
+      "selectColor": "Select color",
+      "default": "Default",
+      "fonts": {
+        "jakarta": "Default (Plus Jakarta)",
+        "lora": "Classic (Lora Serif)",
+        "plex": "Typewriter (Plex Mono)",
+        "rounded": "Rounded"
+      },
+      "radii": {
+        "sharp": "Sharp (0px)",
+        "minimal": "Minimal (4px)",
+        "soft": "Soft (14px)",
+        "round": "Round (24px)"
+      },
+      "tokens": {
+        "primary": "Primary Color",
+        "background": "Background",
+        "card": "Card Background",
+        "foreground": "Text Color",
+        "muted": "Muted Color",
+        "border": "Border Color",
+        "secondary": "Secondary",
+        "accent": "Accent Color"
+      }
+    },
+    "integrations": {
+      "title": "Integrations",
+      "subtitle": "Connecting the Second Brain to the outside world.",
+      "gcalTitle": "Google Calendar",
+      "gcalDesc": "Bidirectional synchronization of Pulses and events.",
+      "telegramDesc": "Quick pulse logging and notifications via messenger.",
+      "emailTitle": "Email Newsletters",
+      "emailDesc": "Weekly stability reports and email reminders.",
+      "webPushTitle": "Browser Notifications",
+      "webPushDesc": "Instant notifications when it's time for a pulse.",
+      "healthDesc": "Automatic pulses based on physical activity.",
+      "apiDesc": "For developers: programmatic control of your nodes.",
+      "connect": "Connect",
+      "planned": "Planned",
+      "soon": "Coming Soon",
+      "suggestTitle": "Have an idea for integration?",
+      "suggestDesc": "We are constantly expanding connectivity. Let us know what you'd like to see.",
+      "suggestButton": "Suggest Idea"
+    },
+    "general": {
+      "title": "General Settings",
+      "subtitle": "Operator identity personalization.",
+      "email": "Email Address",
+      "emailVerified": "Verified",
+      "emailNotVerified": "Not verified",
+      "verifyEmail": "Verify email",
+      "systemSettings": "System Settings",
+      "systemSettingsDesc": "Configuration of your node environment.",
+      "logout": "System Logout",
+      "logoutDesc": "End current management session",
+      "logoutButton": "Sign Out",
+      "saveChanges": "Save Changes",
+      "saveSuccess": "Settings saved successfully",
+      "saveError": "Failed to save settings",
+      "logoutSuccess": "Session ended",
+      "logoutError": "Error signing out"
+    },
+    "identity": {
+      "anonymousNode": "Anonymous"
+    },
+    "greeting": {
+      "title": "Greeting on Dashboard",
+      "show": "Show",
+      "hide": "Hide",
+      "textLabel": "Greeting Text",
+      "hint": "Use {{name}} to automatically insert your name."
+    }
+  },
+  "graph": {
+    "title": "Connection Graph",
+    "subtitle": "Neural Network",
+    "loading": "Architecture is loading...",
+    "category": "Visualization",
+    "sidebar": {
+      "title": "Architecture",
+      "commandCenter": "Command Center",
+      "newNode": "New Core",
+      "noCores": "You don't have any Cores yet.",
+      "createFirstCore": "Create the first gravity center",
+      "settings": "Settings",
+      "node": "Node",
+      "nodesCount": "Nodes in system:"
+    },
+    "cores": {
+      "create": {
+        "title": "Create New Core",
+        "description": "A Core is a gravity center that will attract nodes with selected tags.",
+        "submit": "Create Core",
+        "submitting": "Creating...",
+        "success": "Core created successfully!",
+        "error": "Failed to create core"
+      },
+      "edit": {
+        "title": "Edit Core",
+        "description": "Change the main properties of the gravity center",
+        "submit": "Save Changes",
+        "submitting": "Saving...",
+        "success": "Core updated successfully!",
+        "error": "Failed to update core"
+      },
+      "delete": {
+        "button": "Delete core",
+        "confirm": "Are you sure you want to delete core \"{{name}}\"? This will also delete all connections with nodes.",
+        "success": "Core deleted",
+        "error": "Failed to delete core"
+      },
+      "fields": {
+        "name": "Core Name",
+        "namePlaceholder": "Sport, Health, Career...",
+        "color": "Brand Color",
+        "icon": "Icon"
+      },
+      "manager": {
+        "title": "Connection Settings",
+        "description": "Select Connectors (tags) that this Core should unite. Nodes with these tags will automatically become part of its orbit.",
+        "orbitConnectors": "Orbit Connectors",
+        "attractedNodes": "Attracted Nodes ({{count}})",
+        "noNodes": "No Nodes are attracted to this Core with current tags.",
+        "updateError": "Error updating connections"
+      }
+    },
+    "empty": {
+      "text": "Void. Create Cores to start the neural network of your life.",
+      "button": "Create first Core"
+    }
+  },
+  "analytics": {
+    "title": "Analytics",
+    "stats": "Statistics",
+    "metrics": "Metrics",
+    "focus": "Focus:",
+    "allNodes": "All Nodes",
+    "stability": {
+      "title": "Stability",
+      "focusNode": "Focus on Node",
+      "core": "Core",
+      "global": "Global",
+      "noData": "No data for the selected period. Start recording pulses!"
+    },
+    "activity": {
+      "title": "Activity"
+    },
+    "periods": {
+      "7d": "7d",
+      "30d": "30d",
+      "90d": "90d",
+      "year": "Year"
+    },
+    "heatmap": {
+      "less": "Less",
+      "more": "More",
+      "noActivity": "No activity",
+      "pulses_one": "{{count}} pulse",
+      "pulses_other": "{{count}} pulses"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useUpdateCoreMutation, useDeleteCoreMutation } from "../hooks/useCoresQuery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ interface EditCoreFormProps {
 }
 
 export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
+  const { t } = useTranslation();
   const updateMutation = useUpdateCoreMutation();
   const deleteMutation = useDeleteCoreMutation();
   
@@ -30,40 +32,40 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
     try {
       const updates = { name: name.trim(), color, icon };
       await updateMutation.mutateAsync({ coreId: core.id, updates });
-      toast.success("Ядро успешно обновлено!");
+      toast.success(t("graph.cores.edit.success"));
       onSuccess?.();
-    } catch (error) {
-      toast.error("Не удалось обновить ядро");
+    } catch {
+      toast.error(t("graph.cores.edit.error"));
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Вы действительно хотите удалить ядро "${core.name}"? Это также удалит все связи с узлами.`)) return;
+    if (!confirm(t("graph.cores.delete.confirm", { name: core.name }))) return;
     
     try {
       await deleteMutation.mutateAsync(core.id);
-      toast.success("Ядро удалено");
+      toast.success(t("graph.cores.delete.success"));
       onDelete?.();
-    } catch (error) {
-      toast.error("Не удалось удалить ядро");
+    } catch {
+      toast.error(t("graph.cores.delete.error"));
     }
   };
 
   return (
     <Card className="w-full border-primary/20 bg-primary/5">
       <CardHeader>
-        <CardTitle>Редактирование Ядра</CardTitle>
+        <CardTitle>{t("graph.cores.edit.title")}</CardTitle>
         <CardDescription>
-          Измените основные свойства центра притяжения
+          {t("graph.cores.edit.description")}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="editCoreName">Название ядра</Label>
+            <Label htmlFor="editCoreName">{t("graph.cores.fields.name")}</Label>
             <Input 
               id="editCoreName" 
-              placeholder="Спорт, Здоровье, Карьера..." 
+              placeholder={t("graph.cores.fields.namePlaceholder")} 
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -71,7 +73,7 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="editCoreColor">Фирменный цвет</Label>
+              <Label htmlFor="editCoreColor">{t("graph.cores.fields.color")}</Label>
               <div className="flex gap-4 items-center">
                 <Input 
                   id="editCoreColor" 
@@ -84,7 +86,7 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
             </div>
             
             <div className="space-y-2">
-              <Label>Иконка</Label>
+              <Label>{t("graph.cores.fields.icon")}</Label>
               <IconPicker
                 value={icon}
                 onChange={setIcon}
@@ -99,12 +101,12 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
             size="icon"
             onClick={handleDelete}
             disabled={updateMutation.isPending || deleteMutation.isPending}
-            title="Удалить ядро"
+            title={t("graph.cores.delete.button")}
           >
             <Trash2 className="w-4 h-4" />
           </Button>
           <Button type="submit" disabled={!name.trim() || updateMutation.isPending || deleteMutation.isPending}>
-            {updateMutation.isPending ? "Сохранение..." : "Сохранить изменения"}
+            {updateMutation.isPending ? t("graph.cores.edit.submitting") : t("graph.cores.edit.submit")}
           </Button>
         </CardFooter>
       </form>

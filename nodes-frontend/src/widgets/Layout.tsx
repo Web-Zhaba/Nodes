@@ -3,15 +3,31 @@ import { cn } from "@/lib/utils";
 import { Home, Share2, BarChart3, User, Github } from "lucide-react";
 import { FloatingNavbar } from "@/components/ui/floating-navbar";
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
+import { useAppStore } from "@/store/useAppStore";
+import { useEffect } from "react";
 
 export default function Layout() {
   const location = useLocation();
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const { data: profile } = useProfileQuery(user?.id);
+  const setLanguage = useAppStore((state) => state.setLanguage);
+
+  // Sync language from profile on load
+  useEffect(() => {
+    if (profile?.language) {
+      setLanguage(profile.language);
+    }
+  }, [profile?.language, setLanguage]);
 
   const navItems = [
-    { path: "/", label: "Сегодня", icon: Home },
-    { path: "/graph", label: "Сеть", icon: Share2 },
-    { path: "/analytics", label: "Аналитика", icon: BarChart3 },
-    { path: "/profile", label: "Профиль", icon: User },
+    { path: "/", label: t("nav.dashboard", "Сегодня"), icon: Home },
+    { path: "/graph", label: t("nav.graph", "Граф"), icon: Share2 },
+    { path: "/analytics", label: t("nav.analytics", "Аналитика"), icon: BarChart3 },
+    { path: "/profile", label: t("nav.profile", "Профиль"), icon: User },
   ];
 
   return (
@@ -66,7 +82,7 @@ export default function Layout() {
         <div className="container mx-auto max-w-7xl px-4 flex items-center justify-between text-muted-foreground opacity-70 hover:opacity-100 transition-opacity">
           <div className="text-[10px] sm:text-xs font-medium tracking-widest uppercase flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            NODES — System Online
+            {t("common.footer.systemOnline", "NODES — System Online")}
           </div>
           <div className="flex items-center space-x-5">
             <a href="https://github.com/Web-Zhaba/Nodes" target="_blank" rel="noreferrer" className="hover:text-foreground hover:scale-110 transition-all" title="GitHub">

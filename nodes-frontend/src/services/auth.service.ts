@@ -114,5 +114,22 @@ export const authService = {
     }
 
     return { type: 'loading' };
+  },
+
+  /**
+   * Обновление профиля пользователя
+   */
+  async updateProfile(userId: string, updates: any): Promise<{ data: any, error: any }> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId)
+      .select()
+      .single();
+    
+    return { data, error };
   }
 };

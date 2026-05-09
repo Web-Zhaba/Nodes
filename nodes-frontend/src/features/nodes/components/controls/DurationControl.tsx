@@ -5,6 +5,7 @@ import { Play, Pause, Check, Timer } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import type { Node } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface DurationControlProps {
   node: Node;
@@ -31,6 +32,7 @@ export function DurationControl({
   const intervalRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const pausedElapsedRef = useRef<number>(0); // Сохраняем значение при паузе
+  const { t } = useTranslation();
 
   const targetValue = (node.target_value || 30) * 60; // Конвертируем минуты в секунды
 
@@ -52,8 +54,8 @@ export function DurationControl({
       setElapsed((prev) => prev + 1);
     }, 1000);
 
-    toast.info("Таймер запущен", {
-      description: `Цель: ${Math.floor(targetValue / 60)} мин`,
+    toast.info(t("nodes.controls.duration.timerStarted", "Таймер запущен"), {
+      description: t("nodes.controls.duration.timerTarget", { minutes: Math.floor(targetValue / 60) }),
     });
   };
 
@@ -75,8 +77,8 @@ export function DurationControl({
     const finalElapsed = typeof overrideElapsed === "number" ? overrideElapsed : elapsed;
 
     if (finalElapsed < 10) {
-      toast.warning("Слишком мало времени", {
-        description: "Минимум 10 секунд для записи",
+      toast.warning(t("nodes.controls.duration.tooLittleTime", "Слишком мало времени"), {
+        description: t("nodes.controls.duration.minimumTime", "Минимум 10 секунд для записи"),
       });
       setElapsed(0); // Обнуляем
       pausedElapsedRef.current = 0;
@@ -94,10 +96,10 @@ export function DurationControl({
 
       const newIsOverdrive = totalElapsed > targetValue;
 
-      toast.success(newIsOverdrive ? "Перевыполнение!" : "Время записано!", {
+      toast.success(newIsOverdrive ? t("nodes.controls.quantity.overdriveReached", "Перевыполнение!") : t("nodes.controls.duration.timeRecorded", "Время записано!"), {
         description: newIsOverdrive
-          ? `${formatTime(totalElapsed - targetValue)} сверх цели!`
-          : `${formatTime(finalElapsed)} — отличный результат!`,
+          ? t("nodes.controls.duration.overdriveSuccess", { time: formatTime(totalElapsed - targetValue) })
+          : t("nodes.controls.duration.greatResult", { time: formatTime(finalElapsed) }),
       });
 
       setElapsed(0); // Сброс визуального таймера до нуля
@@ -106,8 +108,8 @@ export function DurationControl({
       setHasSavedToday(true);
 
     } catch (error) {
-      toast.error("Ошибка", {
-        description: "Не удалось сохранить время",
+      toast.error(t("common.error"), {
+        description: t("nodes.controls.duration.errorSaving", "Не удалось сохранить время"),
       });
       setElapsed(0); // В случае ошибки также сбрасываем текущую сессию
       pausedElapsedRef.current = 0;
@@ -133,8 +135,8 @@ export function DurationControl({
     try {
       await onImpulse(-1); // -1 магическое значение для удаления импульсов
 
-      toast.success("Прогресс сброшен", {
-        description: "Сохраненное время за сегодня удалено",
+      toast.success(t("nodes.controls.duration.progressReset", "Прогресс сброшен"), {
+        description: t("nodes.controls.duration.progressResetDescription", "Сохраненное время за сегодня удалено"),
       });
 
       setElapsed(0);
@@ -142,8 +144,8 @@ export function DurationControl({
       setSavedElapsed(0);
       setHasSavedToday(true); // Переопределяем значение новым (нулем), чтобы сразу обновить UI
     } catch (error) {
-      toast.error("Ошибка", {
-        description: "Не удалось сбросить время",
+      toast.error(t("common.error"), {
+        description: t("nodes.controls.duration.resetError", "Не удалось сбросить время"),
       });
     } finally {
       setIsPending(false);
@@ -179,7 +181,7 @@ export function DurationControl({
       {/* Прогресс бар */}
       <div className="space-y-1 text-shadow-sm">
         <div className="flex items-center justify-between text-xs mb-1">
-          <span className="text-muted-foreground font-medium">Прогресс времени</span>
+          <span className="text-muted-foreground font-medium">{t("nodes.controls.duration.progress", "Прогресс времени")}</span>
           <span
             className={cn(
               "font-medium",
@@ -215,7 +217,7 @@ export function DurationControl({
         </div>
         {isOverdrive && (
           <p className="text-[10px] text-orange-500 text-center font-bold tracking-wider uppercase mt-1">
-            +{formatTime(currentTotalElapsed - targetValue)} OVERDRIVE
+            +{formatTime(currentTotalElapsed - targetValue)} {t("nodes.controls.quantity.overdrive", "OVERDRIVE")}
           </p>
         )}
       </div>
@@ -230,7 +232,7 @@ export function DurationControl({
                 setManualMinutes(Math.floor(elapsed / 60).toString());
               }
             }}
-            title={!isRunning ? "Кликните, чтобы ввести минуты вручную" : ""}
+            title={!isRunning ? t("nodes.controls.duration.manualInput", "Кликните, чтобы ввести минуты вручную") : ""}
             className={cn(
               "text-4xl font-mono font-bold tracking-tight drop-shadow-sm transition-colors",
               !isRunning && "cursor-pointer hover:opacity-80 transition-opacity",
@@ -269,13 +271,13 @@ export function DurationControl({
               style={{ MozAppearance: "textfield" }}
               placeholder="0"
             />
-            <span className="text-sm font-medium text-muted-foreground pb-[-8px]">мин</span>
+            <span className="text-sm font-medium text-muted-foreground pb-[-8px]">{t("nodes.controls.duration.minutesShort", "мин")}</span>
           </div>
         )}
         {isRunning && (
           <div className="flex items-center justify-center gap-1.5 mt-2">
             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(239,68,68,0.8)]" />
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Идет запись</span>
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider text-[10px]">{t("nodes.controls.duration.recording", "Идет запись")}</span>
           </div>
         )}
       </div>
@@ -295,7 +297,7 @@ export function DurationControl({
                 size="lg"
               >
                 <Play className="w-5 h-5 mr-2" />
-                Старт
+                {t("nodes.controls.duration.start", "Старт")}
               </Button>
             </motion.div>
           ) : (
@@ -308,7 +310,7 @@ export function DurationControl({
                   size="lg"
                 >
                   <Pause className="w-5 h-5 mr-1" />
-                  Пауза
+                  {t("nodes.controls.duration.pause", "Пауза")}
                 </Button>
               </motion.div>
               <motion.div whileTap={!isPending ? { scale: 0.97 } : {}} className="flex-1">
@@ -326,7 +328,7 @@ export function DurationControl({
                   size="lg"
                 >
                   <Check className="w-5 h-5 mr-1" />
-                  {isOverdrive ? "Overdrive!" : "Стоп"}
+                  {isOverdrive ? t("nodes.controls.quantity.overdrive", "Overdrive!") : t("nodes.controls.duration.stop", "Стоп")}
                 </Button>
               </motion.div>
             </>
@@ -337,7 +339,9 @@ export function DurationControl({
           <div className="flex flex-row items-center justify-center gap-1">
             <p className="text-xs text-center text-green-500/80 font-medium flex items-center justify-center gap-1">
               <Timer className="w-3 h-3" />
-              Уже зафиксировано: {formatTime(hasSavedToday && savedElapsed !== null ? savedElapsed : elapsedToday)}
+              {t("nodes.controls.duration.alreadyRecorded", { 
+                current: formatTime(hasSavedToday && savedElapsed !== null ? savedElapsed : elapsedToday) 
+              })}
             </p>
             <Button
               variant="link"
@@ -345,12 +349,12 @@ export function DurationControl({
               disabled={isPending || isRunning}
               className="h-auto p-0 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-red-500 transition-colors"
             >
-              Сбросить
+              {t("nodes.controls.duration.reset", "Сбросить")}
             </Button>
           </div>
         ) : (
           <p className="text-xs text-center text-muted-foreground/70">
-            Сегодня еще не фиксировалось
+            {t("nodes.controls.duration.notRecorded", "Сегодня еще не фиксировалось")}
           </p>
         )}
       </div>

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useThemeStore } from "@/store/useThemeStore";
 import { Sun, Moon, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const THEME_PRESETS = [
   {
@@ -109,38 +110,40 @@ const THEME_PRESETS = [
   }
 ];
 
-const FONT_OPTIONS = [
-  { label: "По умолчанию (Plus Jakarta)", value: "Plus Jakarta Sans, sans-serif" },
-  { label: "Классический (Lora Serif)", value: "Lora, serif" },
-  { label: "Машинописный (Plex Mono)", value: "IBM Plex Mono, monospace" },
-  { label: "Округлый (Rounded)", value: "ui-rounded, 'Nunito', sans-serif" },
-];
-
-const RADIUS_OPTIONS = [
-  { label: "Острые (0px)", value: "-1000px" },
-  { label: "Минимальные (4px)", value: "0.25rem" },
-  { label: "Мягкие (14px)", value: "0.9rem" },
-  { label: "Круглые (24px)", value: "1.5rem" },
-];
-
-const CUSTOM_TOKENS = [
-  { label: "Акцентный цвет", token: "--primary" },
-  { label: "Фон страницы", token: "--background" },
-  { label: "Фон карточек", token: "--card" },
-  { label: "Текст", token: "--foreground" },
-  { label: "Приглушенный", token: "--muted" },
-  { label: "Границы", token: "--border" },
-  { label: "Вторичный", token: "--secondary" },
-  { label: "Второстепенный акцент", token: "--accent" },
-];
-
 export function AppearanceTab() {
   const { config, setMode, setColor, applyPalette, resetToDefaults } = useThemeStore();
+  const { t } = useTranslation();
   const isDark = config.mode === "dark";
 
+  const FONT_OPTIONS = [
+    { label: t("profile.appearance.fonts.jakarta", "По умолчанию (Plus Jakarta)"), value: "Plus Jakarta Sans, sans-serif" },
+    { label: t("profile.appearance.fonts.lora", "Классический (Lora Serif)"), value: "Lora, serif" },
+    { label: t("profile.appearance.fonts.plex", "Машинописный (Plex Mono)"), value: "IBM Plex Mono, monospace" },
+    { label: t("profile.appearance.fonts.rounded", "Округлый (Rounded)"), value: "ui-rounded, 'Nunito', sans-serif" },
+  ];
+
+  const RADIUS_OPTIONS = [
+    { label: t("profile.appearance.radii.sharp", "Острые (0px)"), value: "-1000px" },
+    { label: t("profile.appearance.radii.minimal", "Минимальные (4px)"), value: "0.25rem" },
+    { label: t("profile.appearance.radii.soft", "Мягкие (14px)"), value: "0.9rem" },
+    { label: t("profile.appearance.radii.round", "Круглые (24px)"), value: "1.5rem" },
+  ];
+
+  const CUSTOM_TOKENS = [
+    { label: t("profile.appearance.tokens.primary", "Акцентный цвет"), token: "--primary" },
+    { label: t("profile.appearance.tokens.background", "Фон страницы"), token: "--background" },
+    { label: t("profile.appearance.tokens.card", "Фон карточек"), token: "--card" },
+    { label: t("profile.appearance.tokens.foreground", "Текст"), token: "--foreground" },
+    { label: t("profile.appearance.tokens.muted", "Приглушенный"), token: "--muted" },
+    { label: t("profile.appearance.tokens.border", "Границы"), token: "--border" },
+    { label: t("profile.appearance.tokens.secondary", "Вторичный"), token: "--secondary" },
+    { label: t("profile.appearance.tokens.accent", "Второстепенный акцент"), token: "--accent" },
+  ];
+
   const toggleTheme = () => {
-    setMode(isDark ? "light" : "dark");
-    toast.success(`Включена ${isDark ? "светлая" : "тёмная"} тема`);
+    const nextMode = isDark ? "light" : "dark";
+    setMode(nextMode);
+    toast.success(t("profile.appearance.themeApplied", { mode: t(`profile.appearance.${nextMode}`) }));
   };
 
   return (
@@ -148,14 +151,16 @@ export function AppearanceTab() {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
           <div>
-            <h2 className="text-xl font-bold tracking-tight">Внешний вид</h2>
-            <p className="text-sm text-muted-foreground">Настройте визуальный резонанс интерфейса.</p>
+            <h2 className="text-xl font-bold tracking-tight">{t("profile.appearance.title", "Внешний вид")}</h2>
+            <p className="text-sm text-muted-foreground">{t("profile.appearance.subtitle", "Настройте визуальный резонанс интерфейса.")}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" onClick={toggleTheme} className="rounded-xl shrink-0 h-10 w-10 shadow-sm">
               {isDark ? <Moon className="w-4 h-4 text-indigo-400" /> : <Sun className="w-4 h-4 text-orange-400" />}
             </Button>
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{isDark ? "Dark Mode" : "Light Mode"}</span>
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
+              {t("profile.appearance.themeMode", { mode: isDark ? "Dark" : "Light" })}
+            </span>
           </div>
         </div>
       </section>
@@ -164,12 +169,10 @@ export function AppearanceTab() {
       <section className="space-y-4">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-1 h-4 bg-primary/50 rounded-full" />
-          <h3 className="font-bold">Готовые палитры</h3>
+          <h3 className="font-bold">{t("profile.appearance.presets", "Готовые палитры")}</h3>
         </div>
         <div className="flex flex-wrap gap-3">
             {THEME_PRESETS.map((preset) => {
-              // Check if current matches
-              // A simple heuristic: if primary matches
               const presetPrimary = (preset as any)[config.mode]["--primary"];
               const currentPrimary = (config.colors as any)[config.mode]["--primary"];
               const isSelected = presetPrimary === currentPrimary;
@@ -180,7 +183,7 @@ export function AppearanceTab() {
                   variant={isSelected ? "default" : "outline"}
                   onClick={() => {
                     applyPalette(preset.light as Record<string, string>, preset.dark as Record<string, string>);
-                    toast.success(`Применена палитра: ${preset.name}`);
+                    toast.success(t("profile.appearance.presetApplied", { name: preset.name }));
                   }}
                   className="rounded-xl text-xs"
                 >
@@ -194,10 +197,10 @@ export function AppearanceTab() {
       <section className="p-5 rounded-[1.5rem] border border-border/40 bg-muted/10 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold">Тонкая настройка</h3>
-            <p className="text-xs text-muted-foreground">Персонализация переменных ({isDark ? "тёмная" : "светлая"} тема)</p>
+            <h3 className="font-bold">{t("profile.appearance.fineTuning", "Тонкая настройка")}</h3>
+            <p className="text-xs text-muted-foreground">{t("profile.appearance.personalization", { mode: isDark ? t("profile.appearance.dark") : t("profile.appearance.light") })}</p>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => { resetToDefaults(); toast.success("Сброшено по умолчанию"); }}>
+          <Button variant="ghost" size="icon" onClick={() => { resetToDefaults(); toast.success(t("profile.appearance.resetSuccess", "Сброшено по умолчанию")); }}>
             <RotateCcw className="w-4 h-4" />
           </Button>
         </div>
@@ -205,14 +208,14 @@ export function AppearanceTab() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex items-center justify-between p-3 bg-background border border-border/50 rounded-xl">
             <div className="min-w-0 flex-1 mr-4">
-              <p className="text-sm font-medium truncate">Шрифт</p>
+              <p className="text-sm font-medium truncate">{t("profile.appearance.font", "Шрифт")}</p>
             </div>
             <select
               className="bg-muted text-sm rounded-lg border-0 focus:ring-2 focus:ring-primary py-1 px-2 shrink-0 cursor-pointer max-w-[120px]"
               value={(config.colors as any)[config.mode]["--font-sans"] || ""}
               onChange={(e) => setColor("--font-sans", e.target.value || null)}
             >
-              <option value="">По умолчанию</option>
+              <option value="">{t("profile.appearance.default", "По умолчанию")}</option>
               {FONT_OPTIONS.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -221,14 +224,14 @@ export function AppearanceTab() {
           
           <div className="flex items-center justify-between p-3 bg-background border border-border/50 rounded-xl">
             <div className="min-w-0 flex-1 mr-4">
-              <p className="text-sm font-medium truncate">Скругления (Radius)</p>
+              <p className="text-sm font-medium truncate">{t("profile.appearance.radius", "Скругления (Radius)")}</p>
             </div>
             <select
               className="bg-muted text-sm rounded-lg border-0 focus:ring-2 focus:ring-primary py-1 px-2 shrink-0 cursor-pointer max-w-[120px]"
               value={(config.colors as any)[config.mode]["--radius"] || ""}
               onChange={(e) => setColor("--radius", e.target.value || null)}
             >
-              <option value="">По умолчанию</option>
+              <option value="">{t("profile.appearance.default", "По умолчанию")}</option>
               {RADIUS_OPTIONS.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -237,7 +240,7 @@ export function AppearanceTab() {
 
           <div className="flex flex-col gap-3 p-3 bg-background border border-border/50 rounded-xl">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">Спецэффекты (Scanlines)</p>
+              <p className="text-sm font-medium">{t("profile.appearance.effects", "Спецэффекты (Scanlines)")}</p>
               <span className="text-xs font-mono opacity-50">{Math.round((parseFloat((config.colors as any)[config.mode]["--effects-opacity"] || "0")) * 100)}%</span>
             </div>
             <input 
@@ -260,9 +263,9 @@ export function AppearanceTab() {
                     <button 
                       onClick={() => setColor(token, null)}
                       className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                      title="Сбросить цвет"
+                      title={t("profile.appearance.resetColor", "Сбросить цвет")}
                     >
-                      Сброс
+                      {t("profile.appearance.reset", "Сброс")}
                     </button>
                   )}
                   <div className="relative w-8 h-8 rounded-full overflow-hidden border border-border/50 cursor-pointer shrink-0">
@@ -271,9 +274,8 @@ export function AppearanceTab() {
                       value={currentValue?.startsWith("#") ? currentValue : "#888888"}
                       onChange={(e) => setColor(token, e.target.value)}
                       className="absolute inset-[-10px] w-[50px] h-[50px] cursor-pointer"
-                      title="Выбрать цвет"
+                      title={t("profile.appearance.selectColor", "Выбрать цвет")}
                     />
-                    {/* Visual indicator if value is not hex (e.g. oklch from index.css) */}
                     {!currentValue && (
                       <div className="absolute inset-0 pointer-events-none flex items-center justify-center bg-muted">
                         <span className="text-[10px] opacity-50">?</span>

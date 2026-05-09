@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { ru } from "date-fns/locale";
+import { ru, enUS } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,6 +8,7 @@ import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { cn } from "@/lib/utils";
 import type { Node } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 interface DailyFocusSelectorProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ const renderIcon = (iconName: string, className?: string) => {
 export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFocusIds, onSave }: DailyFocusSelectorProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const { t, i18n } = useTranslation();
 
   // Синхронизируем локальный стейт при открытии
   useEffect(() => {
@@ -54,15 +56,18 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
     onClose();
   };
 
-  const formattedDate = format(date, "d MMMM", { locale: ru });
+  const dateLocale = i18n.language === 'en' ? enUS : ru;
+  const formattedDate = format(date, "d MMMM", { locale: dateLocale });
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="w-[95vw] sm:max-w-md bg-background border-white/10 rounded-2xl overflow-hidden p-6 gap-0 shadow-2xl">
         <DialogHeader className="mb-4">
-          <DialogTitle className="text-xl font-bold tracking-tight">Задачи на {formattedDate}</DialogTitle>
+          <DialogTitle className="text-xl font-bold tracking-tight">
+            {t("dashboard.selector.title", { date: formattedDate })}
+          </DialogTitle>
           <DialogDescription className="text-sm">
-            Выберите узлы для фокуса на выбранный день.
+            {t("dashboard.selector.description", "Выберите узлы для фокуса на выбранный день.")}
           </DialogDescription>
         </DialogHeader>
 
@@ -74,10 +79,10 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
             className="text-[10px] uppercase font-bold tracking-widest border-white/5 bg-background/50 h-8 rounded-lg"
           >
             <DynamicIcon name="zap" className="w-3 h-3 mr-1.5 text-primary" />
-            Загрузить по умолчанию
+            {t("dashboard.selector.loadDefaults", "Загрузить по умолчанию")}
           </Button>
           <div className="text-[10px] uppercase font-bold tracking-widest opacity-40">
-            {selectedIds.length} выбрано
+            {t("dashboard.selector.selectedCount", { count: selectedIds.length })}
           </div>
         </div>
 
@@ -88,7 +93,9 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
         <ScrollArea className="h-[45vh] pr-4 -mr-2">
           <div className="space-y-3">
             {allNodes.length === 0 ? (
-              <p className="text-center text-muted-foreground py-12">Нет доступных узлов. Создайте их сначала.</p>
+              <p className="text-center text-muted-foreground py-12">
+                {t("dashboard.selector.noNodes", "Нет доступных узлов. Создайте их сначала.")}
+              </p>
             ) : (
               allNodes.map(node => {
                 const isSelected = selectedIds.includes(node.id);
@@ -112,10 +119,12 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
                       </div>
                       <div className="flex flex-col">
                         <span className={cn("font-bold text-sm tracking-tight", isSelected ? "text-foreground" : "")}>{node.name}</span>
-                        <span className="text-[10px] uppercase opacity-40 font-bold tracking-widest">{node.node_type}</span>
+                        <span className="text-[10px] uppercase opacity-40 font-bold tracking-widest">
+                          {t(`nodes.type.${node.node_type}`, node.node_type)}
+                        </span>
                         {node.is_focus_default && (
                           <Badge variant="outline" className="w-fit h-4 text-[8px] uppercase font-bold tracking-tighter border-primary/20 text-primary px-1 mt-0.5">
-                            Default
+                            {t("common.default", "Default")}
                           </Badge>
                         )}
                       </div>
@@ -139,14 +148,16 @@ export function DailyFocusSelector({ isOpen, onClose, date, allNodes, currentFoc
 
         <DialogFooter className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between items-stretch sm:items-center">
           <div className="text-xs text-muted-foreground font-bold uppercase tracking-widest text-center sm:text-left">
-            {selectedIds.length} выбрано
+            {t("dashboard.selector.selectedCount", { count: selectedIds.length })}
           </div>
           <div className="flex flex-col gap-3 sm:flex-row items-stretch">
             <Button variant="ghost" onClick={onClose} disabled={isSaving} className="border border-white/5 rounded-xl">
-              Отмена
+              {t("common.cancel", "Отмена")}
             </Button>
             <Button onClick={handleSave} disabled={isSaving} className="rounded-xl shadow-lg shadow-primary/20">
-              {isSaving ? "Синхронизация..." : "Сохранить фокус"}
+              {isSaving 
+                ? t("dashboard.selector.syncing", "Синхронизация...") 
+                : t("dashboard.selector.saveFocus", "Сохранить фокус")}
             </Button>
           </div>
         </DialogFooter>

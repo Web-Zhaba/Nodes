@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Sparkles } from "lucide-react";
+import { Plus, Target, Activity, Coffee } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { NodeCard } from "@/features/nodes/components/NodeCard";
@@ -14,6 +14,8 @@ import { useDailyFocusQuery, useSetDailyFocusMutation } from "@/features/nodes/h
 import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery";
 import { startOfDay, format } from "date-fns";
 import { calculateStability } from "@/lib/api/stability";
+import { useTranslation } from "react-i18next";
+import type { Impulse } from "@/types";
 
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
 
@@ -24,6 +26,7 @@ export default function NodesListPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: profile } = useProfileQuery(user?.id);
+  const { t } = useTranslation();
   
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
@@ -68,17 +71,17 @@ export default function NodesListPage() {
 
   // Data processing
   const nodesWithValues = useMemo(() => {
-    const impulsesMap = impulses.reduce((acc, imp: any) => {
+    const impulsesMap = impulses.reduce((acc, imp: Impulse) => {
       if (!acc[imp.node_id]) acc[imp.node_id] = [];
       acc[imp.node_id].push(imp);
       return acc;
-    }, {} as Record<string, any[]>);
+    }, {} as Record<string, Impulse[]>);
 
     const result: Record<string, { isCompleted: boolean; value: number }> = {};
 
     Object.values(nodes).forEach(node => {
       const nodeImpulses = impulsesMap[node.id] || [];
-      const totalValue = nodeImpulses.reduce((sum: number, imp: any) => sum + (imp.value || 0), 0);
+      const totalValue = nodeImpulses.reduce((sum: number, imp: Impulse) => sum + (imp.value || 0), 0);
       const isCompleted = node.node_type === "binary"
         ? nodeImpulses.length > 0
         : totalValue >= (node.target_value || 0);
@@ -118,10 +121,10 @@ export default function NodesListPage() {
   const handleSaveFocusNodes = async (selectedIds: string[]) => {
     try {
       await setDailyFocus.mutateAsync({ nodeIds: selectedIds, date: selectedDate, userId: user?.id });
-      toast.success("Фокус дня обновлен");
+      toast.success(t("dashboard.notifications.focusUpdated", "Фокус дня обновлен"));
     } catch (error) {
       console.error("Ошибка сохранения фокуса:", error);
-      toast.error("Не удалось сохранить");
+      toast.error(t("common.errorSaving", "Не удалось сохранить"));
     }
   };
 
@@ -132,10 +135,17 @@ export default function NodesListPage() {
 
   const greetingText = useMemo(() => {
     if (profile?.show_greeting === false) return null;
-    const formatStr = profile?.custom_greeting || "Привет, {name}";
-    const name = profile?.display_name || "Оператор";
-    return formatStr.replace("{name}", name);
-  }, [profile]);
+    
+    const name = profile?.display_name || t("dashboard.operator", "Аноним");
+    const customGreeting = profile?.custom_greeting;
+
+    if (customGreeting) {
+      // Поддерживаем оба формата: {name} и {{name}} для гибкости
+      return customGreeting.replace(/{{name}}|{name}/g, name);
+    }
+
+    return t("dashboard.greeting", { name });
+  }, [profile, t]);
 
   // Автоматическое добавление дефолтных узлов для новых дней
   useEffect(() => {
@@ -161,6 +171,25 @@ export default function NodesListPage() {
     }
   }, [isLoading, isPastDate, focusNodeIds.length, nodes, selectedDate, user?.id, setDailyFocus]);
 
+  const isFutureDate = selectedDate > startOfDay(new Date());
+
+  const getHeaderText = () => {
+    if (isPastDate) return t("dashboard.states.archive", "Архив");
+    if (isFutureDate) return t("dashboard.states.plan", "План");
+    return t("dashboard.states.today", "Сегодня");
+  };
+
+  const getSubText = () => {
+    if (isPastDate) return t("dashboard.subtitles.history", "История орбиты");
+    return t("dashboard.subtitles.focus", "Режим фокуса");
+  };
+
+  const getStatusMessage = () => {
+    if (isPastDate) return t("dashboard.messages.history", "Режим просмотра истории. Вы можете отслеживать активности в прошлом.");
+    if (activeNodes.length === 0) return t("dashboard.messages.waiting", "Система в ожидании. Настройте фокус для старта.");
+    return t("dashboard.messages.active", "Отличный темп. Система работает стабильно. Сохраняйте фокус.");
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto px-4 pt-8 pb-24 md:pb-12 space-y-8 min-h-[calc(100vh-4rem)] relative">
       {/* Декоративный фон: сетка и "сияние" ядра */}
@@ -183,11 +212,11 @@ export default function NodesListPage() {
               </p>
             )}
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/50">
-              {isPastDate ? "Архив" : (selectedDate > startOfDay(new Date()) ? "План" : "Сегодня")}
+              {getHeaderText()}
             </h1>
             <p className="text-xs sm:text-sm font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1 opacity-80 text-primary">
-              <Sparkles className="w-3.5 h-3.5" />
-              {isPastDate ? "История орбиты" : "Режим фокуса"}
+              <Target className="w-3.5 h-3.5" />
+              {getSubText()}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -197,15 +226,15 @@ export default function NodesListPage() {
               className="flex-1 sm:flex-none gap-2 shadow-sm border-white/10 h-10 sm:h-11 rounded-xl"
             >
               <Plus className="w-4 h-4" />
-              <span className="hidden xs:inline">Узел</span>
-              <span className="xs:hidden">Создать</span>
+              <span className="hidden xs:inline">{t("dashboard.buttons.createNode", "Узел")}</span>
+              <span className="xs:hidden">{t("dashboard.buttons.create", "Создать")}</span>
             </Button>
             <Button
               onClick={() => setIsSelectorOpen(true)}
               className="flex-[2] sm:flex-none gap-2 shadow-lg shadow-primary/20 h-10 sm:h-11 rounded-xl bg-primary hover:bg-primary/90 transition-all active:scale-95"
             >
               <Plus className="w-5 h-5" />
-              Настроить фокус
+              {t("dashboard.buttons.setupFocus", "Настроить фокус")}
             </Button>
           </div>
         </div>
@@ -217,13 +246,9 @@ export default function NodesListPage() {
         />
 
         <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 flex items-start gap-3">
-          <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+          <Activity className="w-5 h-5 text-primary shrink-0 mt-0.5" />
           <p className="text-sm text-primary/80 font-medium leading-relaxed">
-            {isPastDate
-              ? "Режим просмотра истории. Вы можете отслеживать активности в прошлом."
-              : activeNodes.length === 0
-                ? "Система в ожидании. Настройте фокус для старта."
-                : "Отличный темп. Система работает стабильно. Сохраняйте фокус."}
+            {getStatusMessage()}
           </p>
         </div>
       </div>
@@ -247,17 +272,17 @@ export default function NodesListPage() {
         <div className="relative text-center py-20 mt-10 rounded-[2rem] border border-white/5 bg-background/40 backdrop-blur-xl shadow-2xl overflow-hidden group">
           <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full transition-opacity group-hover:opacity-70 opacity-40" />
           <div className="relative z-10 w-24 h-24 mx-auto mb-6 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-[0_0_40px_rgba(var(--primary),0.15)] group-hover:scale-105 transition-transform duration-500">
-            <Sparkles className="w-10 h-10 text-primary animate-pulse" />
+            <Coffee className="w-10 h-10 text-primary opacity-60" />
           </div>
-          <h2 className="relative z-10 text-2xl font-bold mb-2 tracking-tight">Планов нет</h2>
+          <h2 className="relative z-10 text-2xl font-bold mb-2 tracking-tight">{t("dashboard.empty.title", "Планов нет")}</h2>
           <p className="relative z-10 text-muted-foreground mb-8 max-w-sm mx-auto text-sm">
-            Не назначено ни одного узла. Синхронизируйте свои задачи и определите главные векторы развития на этот день.
+            {t("dashboard.empty.description", "Не назначено ни одного узла. Определите главные векторы развития на этот день.")}
           </p>
           <Button
             onClick={() => setIsSelectorOpen(true)}
             className="relative z-10 rounded-xl px-8 shadow-lg shadow-primary/20 h-12 text-sm font-bold tracking-wide uppercase transition-all duration-300 hover:scale-105 active:scale-95"
           >
-            Настроить фокус
+            {t("dashboard.empty.setup", "Настроить фокус")}
           </Button>
         </div>
       ) : (

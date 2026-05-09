@@ -6,13 +6,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConnectorSelector } from "@/entities/connector/ui/ConnectorSelector";
-import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 interface CoreMocManagerProps {
   coreId: string;
 }
 
 export function CoreMocManager({ coreId }: CoreMocManagerProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   
   const { data: coreConnectors = {} } = useCoreConnectorsQuery(user?.id);
@@ -24,11 +25,9 @@ export function CoreMocManager({ coreId }: CoreMocManagerProps) {
   // We re-use getNodesForCore selector by passing a mock state
   const linkedNodes = getNodesForCore(nodes, coreConnectors, coreId);
 
-  const linkedConnectorIds = useMemo(() => {
-    return Object.values(coreConnectors)
-      .filter((cc) => cc.core_id === coreId)
-      .map((cc) => cc.connector_id);
-  }, [coreConnectors, coreId]);
+  const linkedConnectorIds = Object.values(coreConnectors)
+    .filter((cc) => cc.core_id === coreId)
+    .map((cc) => cc.connector_id);
 
   const handleChange = async (newIds: string[]) => {
     try {
@@ -42,23 +41,22 @@ export function CoreMocManager({ coreId }: CoreMocManagerProps) {
       for (const id of toRemove) {
         await toggleMutation.mutateAsync({ coreId, connectorId: id, isLinked: false });
       }
-    } catch (error) {
-      toast.error("Ошибка при обновлении связей");
+    } catch {
+      toast.error(t("graph.cores.manager.updateError"));
     }
   };
 
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Настройки связей</CardTitle>
+        <CardTitle>{t("graph.cores.manager.title")}</CardTitle>
         <CardDescription>
-          Выберите Коннекторы (теги), которые это Ядро должно объединять. 
-          Узлы с этими тегами автоматически станут частью его орбиты.
+          {t("graph.cores.manager.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
-          <h4 className="text-sm font-medium leading-none">Коннекторы орбиты</h4>
+          <h4 className="text-sm font-medium leading-none">{t("graph.cores.manager.orbitConnectors")}</h4>
           <ConnectorSelector
             value={linkedConnectorIds}
             onChange={handleChange}
@@ -66,10 +64,10 @@ export function CoreMocManager({ coreId }: CoreMocManagerProps) {
         </div>
 
         <div className="space-y-4 border-t pt-4">
-          <h4 className="text-sm font-medium leading-none">Притянутые Узлы ({linkedNodes.length})</h4>
+          <h4 className="text-sm font-medium leading-none">{t("graph.cores.manager.attractedNodes", { count: linkedNodes.length })}</h4>
           {linkedNodes.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              С текущими тегами к этому Ядру не притянут ни один Узел.
+              {t("graph.cores.manager.noNodes")}
             </p>
           ) : (
             <ul className="text-sm text-muted-foreground space-y-2 pl-2 mt-2">

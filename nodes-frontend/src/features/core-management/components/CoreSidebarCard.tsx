@@ -1,4 +1,5 @@
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
+import { useTranslation } from "react-i18next";
 import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ConnectorTag } from "@/components/ui/connector-tag";
@@ -28,6 +29,7 @@ export function CoreSidebarCard({
   onClick,
   actionButtons,
 }: CoreSidebarCardProps) {
+  const { t } = useTranslation();
   const affectedNodes = getNodesForCore(nodes, coreConnectors, core.id);
 
 
@@ -121,7 +123,7 @@ export function CoreSidebarCard({
             {actionButtons && (
               <span className="text-xs text-muted-foreground flex items-center gap-1.5 font-medium mb-1">
                 <Sparkles className="w-3.5 h-3.5" style={{ color: core.color }} />
-                Узлов в системе: <Badge variant="secondary" className="px-1.5 h-4.5 font-bold">{affectedNodes.length}</Badge>
+                {t("graph.sidebar.nodesCount")} <Badge variant="secondary" className="px-1.5 h-4.5 font-bold">{affectedNodes.length}</Badge>
               </span>
             )}
 

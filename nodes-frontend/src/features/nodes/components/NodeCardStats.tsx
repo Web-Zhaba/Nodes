@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Circle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface NodeCardStatsProps {
   completionCount: number;
@@ -13,6 +14,8 @@ export function NodeCardStats({
   completionCount,
   className,
 }: NodeCardStatsProps) {
+  const { t } = useTranslation();
+
   return (
     <div className={cn("flex items-center gap-2 text-sm", className)}>
       {completionCount > 0 ? (
@@ -20,7 +23,7 @@ export function NodeCardStats({
       ) : (
         <Circle className="w-4 h-4 text-muted-foreground" />
       )}
-      <span className="text-muted-foreground">Выполнено:</span>
+      <span className="text-muted-foreground">{t("nodes.completedCount", "Выполнено")}:</span>
       <span className="font-semibold text-foreground">{completionCount}</span>
     </div>
   );

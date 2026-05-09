@@ -4,6 +4,7 @@ import { useAnalyticsStore } from '@/store/useAnalyticsStore';
 import { useProcessedAnalytics } from '@/features/analytics/hooks/useProcessedAnalytics';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 // Палитра цветов для узлов, если у них нет своего цвета
 const FALLBACK_COLORS = [
@@ -11,15 +12,16 @@ const FALLBACK_COLORS = [
   '#fb923c', '#a3e635', '#22d3ee', '#e879f9', '#f87171',
 ];
 
-const PERIODS = [
-  { label: '7д', days: 7 },
-  { label: '30д', days: 30 },
-  { label: '90д', days: 90 },
-  { label: 'Год', days: 365 },
-];
-
 export function StabilityHeroChart() {
+  const { t } = useTranslation();
   const { focusEntity, setFocus, clearFocus, nodes, isLoading, selectedDays, setSelectedDays } = useAnalyticsStore();
+
+  const PERIODS = [
+    { label: t('analytics.periods.7d'), days: 7 },
+    { label: t('analytics.periods.30d'), days: 30 },
+    { label: t('analytics.periods.90d'), days: 90 },
+    { label: t('analytics.periods.year'), days: 365 },
+  ];
   const { chartData } = useProcessedAnalytics();
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
@@ -66,7 +68,7 @@ export function StabilityHeroChart() {
         onClick={(e) => e.stopPropagation()} // Предотвращаем сброс фокуса при клике на хедер
       >
         <h3 className="font-semibold text-lg tracking-wide">
-          Стабильность {focusEntity ? `— ${focusEntity.type === 'node' ? 'Фокус на узле' : 'Ядро'}` : '— Общая'}
+          {t('analytics.stability.title')} {focusEntity ? `— ${focusEntity.type === 'node' ? t('analytics.stability.focusNode') : t('analytics.stability.core')}` : `— ${t('analytics.stability.global')}`}
         </h3>
 
         <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-lg border border-border/20 self-start sm:self-center">
@@ -166,10 +168,8 @@ export function StabilityHeroChart() {
                       r: 6, 
                       strokeWidth: 0,
                       fill: color,
-                      onClick: (e: any) => {
-                        if (e && e.stopPropagation) {
-                          e.stopPropagation();
-                        }
+                      onClick: () => {
+                        // Recharts event handling
                         setFocus({ type: 'node', id: node.id });
                       }
                     }}
@@ -181,8 +181,8 @@ export function StabilityHeroChart() {
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-full flex items-center justify-center text-muted-foreground">
-            Нет данных за выбранный период. Начните записывать импульсы!
+          <div className="h-full flex items-center justify-center text-center p-4 text-muted-foreground">
+            {t('analytics.stability.noData')}
           </div>
         )}
       </div>

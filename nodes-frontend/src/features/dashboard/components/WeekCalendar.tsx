@@ -1,10 +1,11 @@
 import { format, addDays, subDays, startOfWeek, isSameDay, startOfDay } from "date-fns";
-import { ru } from "date-fns/locale";
+import { ru, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 
 interface WeekCalendarProps {
   selectedDate: Date;
@@ -19,6 +20,8 @@ export function WeekCalendar({
   weekStartsOn = 1, 
   className 
 }: WeekCalendarProps) {
+  const { t, i18n } = useTranslation();
+  
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
     startOfWeek(selectedDate, { weekStartsOn })
   );
@@ -38,14 +41,16 @@ export function WeekCalendar({
     setCurrentWeekStart(startOfWeek(today, { weekStartsOn }));
   };
 
+  const dateLocale = i18n.language === 'en' ? enUS : ru;
+
   return (
     <div className={cn("w-full space-y-4", className)}>
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-xl font-semibold capitalize flex items-center gap-3">
-          {format(currentWeekStart, "LLLL yyyy", { locale: ru })}
+          {format(currentWeekStart, "LLLL yyyy", { locale: dateLocale })}
           {!isSameDay(selectedDate, today) && (
             <Button variant="ghost" size="sm" onClick={handleJumpToToday} className="text-xs h-7 text-muted-foreground hidden sm:flex">
-              Вернуться к сегодня
+              {t("dashboard.calendar.backToToday", "Вернуться к сегодня")}
             </Button>
           )}
         </h2>
@@ -85,7 +90,7 @@ export function WeekCalendar({
                 "text-[8px] sm:text-[10px] font-bold uppercase mb-0.5 sm:mb-1 tracking-tighter sm:tracking-normal",
                 isSelected ? "text-primary-foreground/90" : "text-muted-foreground"
               )}>
-                {format(day, "EEEEEE", { locale: ru })}
+                {format(day, "EEEEEE", { locale: dateLocale })}
               </span>
               <span className="text-base sm:text-xl font-bold tracking-tight">
                 {format(day, "d")}

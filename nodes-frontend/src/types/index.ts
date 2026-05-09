@@ -131,3 +131,15 @@ export interface Profile {
   created_at: string;
   updated_at: string;
 }
+
+/**
+ * Impulse (Импульс) — отметка о выполнении узла
+ */
+export interface Impulse {
+  id: string;
+  user_id: string;
+  node_id: string;
+  value: number;
+  completed_at: string; // YYYY-MM-DD
+  created_at: string;
+}

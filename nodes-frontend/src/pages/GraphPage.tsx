@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Sparkles, Settings2, Plus, Pencil, ArrowLeft, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Settings2, Plus, Pencil, ArrowLeft, X, Loader2, CircleDot, Network, Layers } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { EditCoreForm } from "@/features/core-management/components/EditCoreForm
 import { CoreMocManager } from "@/features/core-management/components/CoreMocManager";
 import { useCoresQuery, useCoreConnectorsQuery } from "@/features/core-management/hooks/useCoresQuery";
 import { useNodesQuery } from "@/features/nodes/hooks/useNodesQuery";
+import type { Impulse } from "@/types";
 import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQuery";
 import { ForceGraph } from "@/entities/graph/ui/ForceGraph";
 import { useGraphData } from "@/features/graph-visualization/hooks/useGraphData";
@@ -20,6 +22,7 @@ import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks
 import { NodeCard } from "@/features/nodes/components/NodeCard";
 
 export default function GraphPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [selectedCoreId, setSelectedCoreId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -56,7 +59,7 @@ export default function GraphPage() {
   let todayValue = 0;
   if (selectedNodeId && nodes[selectedNodeId]) {
     const node = nodes[selectedNodeId];
-    todayValue = nodeImpulses.reduce((sum: number, imp: any) => sum + (imp.value || 0), 0);
+    todayValue = nodeImpulses.reduce((sum: number, imp: Impulse) => sum + (imp.value || 0), 0);
     isCompletedToday = node.node_type === "binary"
       ? nodeImpulses.length > 0
       : todayValue >= (node.target_value || 0);
@@ -69,8 +72,8 @@ export default function GraphPage() {
     return (
       <div className="w-full h-[calc(100vh-5rem)] flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center gap-4">
-          <Sparkles className="w-8 h-8 text-primary opacity-50" />
-          <p className="text-muted-foreground">Архитектура загружается...</p>
+          <Loader2 className="w-8 h-8 text-primary opacity-50 animate-spin" />
+          <p className="text-muted-foreground">{t("graph.loading")}</p>
         </div>
       </div>
     );
@@ -82,7 +85,7 @@ export default function GraphPage() {
       <div className="flex items-center justify-between px-1">
         <h3 className="font-bold flex items-center gap-2">
           <Settings2 className="w-5 h-5 text-primary" />
-          Архитектура
+          {t("graph.sidebar.title")}
         </h3>
         <Button 
           variant="outline" 
@@ -96,7 +99,7 @@ export default function GraphPage() {
           }}
         >
           <Plus className="w-3.5 h-3.5" />
-          Новое Ядро
+          {t("graph.sidebar.newNode")}
         </Button>
       </div>
 
@@ -105,13 +108,13 @@ export default function GraphPage() {
         <div className="space-y-3 pb-20">
           {Object.keys(cores).length === 0 ? (
             <div className="text-center p-8 bg-muted/30 rounded-2xl border border-dashed border-muted">
-              <p className="text-sm text-muted-foreground">У вас еще нет Ядер.</p>
+              <p className="text-sm text-muted-foreground">{t("graph.sidebar.noCores")}</p>
               <Button 
                 variant="link" 
                 onClick={() => setIsCreating(true)}
                 className="mt-2 text-primary"
               >
-                Создайте первый центр гравитации
+                {t("graph.sidebar.createFirstCore")}
               </Button>
             </div>
           ) : (
@@ -160,7 +163,7 @@ export default function GraphPage() {
           {isEditing ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-2xl font-bold tracking-tight px-1">Настройки</h4>
+                <h4 className="text-2xl font-bold tracking-tight px-1">{t("graph.sidebar.settings")}</h4>
                 <Button 
                   variant="ghost" 
                   size="icon" 
@@ -223,7 +226,7 @@ export default function GraphPage() {
         <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
              <div className="flex items-center justify-between mb-2">
                 <h4 className="text-2xl font-bold tracking-tight px-1 text-primary gap-2 flex items-center">
-                  <Sparkles className="w-5 h-5"/> Узел
+                  <CircleDot className="w-5 h-5"/> {t("graph.sidebar.node")}
                 </h4>
                 <Button 
                   variant="ghost" 
@@ -257,14 +260,14 @@ export default function GraphPage() {
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div>
           <p className="text-xs font-medium text-muted-foreground mb-1">
-            Визуализация
+            {t("graph.category")}
           </p>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/50">
-            Орбита
+            {t("graph.title")}
           </h1>
           <p className="text-xs sm:text-sm font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1 opacity-80 text-primary">
-            <Sparkles className="w-3.5 h-3.5" />
-            Нейронная сеть
+            <Network className="w-3.5 h-3.5" />
+            {t("graph.subtitle")}
           </p>
         </div>
       </header>
@@ -273,12 +276,12 @@ export default function GraphPage() {
       <div className="flex-1 rounded-[2rem] md:rounded-3xl border border-primary/10 overflow-hidden relative bg-background/50 backdrop-blur-sm shadow-inner min-h-0">
         {graphData.nodes.length === 0 && !isLoading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center p-6">
-            <Sparkles className="w-10 h-10 text-primary opacity-40" />
+            <Layers className="w-10 h-10 text-primary opacity-40" />
             <p className="text-muted-foreground text-sm max-w-xs">
-              Пустота. Создайте Ядра, чтобы запустить нейронную сеть вашей жизни.
+              {t("graph.empty.text")}
             </p>
             <Button onClick={() => { setIsSidebarOpen(true); setIsCreating(true); }} variant="outline" className="mt-4">
-              Создать первое Ядро
+              {t("graph.empty.button")}
             </Button>
           </div>
         ) : (
@@ -338,7 +341,7 @@ export default function GraphPage() {
             )}
           >
             <div className="flex items-center justify-between mb-2 -mt-2">
-              <h3 className="font-bold text-lg text-muted-foreground opacity-80 uppercase tracking-widest text-[10px]">Командный центр</h3>
+              <h3 className="font-bold text-lg text-muted-foreground opacity-80 uppercase tracking-widest text-[10px]">{t("graph.sidebar.commandCenter")}</h3>
               <Button 
                 variant="ghost" 
                 size="icon" 

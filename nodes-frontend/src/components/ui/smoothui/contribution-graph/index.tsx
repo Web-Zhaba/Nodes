@@ -1,15 +1,18 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import type React from "react";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export interface ContributionData {
   count: number;
   date: string;
   level: number;
   stability?: number;
+  activeNodes?: Array<{ name: string; count: number; color?: string }>;
 }
 
 export interface ContributionGraphProps {
@@ -26,25 +29,9 @@ const JANUARY_MONTH = 0;
 const DECEMBER_MONTH = 11;
 const SUNDAY_DAY = 0;
 const MIN_WEEKS_FOR_DECEMBER_HEADER = 2;
-const TOOLTIP_OFFSET_X = 10;
-const TOOLTIP_OFFSET_Y = 40;
 
-const MONTHS = [
-  "Янв",
-  "Фев",
-  "Мар",
-  "Апр",
-  "Май",
-  "Июн",
-  "Июл",
-  "Авг",
-  "Сен",
-  "Окт",
-  "Ноя",
-  "Дек",
-];
 
-const DAYS = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+// Constants moved into component or handled dynamically
 
 // Contribution level colors
 const CONTRIBUTION_COLORS = [
@@ -95,6 +82,8 @@ const createDayData = (
     date: dateString,
     count: isFuture ? -1 : (existingData?.count ?? LEVEL_0),
     level: isFuture ? -1 : (existingData?.level ?? LEVEL_0),
+    stability: existingData?.stability,
+    activeNodes: existingData?.activeNodes,
   };
 };
 
@@ -120,7 +109,7 @@ const shouldShowMonthHeader = ({
     weekCount >= MIN_WEEKS_FOR_DECEMBER_HEADER);
 
 // Helper function to calculate month headers
-const calculateMonthHeaders = (targetYear: number) => {
+const calculateMonthHeaders = (targetYear: number, monthsArray: string[]) => {
   const headers: { month: string; colspan: number; startWeek: number }[] = [];
   const startDate = new Date(targetYear, JANUARY_MONTH, DAY_1);
   const firstSunday = new Date(startDate);
@@ -150,7 +139,7 @@ const calculateMonthHeaders = (targetYear: number) => {
         })
       ) {
         headers.push({
-          month: MONTHS[currentMonth],
+          month: monthsArray[currentMonth],
           colspan: weekCount,
           startWeek: monthStartWeek,
         });
@@ -176,7 +165,7 @@ const calculateMonthHeaders = (targetYear: number) => {
     })
   ) {
     headers.push({
-      month: MONTHS[currentMonth],
+      month: monthsArray[currentMonth],
       colspan: weekCount,
       startWeek: monthStartWeek,
     });
@@ -192,8 +181,41 @@ export function ContributionGraph({
   showLegend = true,
   showTooltips = true,
 }: ContributionGraphProps) {
+  const { t, i18n } = useTranslation();
+
+  const MONTHS = useMemo(() => [
+    t('common.months.jan', 'Янв'),
+    t('common.months.feb', 'Фев'),
+    t('common.months.mar', 'Мар'),
+    t('common.months.apr', 'Апр'),
+    t('common.months.may', 'Май'),
+    t('common.months.jun', 'Июн'),
+    t('common.months.jul', 'Июл'),
+    t('common.months.aug', 'Авг'),
+    t('common.months.sep', 'Сен'),
+    t('common.months.oct', 'Окт'),
+    t('common.months.nov', 'Ноя'),
+    t('common.months.dec', 'Дек'),
+  ], [t]);
+
+  const DAYS = useMemo(() => [
+    t('common.days.sun', 'Вс'),
+    t('common.days.mon', 'Пн'),
+    t('common.days.tue', 'Вт'),
+    t('common.days.wed', 'Ср'),
+    t('common.days.thu', 'Чт'),
+    t('common.days.fri', 'Пт'),
+    t('common.days.sat', 'Сб')
+  ], [t]);
+
   const [hoveredDay, setHoveredDay] = useState<ContributionData | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   // Generate all days for the year
   const yearData = useMemo(() => {
@@ -227,7 +249,7 @@ export function ContributionGraph({
   }, [data, year]);
 
   // Calculate month headers with colspan
-  const monthHeaders = useMemo(() => calculateMonthHeaders(year), [year]);
+  const monthHeaders = useMemo(() => calculateMonthHeaders(year, MONTHS), [year, MONTHS]);
 
   const handleDayHover = (day: ContributionData, event: React.MouseEvent) => {
     if (showTooltips && day.date && day.level !== -1) {
@@ -245,8 +267,7 @@ export function ContributionGraph({
       return "";
     }
     const date = new Date(dateString);
-    // "четверг, 23 апреля"
-    const formatted = date.toLocaleDateString("ru-RU", {
+    const formatted = date.toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US', {
       weekday: "long",
       month: "long",
       day: "numeric",
@@ -255,19 +276,8 @@ export function ContributionGraph({
   };
 
   const getContributionText = (count: number) => {
-    if (count === LEVEL_0) return "Нет активности";
-    
-    // Склонение слова "импульс"
-    const lastDigit = count % 10;
-    const lastTwoDigits = count % 100;
-    
-    if (lastDigit === 1 && lastTwoDigits !== 11) {
-      return `${count} импульс`;
-    }
-    if ([2, 3, 4].includes(lastDigit) && ![12, 13, 14].includes(lastTwoDigits)) {
-      return `${count} импульса`;
-    }
-    return `${count} импульсов`;
+    if (count === LEVEL_0) return t('analytics.heatmap.noActivity');
+    return t('analytics.heatmap.pulses', { count });
   };
 
   return (
@@ -341,15 +351,37 @@ export function ContributionGraph({
                   className="relative w-full"
                   style={{ paddingBottom: '100%' }}
                 >
-                  <div
-                    className={`absolute inset-0 rounded-[3px] ${colorClass} ${
-                      !isFuture
-                        ? "cursor-pointer hover:ring-1 hover:ring-primary/50 hover:shadow-[0_0_8px_rgba(var(--primary),0.4)] transition-all duration-200"
-                        : ""
-                    }`}
+                  <motion.div
+                    initial={false}
+                    animate={{
+                      scale: hoveredDay?.date === dayData.date ? 1.15 : 1,
+                      zIndex: hoveredDay?.date === dayData.date ? 10 : 1,
+                    }}
+                    className={cn(
+                      "absolute inset-0 rounded-[3px] transition-colors duration-200",
+                      colorClass,
+                      !isFuture && "cursor-pointer",
+                      dayData.date === new Date().toISOString().split('T')[0] && "ring-1 ring-primary/50 shadow-[0_0_8px_rgba(var(--primary),0.3)]"
+                    )}
                     onMouseEnter={(e) => handleDayHover(dayData, e)}
                     onMouseLeave={handleDayLeave}
                   />
+                  {dayData.date === new Date().toISOString().split('T')[0] && (
+                    <motion.div
+                      animate={{ opacity: [0.2, 0.5, 0.2] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute inset-0 rounded-[3px] bg-primary/20 blur-[2px]"
+                    />
+                  )}
+                  {hoveredDay?.date === dayData.date && !isFuture && (
+                    <motion.div
+                      layoutId="hover-glow"
+                      className="absolute inset-0 rounded-[3px] bg-primary/20 blur-[4px] -z-10"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    />
+                  )}
                 </div>
               );
             })}
@@ -357,52 +389,93 @@ export function ContributionGraph({
         ))}
       </div>
 
-      {/* Tooltip */}
-      {showTooltips && hoveredDay && (
-        <motion.div
-          initial={{ opacity: 0, y: 10, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.15, ease: "easeOut" }}
-          className="pointer-events-none fixed z-50 rounded-xl border border-border/40 bg-background/95 backdrop-blur-xl px-4 py-3 text-foreground shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_20px_rgba(var(--primary),0.1)] min-w-[180px]"
-          style={{
-            left: tooltipPosition.x + TOOLTIP_OFFSET_X,
-            top: tooltipPosition.y - TOOLTIP_OFFSET_Y - (hoveredDay.stability !== undefined ? 65 : 45),
-          }}
-        >
-          <div className="flex flex-col gap-1.5">
-            <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.15em] opacity-50">
-              {formatDate(hoveredDay.date)}
-            </div>
-            
-            <div className="flex items-center justify-between gap-4 mt-0.5">
-              <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${
-                  hoveredDay.count > 0 ? "bg-primary shadow-[0_0_8px_var(--primary)]" : "bg-muted-foreground/30"
-                }`} />
-                <span className="font-semibold text-[14px] tracking-tight">
-                  {getContributionText(hoveredDay.count)}
-                </span>
-              </div>
-            </div>
+      {/* Tooltip Portal */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {showTooltips && hoveredDay && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 5, scale: 0.98 }}
+              transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+              className="pointer-events-none fixed z-[9999] rounded-xl border border-white/10 bg-black/60 backdrop-blur-xl px-4 py-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_20px_rgba(var(--primary),0.1)] min-w-[200px]"
+              style={{
+                left: tooltipPosition.x,
+                top: tooltipPosition.y,
+                transform: 'translate(-50%, -115%)', // Center horizontally and place above
+              }}
+            >
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-1.5 mb-0.5">
+                  <span className="text-[10px] text-white/50 font-bold uppercase tracking-[0.1em]">
+                    {formatDate(hoveredDay.date)}
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <div className={cn(
+                      "w-2 h-2 rounded-full",
+                      hoveredDay.count > 0 
+                        ? "bg-primary shadow-[0_0_10px_var(--primary)]" 
+                        : "bg-white/20"
+                    )} />
+                    <span className="font-semibold text-[14px] tracking-tight">
+                      {getContributionText(hoveredDay.count)}
+                    </span>
+                  </div>
+                </div>
 
-            {hoveredDay.stability !== undefined && (
-              <div className="mt-2 pt-2 border-t border-border/30 flex items-center justify-between gap-2">
-                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider opacity-60">Стабильность</span>
-                <span className="text-[13px] font-bold text-primary">{Math.round(hoveredDay.stability)}%</span>
+                {hoveredDay.stability !== undefined && (
+                  <div className="mt-1 flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] text-white/40 font-medium uppercase tracking-wider">{t('analytics.stability.title')}</span>
+                      <span className="text-[12px] font-bold text-primary">{Math.round(hoveredDay.stability)}%</span>
+                    </div>
+                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${hoveredDay.stability}%` }}
+                        className="h-full bg-primary shadow-[0_0_8px_var(--primary)]"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {hoveredDay.activeNodes && hoveredDay.activeNodes.length > 0 && (
+                  <div className="mt-1 pt-2 border-t border-white/10 flex flex-col gap-1.5 max-h-[150px] overflow-y-auto custom-scrollbar pr-1">
+                    {hoveredDay.activeNodes.map((node, idx) => (
+                      <div key={idx} className="flex items-center justify-between gap-3 text-[11px]">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div 
+                            className="w-1.5 h-1.5 rounded-full shrink-0" 
+                            style={{ backgroundColor: node.color || 'rgb(var(--primary))' }}
+                          />
+                          <span className="text-white/80 truncate font-medium">{node.name}</span>
+                        </div>
+                        {node.count > 1 && (
+                          <span className="text-white/40 tabular-nums shrink-0 font-mono text-[10px]">
+                            {node.count}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          
-          {/* Subtle triangle indicator */}
-          <div className="absolute -bottom-1.5 left-6 w-3 h-3 bg-background/95 border-r border-b border-border/40 rotate-45" />
-        </motion.div>
+              
+              {/* Premium Glow effect behind tooltip */}
+              <div className="absolute inset-0 -z-10 bg-primary/5 rounded-xl blur-xl" />
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
 
       {/* Legend */}
       {showLegend && (
         <div className="mt-3 flex items-center justify-end gap-2 text-[11px] text-foreground/70">
-          <span>Меньше</span>
+          <span>{t('analytics.heatmap.less')}</span>
           <div className="flex items-center gap-[3px]">
             {CONTRIBUTION_LEVELS.map((level) => (
               <div
@@ -411,7 +484,7 @@ export function ContributionGraph({
               />
             ))}
           </div>
-          <span>Больше</span>
+          <span>{t('analytics.heatmap.more')}</span>
         </div>
       )}
     </div>

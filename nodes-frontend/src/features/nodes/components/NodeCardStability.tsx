@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface NodeCardStabilityProps {
   stabilityScore: number;
@@ -14,6 +15,8 @@ export function NodeCardStability({
   color,
   className,
 }: NodeCardStabilityProps) {
+  const { t } = useTranslation();
+  
   // Цветовая кодировка стабильности
   const getStabilityColor = (score: number) => {
     if (score >= 70) return "text-green-500";
@@ -32,7 +35,7 @@ export function NodeCardStability({
   return (
     <div className={cn("space-y-1.5", className)}>
       <div className="flex items-center justify-between text-xs">
-        <span className="text-muted-foreground font-medium">Стабильность</span>
+        <span className="text-muted-foreground font-medium">{t("nodes.stability", "Стабильность")}</span>
         <span className={cn("font-semibold", colorClass)}>
           {Math.round(stabilityScore)}/100
         </span>

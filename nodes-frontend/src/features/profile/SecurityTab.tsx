@@ -6,12 +6,14 @@ import { Globe, Github, Chrome, Link2, Unlink2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export function SecurityTab() {
   const { user } = useAuth();
   const [sessions, setSessions] = useState<any[]>([]);
   const [isLoadingSessions, setIsLoadingSessions] = useState(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const fetchSessions = async () => {
     setIsLoadingSessions(true);
@@ -36,16 +38,18 @@ export function SecurityTab() {
 
   const handleResetPasswordEmail = async () => {
     if (!user?.email) {
-      toast.error("Электронная почта не найдена");
+      toast.error(t("profile.security.emailNotFound", "Электронная почта не найдена"));
       return;
     }
     setIsUpdatingPassword(true);
     try {
       const { error } = await authService.resetPasswordForEmail(user.email, `${window.location.origin}/auth/callback`);
       if (error) throw error;
-      toast.success("Письмо со ссылкой для сброса отправлено на вашу почту");
+      toast.success(t("profile.security.resetEmailSent", "Письмо со ссылкой для сброса отправлено на вашу почту"));
     } catch (error: any) {
-      toast.error(error.message || "Ошибка при отправке письма");
+      toast.error(t("profile.security.resetEmailError", "Ошибка при отправке письма"), {
+        description: error.message,
+      });
     } finally {
       setIsUpdatingPassword(false);
     }
@@ -55,25 +59,31 @@ export function SecurityTab() {
     try {
       const { error } = await authService.signOutOthers();
       if (error) throw error;
-      toast.success("Вы вышли на всех остальных устройствах");
+      toast.success(t("profile.security.signOutOthersSuccess", "Вы вышли на всех остальных устройствах"));
       fetchSessions();
     } catch (error: any) {
-      toast.error(error.message || "Ошибка при выходе из других сессий");
+      toast.error(t("profile.security.signOutOthersError", "Ошибка при выходе из других сессий"), {
+        description: error.message,
+      });
     }
+  };
+
+  const getLocaleString = () => {
+    return i18n.language === "ru" ? "ru-RU" : "en-US";
   };
 
   return (
     <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h2 className="text-xl font-bold">Безопасность</h2>
-        <p className="text-sm text-muted-foreground">Управление цифровым следом.</p>
+        <h2 className="text-xl font-bold">{t("profile.security.title", "Безопасность")}</h2>
+        <p className="text-sm text-muted-foreground">{t("profile.security.subtitle", "Управление цифровым следом.")}</p>
       </div>
       
       <div className="space-y-4">
         <div className="p-4 rounded-2xl border border-border/40 bg-muted/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-bold">Сброс пароля</h3>
-            <p className="text-xs text-muted-foreground">Отправить ссылку для сброса на почту</p>
+            <h3 className="font-bold">{t("profile.security.resetPassword", "Сброс пароля")}</h3>
+            <p className="text-xs text-muted-foreground">{t("profile.security.resetPasswordDesc", "Отправить ссылку для сброса на почту")}</p>
           </div>
           <Button 
             variant="secondary" 
@@ -81,15 +91,15 @@ export function SecurityTab() {
             onClick={handleResetPasswordEmail}
             disabled={isUpdatingPassword}
           >
-            Сбросить
+            {t("profile.security.resetButton", "Сбросить")}
           </Button>
         </div>
         
         {/* Connected Accounts Section */}
         <div className="p-4 rounded-2xl border border-border/40 bg-muted/10 space-y-4">
           <div>
-            <h3 className="font-bold">Связанные аккаунты</h3>
-            <p className="text-xs text-muted-foreground">Дополнительные способы входа в систему</p>
+            <h3 className="font-bold">{t("profile.security.connectedAccounts", "Связанные аккаунты")}</h3>
+            <p className="text-xs text-muted-foreground">{t("profile.security.connectedAccountsDesc", "Дополнительные способы входа в систему")}</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -107,7 +117,7 @@ export function SecurityTab() {
                     <div>
                       <p className="text-sm font-bold">{provider.name}</p>
                       <p className="text-[10px] text-muted-foreground">
-                        {isLinked ? 'Подключено' : 'Не подключено'}
+                        {isLinked ? t("profile.security.connected", "Подключено") : t("profile.security.notConnected", "Не подключено")}
                       </p>
                     </div>
                   </div>
@@ -121,15 +131,15 @@ export function SecurityTab() {
                         if (!identity) return;
                         const { error } = await supabase.auth.unlinkIdentity(identity);
                         if (error) {
-                          toast.error("Ошибка при отвязке: " + error.message);
+                          toast.error(t("profile.security.unlinkError", { error: error.message }));
                         } else {
-                          toast.success(`${provider.name} отвязан`);
+                          toast.success(t("profile.security.unlinkSuccess", { provider: provider.name }));
                           window.location.reload(); // Reload to refresh identities
                         }
                       }}
                     >
                       <Unlink2 className="w-3 h-3 mr-1" />
-                      Отвязать
+                      {t("profile.security.unlink", "Отвязать")}
                     </Button>
                   ) : (
                     <Button
@@ -139,7 +149,7 @@ export function SecurityTab() {
                       onClick={() => authService.signInWithOAuth(provider.id as any)}
                     >
                       <Link2 className="w-3 h-3 mr-1" />
-                      Привязать
+                      {t("profile.security.link", "Привязать")}
                     </Button>
                   )}
                 </div>
@@ -151,8 +161,8 @@ export function SecurityTab() {
         <div className="p-4 rounded-2xl border border-border/40 bg-muted/10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
             <div>
-              <h3 className="font-bold">Управление сессиями</h3>
-              <p className="text-xs text-muted-foreground">Устройства, имеющие доступ к аккаунту</p>
+              <h3 className="font-bold">{t("profile.security.sessionManagement", "Управление сессиями")}</h3>
+              <p className="text-xs text-muted-foreground">{t("profile.security.sessionManagementDesc", "Устройства, имеющие доступ к аккаунту")}</p>
             </div>
             <Button 
               variant="destructive" 
@@ -160,7 +170,7 @@ export function SecurityTab() {
               className="rounded-xl w-full sm:w-auto"
               onClick={handleSignOutOthers}
             >
-              Выйти на других устройствах
+              {t("profile.security.signOutOthers", "Выйти на других устройствах")}
             </Button>
           </div>
           <div className="space-y-3">
@@ -171,7 +181,7 @@ export function SecurityTab() {
             ) : sessions.length > 0 ? (
               sessions.map((session, index) => {
                 const isCurrent = index === 0;
-                const userAgent = session.user_agent || "Неизвестное устройство";
+                const userAgent = session.user_agent || t("profile.security.unknownDevice", "Неизвестное устройство");
                 const isMobile = userAgent.toLowerCase().includes('mobile');
                 
                 return (
@@ -181,17 +191,21 @@ export function SecurityTab() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold truncate">
-                          {isCurrent ? "Текущая сессия" : isMobile ? "Мобильное устройство" : "Компьютер"}
+                          {isCurrent 
+                            ? t("profile.security.currentSession", "Текущая сессия") 
+                            : isMobile 
+                              ? t("profile.security.mobileDevice", "Мобильное устройство") 
+                              : t("profile.security.computer", "Компьютер")}
                         </p>
                         <p className="text-xs text-muted-foreground truncate" title={userAgent}>
                           {userAgent}
                         </p>
                         <p className="text-[10px] text-muted-foreground opacity-70 mt-1">
-                          IP: {session.ip || "Неизвестен"} • Обновлено: {new Date(session.updated_at).toLocaleString('ru-RU')}
+                          IP: {session.ip || "Unknown"} • {t("profile.security.updatedAt", { date: new Date(session.updated_at).toLocaleString(getLocaleString()) })}
                         </p>
                       </div>
                       {isCurrent && (
-                        <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)] shrink-0" title="Активно" />
+                        <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)] shrink-0" title={t("profile.security.active", "Активно")} />
                       )}
                   </div>
                 );
@@ -202,8 +216,8 @@ export function SecurityTab() {
                   <Globe className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold truncate">Текущая сессия</p>
-                  <p className="text-xs text-muted-foreground truncate">Web-клиент (Это устройство)</p>
+                  <p className="text-sm font-bold truncate">{t("profile.security.currentSession", "Текущая сессия")}</p>
+                  <p className="text-xs text-muted-foreground truncate">{t("profile.security.webClient", "Web-клиент (Это устройство)")}</p>
                 </div>
                 <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)] shrink-0" />
               </div>

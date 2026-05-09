@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
   Sparkles,
@@ -37,6 +38,7 @@ import { NodePreview } from "./NodePreview";
  * Основная форма создания узла
  */
 export function CreateNodeForm() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   
@@ -98,20 +100,20 @@ export function CreateNodeForm() {
       });
 
       if (!newNode) {
-        throw new Error("Не удалось создать узел");
+        throw new Error(t("nodes.form.create.errorDesc"));
       }
 
-      toast.success("Узел создан", {
-        description: `"${newNode.name}" добавлен в вашу сеть`,
+      toast.success(t("nodes.form.create.success"), {
+        description: t("nodes.form.create.successDesc", { name: newNode.name }),
       });
 
       // Редирект на главную
       navigate("/");
     } catch (error) {
       console.error("Ошибка создания узла:", error);
-      toast.error("Ошибка", {
+      toast.error(t("nodes.form.create.error"), {
         description:
-          error instanceof Error ? error.message : "Не удалось создать узел",
+          error instanceof Error ? error.message : t("nodes.form.create.errorDesc"),
       });
     }
   };
@@ -142,9 +144,9 @@ export function CreateNodeForm() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Создание узла</h1>
+          <h1 className="text-2xl font-bold">{t("nodes.form.create.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Добавьте новую единицу действия в вашу сеть
+            {t("nodes.form.create.subtitle")}
           </p>
         </div>
       </div>
@@ -156,11 +158,11 @@ export function CreateNodeForm() {
           {/* Название узла */}
           <div className="space-y-2">
             <Label htmlFor="name">
-              Название узла <span className="text-destructive">*</span>
+              {t("nodes.form.fields.name")} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="name"
-              placeholder="Например: Утренняя медитация"
+              placeholder={t("nodes.form.fields.namePlaceholder")}
               className={cn(
                 errors.name &&
                 "border-destructive focus-visible:ring-destructive",
@@ -175,7 +177,7 @@ export function CreateNodeForm() {
           {/* Тип узла */}
           <div className="space-y-2">
             <Label>
-              Тип узла <span className="text-destructive">*</span>
+              {t("nodes.form.fields.type")} <span className="text-destructive">*</span>
             </Label>
             <RadioGroup
               value={nodeType}
@@ -200,8 +202,7 @@ export function CreateNodeForm() {
                   )}
                 >
                   <Zap className="h-8 w-8" />
-                  <span className="font-medium">Binary</span>
-                  <span className="text-xs text-muted-foreground">Да/Нет</span>
+                  <span className="font-medium">{t("nodes.type.binary")}</span>
                 </Label>
               </div>
 
@@ -223,8 +224,7 @@ export function CreateNodeForm() {
                   )}
                 >
                   <BarChart3 className="h-8 w-8" />
-                  <span className="font-medium">Quantity</span>
-                  <span className="text-xs text-muted-foreground">Сколько</span>
+                  <span className="font-medium">{t("nodes.type.quantity")}</span>
                 </Label>
               </div>
 
@@ -246,10 +246,7 @@ export function CreateNodeForm() {
                   )}
                 >
                   <Timer className="h-8 w-8" />
-                  <span className="font-medium">Duration</span>
-                  <span className="text-xs text-muted-foreground">
-                    Таймер
-                  </span>
+                  <span className="font-medium">{t("nodes.type.duration")}</span>
                 </Label>
               </div>
             </RadioGroup>
@@ -259,7 +256,7 @@ export function CreateNodeForm() {
           {nodeType !== "binary" && (
             <div className="space-y-2">
               <Label htmlFor="target_value">
-                Целевое значение <span className="text-destructive">*</span>
+                {t("nodes.form.fields.targetValue")} <span className="text-destructive">*</span>
               </Label>
               <div className="flex gap-2">
                 <Input
@@ -269,7 +266,9 @@ export function CreateNodeForm() {
                   min="0.1"
                   max="10000"
                   placeholder={
-                    nodeType === "duration" ? "30 (мин)" : "10 (ед.)"
+                    nodeType === "duration" 
+                      ? t("nodes.form.fields.targetPlaceholder.duration") 
+                      : t("nodes.form.fields.targetPlaceholder.quantity")
                   }
                   className={cn(
                     errors.target_value &&
@@ -284,7 +283,7 @@ export function CreateNodeForm() {
                   }
                 />
                 <span className="flex items-center text-sm text-muted-foreground">
-                  {nodeType === "duration" ? "мин" : "ед."}
+                  {nodeType === "duration" ? t("nodes.form.fields.units.minutes") : t("nodes.form.fields.units.units")}
                 </span>
               </div>
               {errors.target_value && (
@@ -293,7 +292,7 @@ export function CreateNodeForm() {
                 </p>
               )}
               <p className="text-xs text-muted-foreground">
-                Например: 30 минут для медитации или 2 литра для воды
+                {t("nodes.form.fields.targetHint")}
               </p>
             </div>
           )}
@@ -301,7 +300,7 @@ export function CreateNodeForm() {
           {/* Масса (сложность) */}
           <div className="space-y-2">
             <Label htmlFor="mass">
-              Масса (сложность): {previewValues.mass?.toFixed(1) || "1.0"}
+              {t("nodes.form.fields.mass", { value: previewValues.mass?.toFixed(1) || "1.0" })}
             </Label>
             <Input
               id="mass"
@@ -314,16 +313,16 @@ export function CreateNodeForm() {
               onChange={(e) => setValue("mass", parseFloat(e.target.value))}
             />
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Легко (0.5)</span>
-              <span>Средне (5.0)</span>
-              <span>Сложно (10.0)</span>
+              <span>{t("nodes.form.fields.massLevels.easy")} (0.5)</span>
+              <span>{t("nodes.form.fields.massLevels.medium")} (5.0)</span>
+              <span>{t("nodes.form.fields.massLevels.hard")} (10.0)</span>
             </div>
           </div>
 
           {/* Коннектор */}
           <div className="space-y-2">
             <Label>
-              Коннекторы <span className="text-destructive">*</span>
+              {t("nodes.form.fields.connectors")} <span className="text-destructive">*</span>
             </Label>
             <ConnectorSelector
               value={previewValues.connector_ids || []}
@@ -340,7 +339,7 @@ export function CreateNodeForm() {
 
           {/* Цвет */}
           <div className="space-y-2">
-            <Label>Цвет узла</Label>
+            <Label>{t("nodes.form.fields.color")}</Label>
             <ColorPicker
               value={previewValues.color || "#8b5cf6"}
               onChange={(color) => setValue("color", color)}
@@ -349,7 +348,7 @@ export function CreateNodeForm() {
 
           {/* Иконка */}
           <div className="space-y-2">
-            <Label>Иконка</Label>
+            <Label>{t("nodes.form.fields.icon")}</Label>
             <IconPicker
               value={previewValues.icon || "Circle"}
               onChange={(icon) => setValue("icon", icon)}
@@ -361,10 +360,10 @@ export function CreateNodeForm() {
 
           {/* Описание */}
           <div className="space-y-2">
-            <Label htmlFor="description">Описание (опционально)</Label>
+            <Label htmlFor="description">{t("nodes.form.fields.description")}</Label>
             <Input
               id="description"
-              placeholder="Краткое описание узла..."
+              placeholder={t("nodes.form.fields.descriptionPlaceholder")}
               className={cn(
                 errors.description &&
                 "border-destructive focus-visible:ring-destructive",
@@ -390,10 +389,10 @@ export function CreateNodeForm() {
                 htmlFor="is_focus_default"
                 className="text-sm font-medium leading-none cursor-pointer"
               >
-                Узел по умолчанию для фокуса
+                {t("nodes.form.fields.isFocusDefault")}
               </Label>
               <p className="text-xs text-muted-foreground">
-                Этот узел будет автоматически предлагаться при планировании нового дня.
+                {t("nodes.form.fields.isFocusDefaultDesc")}
               </p>
             </div>
           </div>
@@ -405,7 +404,7 @@ export function CreateNodeForm() {
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <span className="font-medium">Предпросмотр</span>
+                <span className="font-medium">{t("nodes.preview.title")}</span>
               </div>
 
               <NodePreview
@@ -421,15 +420,15 @@ export function CreateNodeForm() {
               <div className="text-xs text-muted-foreground space-y-1">
                 <p className="flex items-center gap-1.5">
                   <Check className="h-3 w-3 text-primary" />
-                  Стабильность рассчитывается автоматически
+                  {t("nodes.preview.stabilityAuto")}
                 </p>
                 <p className="flex items-center gap-1.5">
                   <Check className="h-3 w-3 text-primary" />
-                  Коннекторы объединяют узлы по смыслу
+                  {t("nodes.preview.connectorsLogic")}
                 </p>
                 <p className="flex items-center gap-1.5">
                   <Check className="h-3 w-3 text-primary" />
-                  Масса влияет на скорость накопления стабильности
+                  {t("nodes.preview.massLogic")}
                 </p>
               </div>
             </CardContent>
@@ -443,15 +442,15 @@ export function CreateNodeForm() {
               onClick={() => navigate("/")}
               className="flex-1"
             >
-              Отмена
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={createMutation.isPending} className="flex-1">
               {createMutation.isPending ? (
-                "Создание..."
+                t("nodes.form.create.submitting")
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Создать узел
+                  {t("nodes.form.create.submit")}
                 </>
               )}
             </Button>

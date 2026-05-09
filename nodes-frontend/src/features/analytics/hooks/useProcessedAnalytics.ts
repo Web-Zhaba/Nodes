@@ -15,6 +15,7 @@ export interface HeatmapCell {
   count: number;
   level: number;  // 0-4
   stability?: number;
+  activeNodes?: Array<{ name: string; count: number; color?: string }>;
 }
 
 function computeLevel(count: number, maxCount: number): number {
@@ -81,6 +82,7 @@ export function useProcessedAnalytics() {
   const {
     rawStabilitySeries,
     rawHeatmap,
+    nodes,
     selectedDays,
     focusEntityId,
     focusEntityType,
@@ -88,6 +90,7 @@ export function useProcessedAnalytics() {
     useShallow(s => ({
       rawStabilitySeries: s.rawStabilitySeries,
       rawHeatmap: s.rawHeatmap,
+      nodes: s.nodes,
       selectedDays: s.selectedDays,
       // Берём только примитивы из focusEntity, а не весь объект.
       // Это предотвращает ложные инвалидации useMemo: если id/type не изменились,
@@ -164,13 +167,32 @@ export function useProcessedAnalytics() {
 
     const maxCount = sourceData.reduce((max, d) => Math.max(max, d.count), 0);
 
+    // Группируем импульсы по узлам для каждой даты (для тултипов в глобальном виде)
+    const activeNodesByDate = new Map<string, HeatmapCell['activeNodes']>();
+    if (!focusEntityId && rawStabilitySeries.length > 0) {
+      for (const item of rawStabilitySeries) {
+        if (item.pulse_count > 0) {
+          if (!activeNodesByDate.has(item.date)) activeNodesByDate.set(item.date, []);
+          const node = nodes.find(n => n.id === item.node_id);
+          if (node) {
+            activeNodesByDate.get(item.date)!.push({
+              name: node.name,
+              count: item.pulse_count,
+              color: node.color || undefined
+            });
+          }
+        }
+      }
+    }
+
     return sourceData.map(d => ({
       date: d.date,
       count: d.count,
       level: computeLevel(d.count, maxCount),
       stability: d.stability,
+      activeNodes: activeNodesByDate.get(d.date)
     }));
-  }, [rawHeatmap, rawStabilitySeries, focusEntityId, focusEntityType]);
+  }, [rawHeatmap, rawStabilitySeries, nodes, focusEntityId, focusEntityType]);
 
   return { chartData, heatmapData };
 }

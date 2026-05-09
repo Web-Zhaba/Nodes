@@ -3,6 +3,7 @@ import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Node, Connector } from "@/types";
+import { useTranslation } from "react-i18next";
 
 interface NodeCardHeaderProps {
   node: Node;
@@ -19,7 +20,7 @@ export function NodeCardHeader({
   className,
 }: NodeCardHeaderProps) {
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
 
   // Получаем названия коннекторов по ID
   const getConnectorName = (connectorId: string) => {
@@ -82,7 +83,7 @@ export function NodeCardHeader({
 
         {/* Тип узла */}
         <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest font-medium opacity-70">
-          {node.node_type}
+          {t(`nodes.type.${node.node_type}`, node.node_type)}
         </p>
       </div>
     </div>

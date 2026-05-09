@@ -79,8 +79,9 @@ export function useDeleteCoreMutation() {
       const previousCores = queryClient.getQueryData<NormalizedData<Core>>(coresKeys.all);
       
       if (previousCores) {
-        const { [coreId]: removed, ...rest } = previousCores;
-        queryClient.setQueryData<NormalizedData<Core>>(coresKeys.all, rest);
+        const coresCopy = { ...previousCores };
+        delete coresCopy[coreId];
+        queryClient.setQueryData<NormalizedData<Core>>(coresKeys.all, coresCopy);
       }
       return { previousCores };
     },

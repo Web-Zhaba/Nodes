@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit2, Check } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 interface IdentitySectionProps {
   form: UseFormReturn<any>;
@@ -12,6 +13,7 @@ interface IdentitySectionProps {
 
 export function IdentitySection({ form, isLoading, email }: IdentitySectionProps) {
   const [isEditingName, setIsEditingName] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 p-6 rounded-3xl border border-border/40 bg-muted/5">
@@ -43,7 +45,7 @@ export function IdentitySection({ form, isLoading, email }: IdentitySectionProps
           ) : (
             <>
               <h3 className="text-2xl font-bold tracking-tight truncate max-w-[300px]">
-                {form.watch("displayName") || "Анонимный узел"}
+                {form.watch("displayName") || t("profile.identity.anonymousNode", "Анонимный узел")}
               </h3>
               <Button 
                 variant="ghost" 

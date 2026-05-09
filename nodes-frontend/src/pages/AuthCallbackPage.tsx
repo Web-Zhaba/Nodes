@@ -7,8 +7,10 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { authService } from '@/services/auth.service'
+import { useTranslation } from 'react-i18next'
 
 export default function AuthCallbackPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [status, setStatus] = useState<'loading' | 'error' | 'success' | 'recovery'>('loading')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -21,21 +23,21 @@ export default function AuthCallbackPage() {
       const result = await authService.handleAuthCallback();
 
       if (result.type === 'error') {
-        setErrorMessage(result.message || 'Произошла ошибка');
+        setErrorMessage(result.message || t('auth.callback.unknown_error', 'Произошла ошибка'));
         setStatus('error');
-        toast.error('Ошибка: ' + result.message);
+        toast.error(t('auth.callback.error_prefix', 'Ошибка: ') + result.message);
         return;
       }
 
       if (result.type === 'recovery') {
         setStatus('recovery');
-        toast.info('Пожалуйста, введите новый пароль');
+        toast.info(t('auth.callback.recovery_hint', 'Пожалуйста, введите новый пароль'));
         return;
       }
 
       if (result.type === 'success') {
         setStatus('success');
-        toast.success('Данные синхронизированы. Добро пожаловать.');
+        toast.success(t('auth.callback.welcome', 'Данные синхронизированы. Добро пожаловать.'));
         setTimeout(() => navigate('/'), 2000);
         return;
       }
@@ -44,14 +46,14 @@ export default function AuthCallbackPage() {
         // Если через 3 секунды всё еще loading, значит что-то пошло не так
         const timer = setTimeout(() => {
           setStatus('error');
-          setErrorMessage('Время ожидания истекло. Попробуйте войти снова.');
+          setErrorMessage(t('auth.callback.timeout_error', 'Время ожидания истекло. Попробуйте войти снова.'));
         }, 3000);
         return () => clearTimeout(timer);
       }
     };
 
     handleAuth();
-  }, [navigate]);
+  }, [navigate, t]);
 
   const handleUpdatePassword = async () => {
     if (newPassword.length < 6) {
@@ -69,13 +71,14 @@ export default function AuthCallbackPage() {
       const { error } = await supabase.auth.updateUser({ password: newPassword })
       if (error) throw error
       
-      toast.success('Пароль успешно обновлен!')
+      toast.success(t('auth.callback.password_updated_success', 'Пароль успешно обновлен!'))
       setStatus('success')
       setTimeout(() => {
         navigate('/')
       }, 2000)
-    } catch (error: any) {
-      toast.error(error.message || 'Ошибка при обновлении пароля')
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : t('auth.callback.password_update_error', 'Ошибка при обновлении пароля');
+      toast.error(msg)
     } finally {
       setIsUpdating(false)
     }
@@ -96,16 +99,16 @@ export default function AuthCallbackPage() {
             {status === 'recovery' && <div className="w-4 h-4 bg-yellow-500 rounded-full animate-pulse" />}
           </div>
           <CardTitle className="text-2xl tracking-tight">
-            {status === 'loading' && 'Синхронизация узла...'}
-            {status === 'success' && 'Соединение установлено'}
-            {status === 'error' && 'Ошибка подключения'}
-            {status === 'recovery' && 'Сброс пароля'}
+            {status === 'loading' && t('auth.callback.syncing', 'Синхронизация узла...')}
+            {status === 'success' && t('auth.callback.connection_established', 'Соединение установлено')}
+            {status === 'error' && t('auth.callback.connection_error', 'Ошибка подключения')}
+            {status === 'recovery' && t('auth.callback.password_reset', 'Сброс пароля')}
           </CardTitle>
           <CardDescription className="mt-2 text-muted-foreground/80">
-            {status === 'loading' && 'Устанавливаем безопасный канал связи с вашей нейронной сетью...'}
-            {status === 'success' && 'Ваша личность подтверждена. Перенаправляем в интерфейс управления.'}
-            {status === 'error' && (errorMessage || 'Не удалось подтвердить email. Ссылка могла устареть.')}
-            {status === 'recovery' && 'Придумайте новый ключ доступа для вашей системы.'}
+            {status === 'loading' && t('auth.callback.loading_desc', 'Устанавливаем безопасный канал связи с вашей нейронной сетью...')}
+            {status === 'success' && t('auth.callback.success_desc', 'Ваша личность подтверждена. Перенаправляем в интерфейс управления.')}
+            {status === 'error' && (errorMessage || t('auth.callback.error_desc', 'Не удалось подтвердить email. Ссылка могла устареть.'))}
+            {status === 'recovery' && t('auth.callback.recovery_desc', 'Придумайте новый ключ доступа для вашей системы.')}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -114,7 +117,7 @@ export default function AuthCallbackPage() {
               onClick={() => navigate('/login')}
               className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
             >
-              Вернуться ко входу
+              {t('auth.callback.back_to_login', 'Вернуться ко входу')}
             </button>
           )}
           {status === 'loading' && (
@@ -127,7 +130,7 @@ export default function AuthCallbackPage() {
               <div className="space-y-2">
                 <Input
                   type="password"
-                  placeholder="Новый пароль (мин. 6 символов)"
+                  placeholder={t('auth.callback.new_password_placeholder', 'Новый пароль (мин. 6 символов)')}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   disabled={isUpdating}
@@ -135,7 +138,7 @@ export default function AuthCallbackPage() {
                 />
                 <Input
                   type="password"
-                  placeholder="Подтвердите новый пароль"
+                  placeholder={t('auth.callback.confirm_password_placeholder', 'Подтвердите новый пароль')}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={isUpdating}
@@ -148,7 +151,7 @@ export default function AuthCallbackPage() {
                 className="w-full rounded-xl"
               >
                 {isUpdating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-                Сохранить новый пароль
+                {t('auth.callback.save_password', 'Сохранить новый пароль')}
               </Button>
             </div>
           )}

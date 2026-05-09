@@ -2,8 +2,10 @@ import { useAnalyticsStore } from '../../../store/useAnalyticsStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Globe, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 export function GlobalControlBar() {
+  const { t } = useTranslation();
   const { focusEntity, clearFocus, nodes, error } = useAnalyticsStore();
 
   // Find the focused node to display its name
@@ -16,14 +18,14 @@ export function GlobalControlBar() {
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
         <div>
           <p className="text-xs font-medium text-muted-foreground mb-1">
-            Статистика
+            {t("analytics.stats")}
           </p>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/50">
-            Аналитика
+            {t("analytics.title")}
           </h1>
           <p className="text-xs sm:text-sm font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1 opacity-80 text-primary">
             <Activity className="w-3.5 h-3.5" />
-            Показатели
+            {t("analytics.metrics")}
           </p>
         </div>
         
@@ -63,10 +65,10 @@ export function GlobalControlBar() {
             >
               {focusedNode ? (
                 <span className="flex items-center gap-1.5 sm:gap-2 truncate">
-                  <span className="hidden xs:inline">Фокус:</span> <span style={{ color: focusedNode.color ?? undefined }} className="font-semibold truncate">{focusedNode.name}</span>
+                  <span className="hidden xs:inline">{t("analytics.focus")}</span> <span style={{ color: focusedNode.color ?? undefined }} className="font-semibold truncate">{focusedNode.name}</span>
                 </span>
               ) : (
-                <span>Все узлы</span>
+                <span>{t("analytics.allNodes")}</span>
               )}
             </motion.span>
           </AnimatePresence>

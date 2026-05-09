@@ -1,8 +1,10 @@
 import { useAnalyticsStore } from '../../../store/useAnalyticsStore';
 import { useProcessedAnalytics } from '@/features/analytics/hooks/useProcessedAnalytics';
 import { ContributionGraph } from '../../../components/ui/smoothui/contribution-graph';
+import { useTranslation } from 'react-i18next';
 
 export function PulseHeatmap() {
+  const { t } = useTranslation();
   const { focusEntity, isLoading } = useAnalyticsStore();
   const { heatmapData } = useProcessedAnalytics();
 
@@ -13,7 +15,7 @@ export function PulseHeatmap() {
         <div className="flex gap-2">
           {/* Day labels column */}
           <div className="flex flex-col justify-between py-1 pr-2 opacity-30 text-[11px]">
-            <div /><div>Пн</div><div /><div>Ср</div><div /><div>Пт</div><div />
+            <div /><div>{t('common.days.mon', 'Пн')}</div><div /><div>{t('common.days.wed', 'Ср')}</div><div /><div>{t('common.days.fri', 'Пт')}</div><div />
           </div>
           {/* Grid skeleton: One div instead of 371, using CSS pattern */}
           <div className="flex-1 min-h-[110px] bg-muted/10 rounded-md animate-pulse overflow-hidden relative">
@@ -37,7 +39,7 @@ export function PulseHeatmap() {
     <div className="w-full border border-border/50 bg-background/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-sm overflow-hidden">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-lg tracking-wide">
-          Активность — {focusEntity ? `${focusEntity.type === 'node' ? 'Узел' : 'Ядро'}` : 'Общая'}
+          {t('analytics.activity.title')} — {focusEntity ? `${focusEntity.type === 'node' ? t('analytics.stability.focusNode') : t('analytics.stability.core')}` : t('analytics.stability.global')}
         </h3>
       </div>
       

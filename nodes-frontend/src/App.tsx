@@ -4,6 +4,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useAuth } from "@/hooks/useAuth";
 import Layout from "@/widgets/Layout";
 import ProtectedRoute from "@/widgets/ProtectedRoute";
+import { useTranslation } from "react-i18next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -34,12 +35,13 @@ const GraphPage = lazy(() => import("@/pages/GraphPage"));
 const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
 
 function AuthRedirect() {
+  const { t } = useTranslation();
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Загрузка...</div>
+        <div className="animate-pulse text-muted-foreground">{t("common.loading")}</div>
       </div>
     );
   }
@@ -53,6 +55,7 @@ function AuthRedirect() {
 
 function App() {
   const applyTheme = useThemeStore((state) => state.applyTheme);
+  const { t } = useTranslation();
 
   useEffect(() => {
     applyTheme();
@@ -75,7 +78,7 @@ function App() {
       />
       <BrowserRouter>
         <Suspense
-          fallback={<div className="h-screen w-screen flex items-center justify-center animate-pulse">Загрузка Nodes...</div>}>
+          fallback={<div className="h-screen w-screen flex items-center justify-center animate-pulse">{t("common.loading")}</div>}>
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<AuthRedirect />} />

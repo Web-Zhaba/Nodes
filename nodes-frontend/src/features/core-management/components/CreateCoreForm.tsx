@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreateCoreMutation } from "../hooks/useCoresQuery";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ interface CreateCoreFormProps {
 }
 
 export function CreateCoreForm({ onSuccess, onCancel }: CreateCoreFormProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const createMutation = useCreateCoreMutation();
   
@@ -35,14 +37,14 @@ export function CreateCoreForm({ onSuccess, onCancel }: CreateCoreFormProps) {
       });
 
       if (newCore) {
-        toast.success("Ядро успешно создано!");
+        toast.success(t("graph.cores.create.success"));
         setName("");
         setColor("#8b5cf6");
         setIcon("Circle");
         onSuccess?.(newCore.id);
       }
-    } catch (error) {
-      toast.error("Не удалось создать ядро");
+    } catch {
+      toast.error(t("graph.cores.create.error"));
     }
   };
 
@@ -50,7 +52,7 @@ export function CreateCoreForm({ onSuccess, onCancel }: CreateCoreFormProps) {
     <Card className="w-full">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Создать новое Ядро</CardTitle>
+          <CardTitle>{t("graph.cores.create.title")}</CardTitle>
           <Button 
             variant="ghost" 
             size="icon" 
@@ -61,16 +63,16 @@ export function CreateCoreForm({ onSuccess, onCancel }: CreateCoreFormProps) {
           </Button>
         </div>
         <CardDescription>
-          Ядро — это гравитационный центр, который будет притягивать узлы с выбранными тегами.
+          {t("graph.cores.create.description")}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="coreName">Название ядра</Label>
+            <Label htmlFor="coreName">{t("graph.cores.fields.name")}</Label>
             <Input 
               id="coreName" 
-              placeholder="Спорт, Здоровье, Карьера..." 
+              placeholder={t("graph.cores.fields.namePlaceholder")} 
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -78,7 +80,7 @@ export function CreateCoreForm({ onSuccess, onCancel }: CreateCoreFormProps) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="coreColor">Фирменный цвет</Label>
+              <Label htmlFor="coreColor">{t("graph.cores.fields.color")}</Label>
               <div className="flex gap-4 items-center">
                 <Input 
                   id="coreColor" 
@@ -91,7 +93,7 @@ export function CreateCoreForm({ onSuccess, onCancel }: CreateCoreFormProps) {
             </div>
             
             <div className="space-y-2">
-              <Label>Иконка</Label>
+              <Label>{t("graph.cores.fields.icon")}</Label>
               <IconPicker
                 value={icon}
                 onChange={setIcon}
@@ -101,7 +103,7 @@ export function CreateCoreForm({ onSuccess, onCancel }: CreateCoreFormProps) {
         </CardContent>
         <CardFooter>
           <Button type="submit" disabled={!name.trim() || createMutation.isPending} className="w-full">
-            {createMutation.isPending ? "Создание..." : "Создать Ядро"}
+            {createMutation.isPending ? t("graph.cores.create.submitting") : t("graph.cores.create.submit")}
           </Button>
         </CardFooter>
       </form>

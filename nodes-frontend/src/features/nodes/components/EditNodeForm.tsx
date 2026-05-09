@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
   Zap,
@@ -42,6 +43,7 @@ interface EditNodeFormProps {
  * Форма редактирования существующего узла
  */
 export function EditNodeForm({ nodeId }: EditNodeFormProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   
@@ -98,16 +100,16 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
 
   // Удаление узла
   const handleDelete = async () => {
-    if (!window.confirm("Вы уверены, что хотите удалить этот узел? Все данные будут потеряны.")) {
+    if (!window.confirm(t("nodes.form.edit.deleteConfirm"))) {
       return;
     }
 
     try {
       await deleteMutation.mutateAsync(nodeId);
-      toast.success("Узел удален");
+      toast.success(t("nodes.form.edit.success"));
       navigate("/nodes");
     } catch (error) {
-      toast.error("Ошибка удаления");
+      toast.error(t("nodes.form.edit.error"));
     }
   };
 
@@ -130,11 +132,11 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
         userId: user?.id,
       });
 
-      toast.success("Изменения сохранены");
+      toast.success(t("nodes.form.edit.success"));
       navigate("/nodes");
     } catch (error) {
       console.error("Ошибка обновления:", error);
-      toast.error("Ошибка при сохранении");
+      toast.error(t("nodes.form.edit.error"));
     }
   };
 
@@ -147,7 +149,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">Загрузка данных узла...</p>
+        <p className="mt-4 text-muted-foreground">{t("common.loading")}</p>
       </div>
     );
   }
@@ -166,7 +168,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Настройки узла</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t("nodes.form.edit.title")}</h1>
             {/* <p className="text-muted-foreground">
               Управление параметрами и типами узла
             </p> */}
@@ -186,7 +188,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
           ) : (
             <Trash2 className="h-4 w-4" />
           )}
-          Удалить узел
+          {t("nodes.form.edit.delete")}
         </Button>
       </div>
 
@@ -194,7 +196,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
         <div className="space-y-8">
           {/* Название */}
           <div className="space-y-3">
-            <Label htmlFor="name" className="text-base">Название узла</Label>
+            <Label htmlFor="name" className="text-base">{t("nodes.form.fields.name")}</Label>
             <Input
               id="name"
               className={cn("h-12 text-lg font-medium", errors.name && "border-destructive")}
@@ -207,7 +209,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
 
           {/* Тип узла */}
           <div className="space-y-4">
-            <Label className="text-base">Тип нейронной связи</Label>
+            <Label className="text-base">{t("nodes.form.fields.type")}</Label>
             <RadioGroup
               value={nodeType}
               onValueChange={(v) => {
@@ -219,9 +221,9 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
               className="grid grid-cols-1 sm:grid-cols-3 gap-3"
             >
               {[
-                { id: "binary", label: "Binary", icon: Zap, desc: "Да/Нет" },
-                { id: "quantity", label: "Quantity", icon: BarChart3, desc: "Число" },
-                { id: "duration", label: "Duration", icon: Timer, desc: "Время" },
+                { id: "binary", label: t("nodes.type.binary"), icon: Zap },
+                { id: "quantity", label: t("nodes.type.quantity"), icon: BarChart3 },
+                { id: "duration", label: t("nodes.type.duration"), icon: Timer },
               ].map((t) => (
                 <div key={t.id}>
                   <RadioGroupItem value={t.id} id={t.id} className="sr-only" />
@@ -236,7 +238,6 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
                   >
                     <t.icon className={cn("h-6 w-6", nodeType === t.id ? "text-primary" : "text-muted-foreground")} />
                     <span className="font-bold">{t.label}</span>
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-widest">{t.desc}</span>
                   </Label>
                 </div>
               ))}
@@ -246,7 +247,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
           {/* Целевое значение */}
           {nodeType !== "binary" && (
             <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-              <Label htmlFor="target_value" className="text-base">Цель за день</Label>
+              <Label htmlFor="target_value" className="text-base">{t("nodes.form.fields.targetValue")}</Label>
               <div className="flex gap-3">
                 <Input
                   id="target_value"
@@ -256,7 +257,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
                   {...register("target_value", { valueAsNumber: true })}
                 />
                 <div className="flex items-center px-4 rounded-lg bg-muted text-sm font-medium">
-                  {nodeType === "duration" ? "мин" : "ед."}
+                  {nodeType === "duration" ? t("nodes.form.fields.units.minutes") : t("nodes.form.fields.units.units")}
                 </div>
               </div>
               {errors.target_value && (
@@ -267,7 +268,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
 
           {/* Масса */}
           <div className="space-y-3">
-            <Label htmlFor="mass" className="text-base">Масса (сложность): {previewValues.mass?.toFixed(1) || "1.0"}</Label>
+            <Label htmlFor="mass" className="text-base">{t("nodes.form.fields.mass", { value: previewValues.mass?.toFixed(1) || "1.0" })}</Label>
             <Input
               id="mass"
               type="range"
@@ -282,7 +283,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
 
           {/* Коннекторы */}
           <div className="space-y-3">
-            <Label className="text-base">Коннекторы</Label>
+            <Label className="text-base">{t("nodes.form.fields.connectors")}</Label>
             <ConnectorSelector
               value={previewValues.connector_ids || []}
               onChange={(ids) => setValue("connector_ids", ids, { shouldDirty: true, shouldValidate: true })}
@@ -295,14 +296,14 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
           {/* Визуал */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <Label className="text-base">Цвет</Label>
+              <Label className="text-base">{t("nodes.form.fields.color")}</Label>
               <ColorPicker
                 value={previewValues.color || "#8b5cf6"}
                 onChange={(color) => setValue("color", color, { shouldDirty: true })}
               />
             </div>
             <div className="space-y-3">
-              <Label className="text-base">Иконка</Label>
+              <Label className="text-base">{t("nodes.form.fields.icon")}</Label>
               <IconPicker
                 value={previewValues.icon || "Circle"}
                 onChange={(icon) => setValue("icon", icon, { shouldDirty: true })}
@@ -311,10 +312,10 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
           </div>
 
           <div className="space-y-3">
-            <Label htmlFor="description" className="text-base">Описание</Label>
+            <Label htmlFor="description" className="text-base">{t("nodes.form.fields.description")}</Label>
             <Input
               id="description"
-              placeholder="Коротко о сути задачи..."
+              placeholder={t("nodes.form.fields.descriptionPlaceholder")}
               {...register("description")}
             />
           </div>
@@ -331,10 +332,10 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
                 htmlFor="is_focus_default"
                 className="text-sm font-medium leading-none cursor-pointer"
               >
-                Узел по умолчанию для фокуса
+                {t("nodes.form.fields.isFocusDefault")}
               </Label>
               <p className="text-xs text-muted-foreground">
-                Этот узел будет автоматически предлагаться при планировании нового дня.
+                {t("nodes.form.fields.isFocusDefaultDesc")}
               </p>
             </div>
           </div>
@@ -344,9 +345,9 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
         <div className="lg:sticky lg:top-8 h-fit space-y-8">
           <Card className="overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/5">
             <CardContent className="p-8">
-              <div className="text-sm font-bold uppercase tracking-widest text-primary/60 mb-6">Предпросмотр</div>
+              <div className="text-sm font-bold uppercase tracking-widest text-primary/60 mb-6">{t("nodes.preview.title")}</div>
               <NodePreview
-                name={previewValues.name || "Название узла"}
+                name={previewValues.name || t("nodes.form.fields.name")}
                 icon={previewValues.icon || "Circle"}
                 color={previewValues.color || "#8b5cf6"}
                 connectorNames={connectorNames}
@@ -365,7 +366,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
               onClick={() => navigate("/nodes")}
               className="flex-1 h-12"
             >
-              Отмена
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={updateMutation.isPending} size="lg" className="flex-1 h-12 gap-2 shadow-lg shadow-primary/20">
               {updateMutation.isPending ? (
@@ -373,7 +374,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
               ) : (
                 <Save className="h-5 w-5" />
               )}
-              {updateMutation.isPending ? "Сохранение..." : "Сохранить"}
+              {updateMutation.isPending ? t("nodes.form.edit.submitting") : t("common.save")}
             </Button>
           </div>
         </div>

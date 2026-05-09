@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { Home, Share2, BarChart3, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface NavItem {
   icon: React.ElementType;
@@ -10,14 +11,15 @@ interface NavItem {
   label: string;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { icon: Home, href: '/', label: 'Сегодня' },
-  { icon: Share2, href: '/graph', label: 'Сеть' },
-  { icon: BarChart3, href: '/analytics', label: 'Аналитика' },
-];
-
 export function FloatingNavbar() {
   const location = useLocation();
+  const { t } = useTranslation();
+
+  const NAV_ITEMS: NavItem[] = [
+    { icon: Home, href: '/', label: t("nav.dashboard", "Сегодня") },
+    { icon: Share2, href: '/graph', label: t("nav.graph", "Граф") },
+    { icon: BarChart3, href: '/analytics', label: t("nav.analytics", "Аналитика") },
+  ];
 
   return (
     <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 justify-center pt-4 sm:pt-6 pointer-events-none">
@@ -64,17 +66,17 @@ export function FloatingNavbar() {
           })}
         </nav>
 
-        {/* Right Island: Theme & Profile */}
-        <div className="flex items-center justify-center bg-background/40 backdrop-blur-xl border border-border/40 rounded-2xl p-1 shadow-sm h-10 md:h-12 px-2 gap-2 shrink-0">
+        {/* Right Island: Profile */}
+        <div className="flex items-center justify-center bg-background/40 backdrop-blur-xl border border-border/40 rounded-full shadow-sm h-10 md:h-12 px-1 gap-2 shrink-0">
           <Link
             to="/profile"
             className={cn(
-              "w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-all duration-300",
+              "w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300",
               location.pathname === '/profile'
                 ? "bg-primary text-primary-foreground shadow-md"
                 : "text-muted-foreground hover:bg-muted-foreground/20 hover:text-foreground"
             )}
-            title="Профиль"
+            title={t("nav.profile", "Профиль")}
           >
             <User className="w-4 h-4 md:w-5 md:h-5" />
           </Link>
