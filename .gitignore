@@ -4,26 +4,48 @@
 # Build outputs
 **/dist/
 **/build/
+**/coverage/
+**/bundle-stats.html
+
+# Python & Django
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/.venv/
+**/venv/
+**/env/
+**/db.sqlite3
+**/media/
+**/static_root/
 
 # Environment variables
 **/.env
 **/.env.local
 **/.env.*.local
 
-# Editor
+# Editor & IDE
 .vscode/
+.VSCodeCounter/
 .idea/
 *.swp
 *.swo
+*.sublime-project
+*.sublime-workspace
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Logs
 **/logs/
 **/*.log
 **/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
 
-# Documentation plans
+# Scripts
+claudeforfree.bat
+
+# Documentation
 docs/plans/

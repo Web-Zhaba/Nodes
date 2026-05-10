@@ -66,7 +66,7 @@ export async function getAuthToken() {
   return null;
 }
 
-export async function recordImpulse(nodeId: string, value: number, date: string): Promise<{ success: boolean; new_stability_score?: number; backendMs?: number; error?: string }> {
+export async function recordImpulse(nodeId: string, value: number, date: string): Promise<{ success: boolean; new_stability_score?: number; new_completion_count?: number; backendMs?: number; error?: string }> {
   try {
     const token = await getAuthToken();
 
@@ -100,7 +100,12 @@ export async function recordImpulse(nodeId: string, value: number, date: string)
     }
     
     const data = await response.json();
-    return { success: true, new_stability_score: data.new_stability_score, backendMs: runtimeMs };
+    return { 
+      success: true, 
+      new_stability_score: data.new_stability_score, 
+      new_completion_count: data.new_completion_count,
+      backendMs: runtimeMs 
+    };
 
   } catch (error) {
     console.error('Fetch error (Django API):', error);

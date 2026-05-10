@@ -84,8 +84,36 @@
 - [x] **Theming 2.0:** Полная настройка цветовых палитр для Light/Dark тем (CSS Variables).
 - [x] **Глубокая локализация:** Поддержка i18next, адаптация форматов дат/времени и таймзон.
 - [x] **Account Management:** Смена Email/Password, привязка Social Providers (Oauth), управление сессиями.
+- [ ] **Neural Public Profile:** Генерация публичных ссылок на граф. Настройка приватности узлов и анонимизация данных.
+- [ ] **Deep Storage:** Прикрепление Markdown-заметок и медиафайлов к импульсам (Supabase Storage).
 - [ ] **External Sync:** Двусторонняя интеграция с Google Calendar (авто-импульсы из событий).
 - [ ] **Notifications:** Настройка уведомлений по каналам (Browser, Email, Telegram).
+
+## 📅 Фаза 6: Автономность и Устойчивость (Offline-First)
+- [ ] **PWA Foundation:** Установка `vite-plugin-pwa` и настройка манифеста.
+- [ ] **Resource Caching:** Service Worker стратегии для кэширования шрифтов, иконок и логики.
+- [ ] **Data Persistence:** Интеграция `persistQueryClient` для сохранения кэша React Query в LocalStorage/IndexedDB.
+- [ ] **Offline Mutations:** Система «Оптимистичных обновлений» для создания импульсов без сети.
+- [ ] **Sync Engine:** Очередь фоновой синхронизации (Zustand + Background Sync API) для отправки данных при появлении сети.
+- [ ] **Connectivity UI:** Индикаторы состояния сети (Online/Offline/Syncing) и плашки «Ожидает синхронизации» на узлах.
+
+## 📅 Фаза 7: Мобильная экосистема (Hybrid Mobile)
+- [ ] **Capacitor Core:** Инициализация и настройка iOS/Android платформ.
+- [ ] **Pulse Resonance:** Система аудио-визуального отклика (SFX паки + анимации) при активации узлов.
+- [ ] **Sensory Layer:** Нативный виброотклик (Haptic Feedback) для импульсов и переходов.
+- [ ] **Mobile Auth:** Настройка Deep Links и обратных редиректов для Supabase Auth.
+- [ ] **Native UI:** Адаптация статус-бара, сплэш-скринов и мобильных жестов.
+- [ ] **Biometrics:** Дополнительный слой защиты через FaceID/TouchID (по выбору пользователя).
+- [ ] **App Store Assets:** Подготовка иконок, скриншотов и релизных манифестов.
+
+## 📅 Фаза 8: Monetization & Expansion (Neural Expansion)
+- [ ] **Infrastructure:** Интеграция Stripe/LemonSqueezy через Supabase Edge Functions.
+- [ ] **Subscription Logic:** Система проверки лимитов (Neural Capacity) и управления статусом Pro.
+- [ ] **Time Machine:** Визуализация истории графа. Анимация развития сети за выбранный период (Obsidian-style).
+- [ ] **Synapse API:** Доступ к персональному API-ключу для внешней автоматизации (Zapier/Make/Webhooks).
+- [ ] **Theme Slots:** Система управления пресетами тем (1 Free / Unlimited Pro).
+- [ ] **Crystal Marketplace:** Реализация покупки и менеджмента дополнительных Crystal Slots.
+
 
 ---
 

@@ -32,6 +32,7 @@ DECLARE
     v_impulse_rec RECORD;
     v_is_delete BOOLEAN;
     v_cutoff DATE;
+    v_new_count INT;
     -- Константы (зеркало services.py)
     C_BASE_BUMP NUMERIC := 20.0;
     C_MAX_OVERDRIVE NUMERIC := 1.5;
@@ -58,6 +59,13 @@ BEGIN
     IF v_is_delete THEN
         DELETE FROM public.impulses
         WHERE node_id = p_node_id AND completed_at = p_date;
+        
+        -- Декремент счетчика только если запись была удалена
+        IF FOUND THEN
+            UPDATE public.nodes 
+            SET completion_count = GREATEST(0, completion_count - 1) 
+            WHERE id = p_node_id;
+        END IF;
     ELSE
         -- Upsert: пробуем обновить, если не получилось — вставляем
         UPDATE public.impulses
@@ -67,6 +75,11 @@ BEGIN
         IF NOT FOUND THEN
             INSERT INTO public.impulses (node_id, completed_at, value)
             VALUES (p_node_id, p_date, p_value);
+            
+            -- Инкремент счетчика при новом импульсе
+            UPDATE public.nodes 
+            SET completion_count = completion_count + 1 
+            WHERE id = p_node_id;
         END IF;
     END IF;
 
@@ -160,13 +173,17 @@ BEGIN
     ) sub
     WHERE c.id = sub.core_id;
 
+    -- Получаем актуальный счетчик
+    SELECT completion_count INTO v_new_count FROM public.nodes WHERE id = p_node_id;
+
     -- ==============================
     -- 5. Возвращаем результат
     -- ==============================
     RETURN jsonb_build_object(
         'status', 'success',
         'node_id', p_node_id,
-        'new_stability_score', v_stability
+        'new_stability_score', v_stability,
+        'new_completion_count', v_new_count
     );
 END;
 $$;

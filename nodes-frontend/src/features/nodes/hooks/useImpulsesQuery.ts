@@ -76,7 +76,11 @@ export function useRecordPulseMutation() {
           if (!node) return old;
           return {
             ...old,
-            [variables.nodeId]: { ...node, stability_score: res.new_stability_score }
+            [variables.nodeId]: { 
+              ...node, 
+              stability_score: res.new_stability_score,
+              completion_count: res.new_completion_count ?? node.completion_count
+            }
           };
         });
         // Тихая инвалидация ядер, так как их сложнее рассчитать точно на фронте

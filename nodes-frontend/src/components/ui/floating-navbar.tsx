@@ -67,7 +67,7 @@ export function FloatingNavbar() {
         </nav>
 
         {/* Right Island: Profile */}
-        <div className="flex items-center justify-center bg-background/40 backdrop-blur-xl border border-border/40 rounded-full shadow-sm h-10 md:h-12 px-1 gap-2 shrink-0">
+        <div className="flex items-center justify-center bg-background/40 backdrop-blur-xl border border-border/40 rounded-full shadow-sm w-10 h-10 md:w-12 md:h-12 shrink-0">
           <Link
             to="/profile"
             className={cn(

@@ -111,7 +111,8 @@ class ImpulseActionView(APIView):
             response = Response({
                 "status": "success",
                 "node_id": result.get('node_id'),
-                "new_stability_score": result.get('new_stability_score')
+                "new_stability_score": result.get('new_stability_score'),
+                "new_completion_count": result.get('new_completion_count')
             }, status=200)
 
             response['X-Backend-Runtime-MS'] = f"{runtime_ms:.2f}"
