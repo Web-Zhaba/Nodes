@@ -31,12 +31,12 @@ export function GeneralTab() {
 
   const form = useForm<GeneralFormValues>({
     defaultValues: {
-      displayName: "",
-      resetTime: "00:00",
-      firstDay: "1",
-      language: "ru",
-      showGreeting: "true",
-      customGreeting: "Привет, {name}",
+      displayName: profile?.display_name || "",
+      resetTime: profile?.daily_reset_time || "00:00",
+      firstDay: String(profile?.first_day_of_week ?? 1),
+      language: profile?.language || "ru",
+      showGreeting: String(profile?.show_greeting ?? true),
+      customGreeting: profile?.custom_greeting || t("profile.greeting.defaultText", "Hello, {name}"),
     },
   });
 
@@ -51,7 +51,7 @@ export function GeneralTab() {
         firstDay: String(profile.first_day_of_week ?? 1),
         language: profile.language || "ru",
         showGreeting: String(profile.show_greeting ?? true),
-        customGreeting: profile.custom_greeting || "Привет, {name}",
+        customGreeting: profile.custom_greeting || t("profile.greeting.defaultText", "Hello, {name}"),
       });
     }
   }, [profile, reset]);
@@ -72,19 +72,19 @@ export function GeneralTab() {
         },
       });
       
-      toast.success(t("profile.general.saveSuccess", "Настройки успешно сохранены"));
+      toast.success(t("profile.general.saveSuccess", "Settings saved successfully"));
       reset(data); // Сбрасываем isDirty
     } catch (err) {
-      toast.error(t("profile.general.saveError", "Не удалось сохранить изменения"));
+      toast.error(t("profile.general.saveError", "Failed to save settings"));
     }
   };
 
   const handleLogout = async () => {
     try {
       await authService.signOut();
-      toast.success(t("profile.general.logoutSuccess", "Сессия завершена"));
+      toast.success(t("profile.general.logoutSuccess", "Session ended"));
     } catch (error) {
-      toast.error(t("profile.general.logoutError", "Ошибка при выходе"));
+      toast.error(t("profile.general.logoutError", "Error signing out"));
     }
   };
 
@@ -103,8 +103,8 @@ export function GeneralTab() {
 
         <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-8">
           <div>
-            <h2 className="text-xl font-bold">{t("profile.general.systemSettings", "Системные настройки")}</h2>
-            <p className="text-sm text-muted-foreground">{t("profile.general.systemSettingsDesc", "Конфигурация окружения вашего узла.")}</p>
+            <h2 className="text-xl font-bold">{t("profile.general.systemSettings", "System Settings")}</h2>
+            <p className="text-sm text-muted-foreground">{t("profile.general.systemSettingsDesc", "Configuration of your node environment.")}</p>
           </div>
 
           <RegionalSection form={form} isLoading={isSubmitting} />
@@ -116,8 +116,8 @@ export function GeneralTab() {
           {/* Logout Section inside the main card but at the bottom */}
           <div className="border-t border-border/40 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-center sm:text-left">
-              <p className="text-sm font-bold text-destructive">{t("profile.general.logout", "Выход из системы")}</p>
-              <p className="text-xs text-muted-foreground">{t("profile.general.logoutDesc", "Завершить текущую сессию управления")}</p>
+              <p className="text-sm font-bold text-destructive">{t("profile.general.logout", "Logout")}</p>
+              <p className="text-xs text-muted-foreground">{t("profile.general.logoutDesc", "End current management session")}</p>
             </div>
             <Button 
               type="button"
@@ -126,7 +126,7 @@ export function GeneralTab() {
               onClick={handleLogout}
             >
               <LogOut className="w-4 h-4 mr-2" />
-              {t("profile.general.logoutButton", "Выйти из аккаунта")}
+              {t("profile.general.logoutButton", "Logout from account")}
             </Button>
           </div>
         </div>
@@ -150,7 +150,7 @@ export function GeneralTab() {
                 ) : (
                   <Save className="w-5 h-5 mr-2" />
                 )}
-                {t("profile.general.saveChanges", "Сохранить изменения")}
+                {t("profile.general.saveChanges", "Save Changes")}
               </Button>
             </motion.div>
           )}

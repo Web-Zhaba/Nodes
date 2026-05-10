@@ -71,7 +71,7 @@ export function GreetingSection({ form, isLoading }: GreetingSectionProps) {
               </Label>
               <Input
                 {...form.register("customGreeting")}
-                placeholder="Привет, {name}"
+                placeholder={t("profile.greeting.defaultText", "Привет, {name}")}
                 className="bg-background/50 border-primary/20 h-12 rounded-2xl px-4 text-lg font-medium focus:border-primary transition-all"
                 disabled={isLoading}
               />

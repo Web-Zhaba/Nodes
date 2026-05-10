@@ -21,6 +21,7 @@ export interface ContributionGraphProps {
   showLegend?: boolean;
   showTooltips?: boolean;
   year?: number;
+  limitWeeks?: number; // New prop to show only last N weeks
 }
 
 const WEEKS_IN_YEAR = 53;
@@ -180,6 +181,7 @@ export function ContributionGraph({
   className = "",
   showLegend = true,
   showTooltips = true,
+  limitWeeks,
 }: ContributionGraphProps) {
   const { t, i18n } = useTranslation();
 
@@ -251,6 +253,26 @@ export function ContributionGraph({
   // Calculate month headers with colspan
   const monthHeaders = useMemo(() => calculateMonthHeaders(year, MONTHS), [year, MONTHS]);
 
+  // Calculate effective week range
+  // Calculate current week index for smarter slicing
+  const currentWeek = useMemo(() => {
+    const now = new Date();
+    if (now.getFullYear() !== year) return WEEKS_IN_YEAR - 1;
+    // Calculate weeks from the first Sunday of the year (start of grid)
+    const startDate = new Date(year, JANUARY_MONTH, DAY_1);
+    const firstSunday = new Date(startDate);
+    firstSunday.setDate(startDate.getDate() - startDate.getDay());
+    const diff = now.getTime() - firstSunday.getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24 * 7));
+  }, [year]);
+
+  const displayedWeeks = limitWeeks ? Math.min(limitWeeks, WEEKS_IN_YEAR) : WEEKS_IN_YEAR;
+  
+  // If limitWeeks is used, show weeks leading up to today (if current year) or end of year
+  const startWeek = limitWeeks 
+    ? Math.max(0, Math.min(currentWeek + 1, WEEKS_IN_YEAR) - displayedWeeks)
+    : 0;
+
   const handleDayHover = (day: ContributionData, event: React.MouseEvent) => {
     if (showTooltips && day.date && day.level !== -1) {
       setHoveredDay(day);
@@ -277,116 +299,125 @@ export function ContributionGraph({
 
   const getContributionText = (count: number) => {
     if (count === LEVEL_0) return t('analytics.heatmap.noActivity');
+    // i18next pluralization works with count
     return t('analytics.heatmap.pulses', { count });
   };
 
   return (
     <div 
-      className={cn("contribution-graph w-full", className)}
+      className={cn("contribution-graph w-full overflow-hidden", className)}
       style={{
-        "--day-label-width": "clamp(18px, 4vw, 28px)",
+        "--day-label-width": displayedWeeks > 30 ? "clamp(18px, 4vw, 28px)" : "24px",
         "--grid-gap": "clamp(1px, 0.5vw, 3px)",
       } as React.CSSProperties}
     >
-      {/* Month headers — uses same CSS grid as the cells */}
-      <div
-        className="grid mb-1"
-        style={{
-          gridTemplateColumns: `var(--day-label-width) repeat(${WEEKS_IN_YEAR}, 1fr)`,
-          gap: `var(--grid-gap)`,
-        }}
-      >
-        {/* empty cell for day labels column */}
-        <div />
-        {(() => {
-          // Build an array of 53 slots, each slot gets a month label or empty
-          const slots: (string | null)[] = new Array(WEEKS_IN_YEAR).fill(null);
-          for (const header of monthHeaders) {
-            slots[header.startWeek] = header.month;
-          }
-          return slots.map((label, i) => (
-            <div key={i} className="text-[7px] xs:text-[8px] sm:text-[11px] text-foreground/70 overflow-visible whitespace-nowrap">
-              {label || ''}
-            </div>
-          ));
-        })()}
-      </div>
-
-      {/* Main grid: 7 rows × (1 label col + 53 week cols) */}
-      <div
-        className="grid"
-        style={{
-          gridTemplateColumns: `var(--day-label-width) repeat(${WEEKS_IN_YEAR}, 1fr)`,
-          gap: `var(--grid-gap)`,
-        }}
-      >
-        {Array.from({ length: DAYS_IN_WEEK }, (_, dayIndex) => (
-          <Fragment key={`row-${dayIndex}`}>
-            {/* Day label */}
-            <div
-              className="text-[7px] xs:text-[8px] sm:text-[11px] text-foreground/70 flex items-center shrink-0"
-              style={{ width: "var(--day-label-width)" }}
-            >
-              {dayIndex % 2 === 0 ? DAYS[dayIndex] : ''}
-            </div>
-
-            {/* 53 cells for this day-of-week */}
-            {Array.from({ length: WEEKS_IN_YEAR }, (_, weekIndex) => {
-              const dayData = yearData[weekIndex * DAYS_IN_WEEK + dayIndex];
-
-              if (!dayData?.date) {
-                return (
-                  <div key={`empty-${weekIndex}-${dayIndex}`} className="w-full" style={{ paddingBottom: '100%' }} />
-                );
+      <div className="overflow-x-auto pb-2 custom-scrollbar">
+        <div className="min-w-[300px]">
+          {/* Month headers — uses same CSS grid as the cells */}
+          <div
+            className="grid mb-1.5"
+            style={{
+              gridTemplateColumns: `var(--day-label-width) repeat(${displayedWeeks}, 1fr)`,
+              gap: `var(--grid-gap)`,
+            }}
+          >
+            {/* empty cell for day labels column */}
+            <div />
+            {(() => {
+              // Build an array of slots for displayed weeks
+              const slots: (string | null)[] = new Array(displayedWeeks).fill(null);
+              for (const header of monthHeaders) {
+                const relativeWeek = header.startWeek - startWeek;
+                if (relativeWeek >= 0 && relativeWeek < displayedWeeks) {
+                  slots[relativeWeek] = header.month;
+                }
               }
-
-              const isFuture = dayData.level === -1;
-              const colorClass = isFuture
-                ? CONTRIBUTION_COLORS[0]
-                : CONTRIBUTION_COLORS[dayData.level];
-
-              return (
-                <div
-                  key={dayData.date}
-                  className="relative w-full"
-                  style={{ paddingBottom: '100%' }}
-                >
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      scale: hoveredDay?.date === dayData.date ? 1.15 : 1,
-                      zIndex: hoveredDay?.date === dayData.date ? 10 : 1,
-                    }}
-                    className={cn(
-                      "absolute inset-0 rounded-[3px] transition-colors duration-200",
-                      colorClass,
-                      !isFuture && "cursor-pointer",
-                      dayData.date === new Date().toISOString().split('T')[0] && "ring-1 ring-primary/50 shadow-[0_0_8px_rgba(var(--primary),0.3)]"
-                    )}
-                    onMouseEnter={(e) => handleDayHover(dayData, e)}
-                    onMouseLeave={handleDayLeave}
-                  />
-                  {dayData.date === new Date().toISOString().split('T')[0] && (
-                    <motion.div
-                      animate={{ opacity: [0.2, 0.5, 0.2] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="absolute inset-0 rounded-[3px] bg-primary/20 blur-[2px]"
-                    />
-                  )}
-                  {hoveredDay?.date === dayData.date && !isFuture && (
-                    <motion.div
-                      layoutId="hover-glow"
-                      className="absolute inset-0 rounded-[3px] bg-primary/20 blur-[4px] -z-10"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    />
-                  )}
+              return slots.map((label, i) => (
+                <div key={i} className="text-[9px] sm:text-[11px] text-foreground/50 font-medium overflow-visible whitespace-nowrap">
+                  {label || ''}
                 </div>
-              );
-            })}
-          </Fragment>
-        ))}
+              ));
+            })()}
+          </div>
+
+          {/* Main grid: 7 rows × (1 label col + displayed week cols) */}
+          <div
+            className="grid"
+            style={{
+              gridTemplateColumns: `var(--day-label-width) repeat(${displayedWeeks}, 1fr)`,
+              gap: `var(--grid-gap)`,
+            }}
+          >
+            {Array.from({ length: DAYS_IN_WEEK }, (_, dayIndex) => (
+              <Fragment key={`row-${dayIndex}`}>
+                {/* Day label */}
+                <div
+                  className="text-[9px] sm:text-[11px] text-foreground/40 font-medium flex items-center shrink-0"
+                  style={{ width: "var(--day-label-width)" }}
+                >
+                  {dayIndex % 2 === 0 ? DAYS[dayIndex] : ''}
+                </div>
+
+                {/* Sliced cells for this day-of-week */}
+                {Array.from({ length: displayedWeeks }, (_, weekIdxInSlice) => {
+                  const weekIndex = startWeek + weekIdxInSlice;
+                  const dayData = yearData[weekIndex * DAYS_IN_WEEK + dayIndex];
+
+                  if (!dayData?.date) {
+                    return (
+                      <div key={`empty-${weekIndex}-${dayIndex}`} className="w-full" style={{ paddingBottom: '100%' }} />
+                    );
+                  }
+
+                  const isFuture = dayData.level === -1;
+                  const colorClass = isFuture
+                    ? CONTRIBUTION_COLORS[0]
+                    : CONTRIBUTION_COLORS[dayData.level];
+
+                  return (
+                    <div
+                      key={dayData.date}
+                      className="relative w-full"
+                      style={{ paddingBottom: '100%' }}
+                    >
+                      <motion.div
+                        initial={false}
+                        animate={{
+                          scale: hoveredDay?.date === dayData.date ? 1.15 : 1,
+                          zIndex: hoveredDay?.date === dayData.date ? 10 : 1,
+                        }}
+                        className={cn(
+                          "absolute inset-0 rounded-[2px] sm:rounded-[3px] transition-colors duration-200",
+                          colorClass,
+                          !isFuture && "cursor-pointer",
+                          dayData.date === new Date().toISOString().split('T')[0] && "ring-1 ring-primary/50 shadow-[0_0_8px_rgba(var(--primary),0.3)]"
+                        )}
+                        onMouseEnter={(e) => handleDayHover(dayData, e)}
+                        onMouseLeave={handleDayLeave}
+                      />
+                      {dayData.date === new Date().toISOString().split('T')[0] && (
+                        <motion.div
+                          animate={{ opacity: [0.2, 0.5, 0.2] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="absolute inset-0 rounded-[2px] sm:rounded-[3px] bg-primary/20 blur-[2px]"
+                        />
+                      )}
+                      {hoveredDay?.date === dayData.date && !isFuture && (
+                        <motion.div
+                          layoutId="hover-glow"
+                          className="absolute inset-0 rounded-[3px] bg-primary/20 blur-[4px] -z-10"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </Fragment>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Tooltip Portal */}
@@ -398,7 +429,7 @@ export function ContributionGraph({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 5, scale: 0.98 }}
               transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
-              className="pointer-events-none fixed z-[9999] rounded-xl border border-white/10 bg-black/60 backdrop-blur-xl px-4 py-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_20px_rgba(var(--primary),0.1)] min-w-[200px]"
+              className="pointer-events-none fixed z-[9999] rounded-xl border border-white/10 bg-black/80 backdrop-blur-xl px-4 py-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_20px_rgba(var(--primary),0.1)] min-w-[200px]"
               style={{
                 left: tooltipPosition.x,
                 top: tooltipPosition.y,
@@ -420,7 +451,7 @@ export function ContributionGraph({
                         ? "bg-primary shadow-[0_0_10px_var(--primary)]" 
                         : "bg-white/20"
                     )} />
-                    <span className="font-semibold text-[14px] tracking-tight">
+                    <span className="font-semibold text-[14px] tracking-tight text-white">
                       {getContributionText(hoveredDay.count)}
                     </span>
                   </div>
@@ -474,12 +505,12 @@ export function ContributionGraph({
 
       {/* Legend */}
       {showLegend && (
-        <div className="mt-3 flex items-center justify-end gap-2 text-[11px] text-foreground/70">
+        <div className="mt-4 flex items-center justify-end gap-3 text-[10px] sm:text-[11px] text-foreground/50 font-medium">
           <span>{t('analytics.heatmap.less')}</span>
           <div className="flex items-center gap-[3px]">
             {CONTRIBUTION_LEVELS.map((level) => (
               <div
-                className={`h-[12px] w-[12px] rounded-[2px] ${CONTRIBUTION_COLORS[level]}`}
+                className={`h-[10px] w-[10px] sm:h-[12px] sm:w-[12px] rounded-[2px] ${CONTRIBUTION_COLORS[level]}`}
                 key={level}
               />
             ))}

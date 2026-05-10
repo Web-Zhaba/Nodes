@@ -33,6 +33,8 @@ const AuthCallbackPage = lazy(() => import("@/pages/AuthCallbackPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const GraphPage = lazy(() => import("@/pages/GraphPage"));
 const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
+const PublicGraphPage = lazy(() => import("@/pages/PublicGraphPage"));
+const PublicNodePage = lazy(() => import("@/pages/PublicNodePage"));
 
 function AuthRedirect() {
   const { t } = useTranslation();
@@ -84,6 +86,10 @@ function App() {
             <Route path="/login" element={<AuthRedirect />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
+            {/* Neural Public Sharing — read-only, no auth required */}
+            <Route path="/share/u/:slug" element={<PublicGraphPage />} />
+            <Route path="/share/n/:token" element={<PublicNodePage />} />
 
             {/* Protected routes */}
             <Route

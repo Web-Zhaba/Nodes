@@ -53,6 +53,10 @@ export interface Node {
   // Фокус по умолчанию
   is_focus_default: boolean;
 
+  // Публичный доступ (Neural Public Sharing)
+  is_public?: boolean;
+  share_token?: string;
+
   // Метаданные
   created_at: string;
   updated_at: string;
@@ -70,6 +74,7 @@ export interface Core {
   color: string;
   icon?: string;
   stability_score: number; // Агрегированная стабильность (0-100)
+  is_public?: boolean; // Публичный доступ
   position_x?: number;
   position_y?: number;
   created_at: string;
@@ -128,6 +133,12 @@ export interface Profile {
   show_greeting: boolean;
   custom_greeting: string;
   theme_config?: any;
+
+  // Neural Public Sharing
+  is_public?: boolean;
+  public_slug?: string;
+  bio?: string;
+
   created_at: string;
   updated_at: string;
 }

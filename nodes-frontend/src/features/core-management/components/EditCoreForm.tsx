@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconPicker } from "@/features/nodes/components/IconPicker";
 import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
+import { Trash2, Globe, Lock } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import type { Core } from "@/types";
 
 interface EditCoreFormProps {
@@ -24,13 +25,14 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
   const [name, setName] = useState(core.name);
   const [color, setColor] = useState(core.color || "#8b5cf6");
   const [icon, setIcon] = useState(core.icon || "Circle");
+  const [isPublic, setIsPublic] = useState(core.is_public ?? false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
     try {
-      const updates = { name: name.trim(), color, icon };
+      const updates = { name: name.trim(), color, icon, is_public: isPublic };
       await updateMutation.mutateAsync({ coreId: core.id, updates });
       toast.success(t("graph.cores.edit.success"));
       onSuccess?.();
@@ -60,7 +62,7 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="editCoreName">{t("graph.cores.fields.name")}</Label>
             <Input 
@@ -71,6 +73,30 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
               required
             />
           </div>
+
+          {/* Privacy Toggle */}
+          <div className="flex items-center justify-between p-4 bg-background/50 rounded-2xl border border-border/40 transition-all hover:border-primary/20">
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
+                isPublic ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+              )}>
+                {isPublic ? <Globe className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+              </div>
+              <div>
+                <Label htmlFor="core-privacy" className="font-bold cursor-pointer">{t("settings.privacy.nodes")}</Label>
+                <p className="text-[10px] text-muted-foreground">
+                  {isPublic ? "Ядро видно всем в публичном графе" : "Ядро скрыто от посторонних"}
+                </p>
+              </div>
+            </div>
+            <Switch
+              id="core-privacy"
+              checked={isPublic}
+              onCheckedChange={setIsPublic}
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="editCoreColor">{t("graph.cores.fields.color")}</Label>
@@ -94,7 +120,7 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-between pt-2">
           <Button 
             type="button" 
             variant="destructive" 
@@ -102,10 +128,15 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
             onClick={handleDelete}
             disabled={updateMutation.isPending || deleteMutation.isPending}
             title={t("graph.cores.delete.button")}
+            className="rounded-xl h-10 w-10"
           >
             <Trash2 className="w-4 h-4" />
           </Button>
-          <Button type="submit" disabled={!name.trim() || updateMutation.isPending || deleteMutation.isPending}>
+          <Button 
+            type="submit" 
+            disabled={!name.trim() || updateMutation.isPending || deleteMutation.isPending}
+            className="rounded-xl px-6"
+          >
             {updateMutation.isPending ? t("graph.cores.edit.submitting") : t("graph.cores.edit.submit")}
           </Button>
         </CardFooter>
@@ -113,3 +144,5 @@ export function EditCoreForm({ core, onSuccess, onDelete }: EditCoreFormProps) {
     </Card>
   );
 }
+
+import { cn } from "@/lib/utils";

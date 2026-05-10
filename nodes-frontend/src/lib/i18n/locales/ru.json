@@ -36,7 +36,7 @@
       "title": "Задачи на {{date}}",
       "description": "Выберите узлы для фокуса на выбранный день.",
       "loadDefaults": "Загрузить по умолчанию",
-      "selectedCount":   "{{count}} выбрано",
+      "selectedCount": "{{count}} выбрано",
       "noNodes": "Нет доступных узлов. Создайте их сначала.",
       "saveFocus": "Сохранить фокус",
       "syncing": "Синхронизация..."
@@ -84,6 +84,7 @@
     "graph": "Граф",
     "analytics": "Аналитика",
     "profile": "Профиль",
+    "home": "Главная",
     "logout": "Выйти"
   },
   "nodes": {
@@ -144,6 +145,12 @@
         "stop": "Стоп",
         "reset": "Сбросить"
       }
+    },
+    "stabilityLevels": {
+      "crystal": "Кристальный",
+      "stable": "Стабильный",
+      "developing": "Развивающийся",
+      "initiation": "Инициация"
     },
     "form": {
       "create": {
@@ -214,6 +221,7 @@
     "tabs": {
       "general": "Общее",
       "appearance": "Внешний вид",
+      "privacy": "Приватность",
       "security": "Безопасность",
       "integrations": "Интеграции"
     },
@@ -316,6 +324,34 @@
       "suggestDesc": "Мы постоянно расширяем возможности связи. Напишите нам, что бы вы хотели видеть.",
       "suggestButton": "Предложить идею"
     },
+    "privacy": {
+      "title": "Приватность",
+      "subtitle": "Управление видимостью вашего нейронного профиля.",
+      "publicProfile": "Публичный профиль",
+      "publicProfileDesc": "Откройте ваш нейронный граф миру. Публичная ссылка позволяет любому увидеть ваши активные узлы и их стабильность.",
+      "profileIsPublic": "Профиль публичный",
+      "profileIsPrivate": "Профиль приватный",
+      "publicLinkDesc": "Ваш граф доступен по ссылке",
+      "privateLinkDesc": "Только вы видите ваши узлы",
+      "publicSlug": "Публичный slug",
+      "slugPlaceholder": "ваш-никнейм",
+      "slugHint": "Только строчные буквы, цифры, _ и - (3–30 символов)",
+      "slugOccupied": "Этот slug уже занят",
+      "bio": "Описание профиля (Bio)",
+      "bioPlaceholder": "Краткое описание вашей архитектуры жизни...",
+      "yourGraphLink": "Ваша ссылка на граф",
+      "saveButton": "Сохранить настройки профиля",
+      "saveSuccess": "Настройки приватности сохранены",
+      "saveError": "Не удалось сохранить настройки",
+      "coresPrivacy": "Приватность ядер",
+      "coresPrivacyDesc": "Публичные ядра будут видны на графе как центры притяжения.",
+      "noCores": "Ядра еще не созданы",
+      "nodesPrivacy": "Приватность узлов",
+      "nodesPrivacyDesc": "Выберите, какие узлы отображать на публичном графе.",
+      "noNodes": "У вас пока нет узлов",
+      "toggleNodeError": "Не удалось обновить узел",
+      "toggleCoreError": "Не удалось обновить ядро"
+    },
     "general": {
       "title": "Общие настройки",
       "subtitle": "Персонализация личности оператора.",
@@ -342,7 +378,8 @@
       "show": "Показывать",
       "hide": "Скрыть",
       "textLabel": "Текст приветствия",
-      "hint": "Используйте {{name}} для автоматической вставки вашего имени."
+      "defaultText": "Привет, {name}",
+      "hint": "Используйте {name} для автоматической вставки вашего имени."
     }
   },
   "graph": {
@@ -353,12 +390,22 @@
     "sidebar": {
       "title": "Архитектура",
       "commandCenter": "Командный центр",
-      "newNode": "Новое Ядро",
       "noCores": "У вас еще нет Ядер.",
       "createFirstCore": "Создайте первый центр гравитации",
       "settings": "Настройки",
       "node": "Узел",
-      "nodesCount": "Узлов в системе:"
+      "nodesCount": "Узлов в системе:",
+      "creating": "Создание",
+      "systemStats": "Статистика системы",
+      "newNode": "Новый узел",
+      "cores": "Ядра",
+      "entities": "Neural Entities",
+      "coreSettings": "Настройка ядра",
+      "coreDetails": "Детали Ядра",
+      "nodeDetails": "Детали Узла",
+      "openAnalytics": "Открыть детальную аналитику",
+      "neuralInsights": "Нейронные данные",
+      "graphControl": "Управление графом"
     },
     "cores": {
       "create": {
@@ -423,15 +470,68 @@
       "7d": "7д",
       "30d": "30д",
       "90d": "90д",
-      "year": "Год"
+      "year": "Год",
+      "lastDays": "Последние {{count}} дней"
     },
     "heatmap": {
+      "title": "История импульсов",
       "less": "Меньше",
       "more": "Больше",
       "noActivity": "Нет активности",
-      "pulses_one": "{{count}} импульс",
+      "pulses": "{{count}} импульс",
       "pulses_few": "{{count}} импульса",
       "pulses_many": "{{count}} импульсов"
+    },
+    "systemStats": {
+      "totalNodes": "Всего узлов",
+      "avgStability": "Стабильность системы"
+    },
+    "nodeStats": {
+      "completions": "Выполнений",
+      "mass": "Масса узла",
+      "impulses": "Импульсов",
+      "daysOnline": "Дней в сети",
+      "stability": "Стабильность"
+    },
+    "emptyState": {
+      "selectNodeTitle": "Выберите узел для анализа",
+      "selectNodeDescription": "Нажмите на любой узел в списке или на графе, чтобы увидеть детальную статистику его развития."
+    }
+  },
+  "public": {
+    "profile": {
+      "publicView": "Публичный вид",
+      "nodesCount": "{{count}} узлов",
+      "join": "Присоединиться",
+      "syncing": "Синхронизация нейронного состояния...",
+      "graphUnavailable": "Граф недоступен",
+      "profilePrivate": "Этот профиль приватный или не существует.",
+      "returnHome": "Вернуться на главную"
+    },
+    "node": {
+      "nodeUnavailable": "Узел недоступен",
+      "nodePrivate": "Этот узел приватный или ссылка недействительна.",
+      "returnHome": "На главную",
+      "nodeDetails": "Детали узла",
+      "publicEntity": "Public Neural Entity",
+      "createdAt": "Создан {{date}}",
+      "stability": "Стабильность",
+      "stats": {
+        "completions": "Выполнений",
+        "mass": "Масса узла",
+        "impulses": "Импульсов",
+        "daysOnline": "Дней в сети"
+      },
+      "charts": {
+        "activityPulse": "Пульс активности",
+        "impulseHistory": "История импульсов"
+      },
+      "ownership": {
+        "belongsTo": "Узел принадлежит {{name}}",
+        "exploreFull": "Исследуйте полный нейронный граф этого пользователя.",
+        "viewFullGraph": "Весь граф",
+        "createOwn": "Создать свой"
+      }
     }
   }
 }

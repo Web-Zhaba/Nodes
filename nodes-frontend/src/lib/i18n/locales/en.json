@@ -84,6 +84,7 @@
     "graph": "Graph",
     "analytics": "Analytics",
     "profile": "Profile",
+    "home": "Home",
     "logout": "Logout"
   },
   "nodes": {
@@ -144,6 +145,12 @@
         "stop": "Stop",
         "reset": "Reset"
       }
+    },
+    "stabilityLevels": {
+      "crystal": "Crystal",
+      "stable": "Stable",
+      "developing": "Developing",
+      "initiation": "Initiation"
     },
     "form": {
       "create": {
@@ -214,6 +221,7 @@
     "tabs": {
       "general": "General",
       "appearance": "Appearance",
+      "privacy": "Privacy",
       "security": "Security",
       "integrations": "Integrations"
     },
@@ -316,6 +324,34 @@
       "suggestDesc": "We are constantly expanding connectivity. Let us know what you'd like to see.",
       "suggestButton": "Suggest Idea"
     },
+    "privacy": {
+      "title": "Privacy",
+      "subtitle": "Manage your neural profile visibility.",
+      "publicProfile": "Public Profile",
+      "publicProfileDesc": "Open your neural graph to the world. A public link allows anyone to see your active nodes and their stability.",
+      "profileIsPublic": "Profile is Public",
+      "profileIsPrivate": "Profile is Private",
+      "publicLinkDesc": "Your graph is available via link",
+      "privateLinkDesc": "Only you see your nodes",
+      "publicSlug": "Public Slug",
+      "slugPlaceholder": "my-username",
+      "slugHint": "Only lowercase letters, numbers, _ and - (3–30 characters)",
+      "slugOccupied": "This slug is already taken",
+      "bio": "Profile Bio",
+      "bioPlaceholder": "Brief description of your life architecture...",
+      "yourGraphLink": "Your graph link",
+      "saveButton": "Save Profile Settings",
+      "saveSuccess": "Privacy settings saved",
+      "saveError": "Failed to save settings",
+      "coresPrivacy": "Cores Privacy",
+      "coresPrivacyDesc": "Public cores will be visible on the graph as centers of gravity.",
+      "noCores": "No cores created yet",
+      "nodesPrivacy": "Nodes Privacy",
+      "nodesPrivacyDesc": "Choose which nodes to display on the public graph.",
+      "noNodes": "No nodes yet",
+      "toggleNodeError": "Failed to update node",
+      "toggleCoreError": "Failed to update core"
+    },
     "general": {
       "title": "General Settings",
       "subtitle": "Operator identity personalization.",
@@ -342,7 +378,8 @@
       "show": "Show",
       "hide": "Hide",
       "textLabel": "Greeting Text",
-      "hint": "Use {{name}} to automatically insert your name."
+      "defaultText": "Hello, {name}",
+      "hint": "Use {name} to automatically insert your name."
     }
   },
   "graph": {
@@ -353,12 +390,22 @@
     "sidebar": {
       "title": "Architecture",
       "commandCenter": "Command Center",
-      "newNode": "New Core",
       "noCores": "You don't have any Cores yet.",
       "createFirstCore": "Create the first gravity center",
       "settings": "Settings",
       "node": "Node",
-      "nodesCount": "Nodes in system:"
+      "nodesCount": "Nodes in system:",
+      "creating": "Creating",
+      "systemStats": "System Statistics",
+      "newNode": "New Node",
+      "cores": "Cores",
+      "entities": "Neural Entities",
+      "coreSettings": "Core Settings",
+      "coreDetails": "Core Details",
+      "nodeDetails": "Node Details",
+      "openAnalytics": "Open Detailed Analytics",
+      "neuralInsights": "Neural Insights",
+      "graphControl": "Graph Control"
     },
     "cores": {
       "create": {
@@ -423,14 +470,67 @@
       "7d": "7d",
       "30d": "30d",
       "90d": "90d",
-      "year": "Year"
+      "year": "Year",
+      "lastDays": "Last {{count}} days"
     },
     "heatmap": {
+      "title": "Pulse History",
       "less": "Less",
       "more": "More",
       "noActivity": "No activity",
-      "pulses_one": "{{count}} pulse",
-      "pulses_other": "{{count}} pulses"
+      "pulses": "{{count}} pulse",
+      "pulses_plural": "{{count}} pulses"
+    },
+    "systemStats": {
+      "totalNodes": "Total Nodes",
+      "avgStability": "System Stability"
+    },
+    "nodeStats": {
+      "completions": "Completions",
+      "mass": "Node Mass",
+      "impulses": "Impulses",
+      "daysOnline": "Days Online",
+      "stability": "Stability"
+    },
+    "emptyState": {
+      "selectNodeTitle": "Select a node for analysis",
+      "selectNodeDescription": "Click on any node in the list or on the graph to see detailed statistics of its development."
+    }
+  },
+  "public": {
+    "profile": {
+      "publicView": "Public View",
+      "nodesCount": "{{count}} nodes",
+      "join": "Join",
+      "syncing": "Syncing neural state...",
+      "graphUnavailable": "Graph Unavailable",
+      "profilePrivate": "This profile is private or does not exist.",
+      "returnHome": "Return to Home"
+    },
+    "node": {
+      "nodeUnavailable": "Node Unavailable",
+      "nodePrivate": "This node is private or the link is invalid.",
+      "returnHome": "To Home",
+      "nodeDetails": "Node Details",
+      "publicEntity": "Public Neural Entity",
+      "createdAt": "Created on {{date}}",
+      "stability": "Stability",
+      "stats": {
+        "completions": "Completions",
+        "mass": "Node Mass",
+        "impulses": "Impulses",
+        "daysOnline": "Days Online"
+      },
+      "charts": {
+        "activityPulse": "Activity Pulse",
+        "impulseHistory": "Impulse History"
+      },
+      "ownership": {
+        "belongsTo": "Node belongs to {{name}}",
+        "exploreFull": "Explore the full neural graph of this user.",
+        "viewFullGraph": "Full Graph",
+        "createOwn": "Create Your Own"
+      }
     }
   }
 }

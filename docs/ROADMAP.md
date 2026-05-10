@@ -84,7 +84,12 @@
 - [x] **Theming 2.0:** Полная настройка цветовых палитр для Light/Dark тем (CSS Variables).
 - [x] **Глубокая локализация:** Поддержка i18next, адаптация форматов дат/времени и таймзон.
 - [x] **Account Management:** Смена Email/Password, привязка Social Providers (Oauth), управление сессиями.
-- [ ] **Neural Public Profile:** Генерация публичных ссылок на граф. Настройка приватности узлов и анонимизация данных.
+- [x] **Neural Public Profile:** Генерация публичных ссылок на граф. Настройка приватности узлов и анонимизация данных.
+  - `GET /share/u/:slug` — публичный граф пользователя (read-only, `react-force-graph-2d`)
+  - `GET /share/n/:token` — детали узла (Recharts AreaChart + Heatmap 12 недель)
+  - Вкладка «Приватность» в настройках профиля: тоггл профиля, custom slug, bio, per-node visibility
+  - `publicService.ts` — анонимный доступ через Supabase RLS (`anon` role)
+  - Migration `004_public_sharing.sql` — колонки `is_public`, `public_slug`, `share_token`
 - [ ] **Deep Storage:** Прикрепление Markdown-заметок и медиафайлов к импульсам (Supabase Storage).
 - [ ] **External Sync:** Двусторонняя интеграция с Google Calendar (авто-импульсы из событий).
 - [ ] **Notifications:** Настройка уведомлений по каналам (Browser, Email, Telegram).

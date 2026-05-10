@@ -22,6 +22,10 @@ CREATE TABLE public.profiles (
   show_greeting     boolean DEFAULT true,
   custom_greeting   text DEFAULT 'Привет, {name}',
   theme_config      jsonb DEFAULT '{}'::jsonb,
+  -- Neural Public Sharing (migration 004)
+  is_public         boolean DEFAULT false,
+  public_slug       text UNIQUE,
+  bio               text,
   created_at        timestamp with time zone DEFAULT now(),
   updated_at        timestamp with time zone DEFAULT now(),
   CONSTRAINT profiles_pkey PRIMARY KEY (id),

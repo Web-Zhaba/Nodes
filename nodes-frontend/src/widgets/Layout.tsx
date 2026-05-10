@@ -1,6 +1,6 @@
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, Share2, BarChart3, User, Github } from "lucide-react";
+import { Home, Share2, BarChart3, User } from "lucide-react";
 import { FloatingNavbar } from "@/components/ui/floating-navbar";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
 import { useAppStore } from "@/store/useAppStore";
 import { useEffect } from "react";
+import { AppFooter } from "@/components/AppFooter";
 
 export default function Layout() {
   const location = useLocation();
@@ -78,20 +79,7 @@ export default function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="hidden md:block border-t border-border/40 py-6 mt-auto transition-colors duration-300">
-        <div className="container mx-auto max-w-7xl px-4 flex items-center justify-between text-muted-foreground opacity-70 hover:opacity-100 transition-opacity">
-          <div className="text-[10px] sm:text-xs font-medium tracking-widest uppercase flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            {t("common.footer.systemOnline", "NODES — System Online")}
-          </div>
-          <div className="flex items-center space-x-5">
-            <a href="https://github.com/Web-Zhaba/Nodes" target="_blank" rel="noreferrer" className="hover:text-foreground hover:scale-110 transition-all" title="GitHub">
-              <Github className="w-4 h-4" />
-              <span className="sr-only">GitHub</span>
-            </a>
-          </div>
-        </div>
-      </footer>
+      <AppFooter className="hidden md:block mt-auto" />
     </div>
   );
 }

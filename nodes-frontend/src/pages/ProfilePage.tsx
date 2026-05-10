@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { User, Shield, Zap, Palette, Settings2 } from "lucide-react";
+import { User, Shield, Zap, Palette, Settings2, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -8,16 +8,18 @@ import { GeneralTab } from "@/features/profile/GeneralTab";
 import { AppearanceTab } from "@/features/profile/AppearanceTab";
 import { SecurityTab } from "@/features/profile/SecurityTab";
 import { IntegrationsTab } from "@/features/profile/IntegrationsTab";
+import { PrivacyTab } from "@/features/profile/PrivacyTab";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("general");
   const { t } = useTranslation();
 
   const TABS = useMemo(() => [
-    { id: "general", label: t("profile.tabs.general", "Общее"), icon: User },
-    { id: "appearance", label: t("profile.tabs.appearance", "Внешний вид"), icon: Palette },
-    { id: "security", label: t("profile.tabs.security", "Безопасность"), icon: Shield },
-    { id: "integrations", label: t("profile.tabs.integrations", "Интеграции"), icon: Zap },
+    { id: "general", label: t("profile.tabs.general", "General"), icon: User },
+    { id: "appearance", label: t("profile.tabs.appearance", "Appearance"), icon: Palette },
+    { id: "security", label: t("profile.tabs.security", "Security"), icon: Shield },
+    { id: "integrations", label: t("profile.tabs.integrations", "Integrations"), icon: Zap },
+    { id: "privacy", label: t("profile.tabs.privacy", "Privacy"), icon: Globe },
   ], [t]);
 
   return (
@@ -81,6 +83,7 @@ export default function ProfilePage() {
               {activeTab === "appearance" && <AppearanceTab />}
               {activeTab === "security" && <SecurityTab />}
               {activeTab === "integrations" && <IntegrationsTab />}
+              {activeTab === "privacy" && <PrivacyTab />}
             </motion.div>
           </AnimatePresence>
         </div>
