@@ -163,6 +163,7 @@
 | CI/CD iOS Simulator автосборка | Средний | ✅ Завершено (GitHub Actions) |
 | Haptic Feedback на импульсы | Средний | ✅ Завершено |
 | Dynamic StatusBar (Light/Dark) | Низкий | ✅ Завершено |
+| Canvas 2D graph rendering (shadowBlur removal, 2D physics, engine freeze, LOD culling) | Высокий | ✅ Завершено (~15-25 FPS → 55-60 FPS на iGPU) |
 | Motion (Framer) audit — CSS transitions vs layout animations | Низкий | ⏳ Запланировано |
 | Safe Area insets для notch | Высокий | ✅ Завершено |
 
@@ -177,4 +178,5 @@
 - **Django endpoints:** 1 (`/api/v1/stability/calculate/`)
 - **GitHub Actions workflows:** 2 (Android APK, iOS Simulator)
 - **Суммарный стек:** React 19 + Vite 7 + TypeScript 5.9 + Tailwind v4 + Capacitor 8 + Supabase + Django DRF
+- **Граф FPS (budget iGPU):** ~55-60 FPS стабильно (было ~15-25)
 - **Lazy dev-only imports:** ReactQueryDevtools (не попадает в продакшн)
