@@ -11,8 +11,8 @@ import type { GraphNode } from "../model/types";
 /** Радиус ядра в graph-единицах */
 export const CORE_RADIUS = 18;
 
-/** Рендерим иконки в 4× разрешении → потом масштабируем вниз, sharp на HiDPI */
-export const ICON_PIXEL_RATIO = 4;
+/** Рендерим иконки в 2× разрешении → баланс sharpness / VRAM для стандартных экранов */
+export const ICON_PIXEL_RATIO = 2;
 
 export type DrawNodeLabelProps = {
   // Узел
@@ -79,12 +79,6 @@ export function drawNodeCircle({
   const stabilityFactor = isCore ? 1 : 0.3 + (stability / 100) * 0.7;
   
   ctx.save();
-  
-  // Эффект свечения для очень стабильных узлов
-  if (stability > 80 || isCore) {
-    ctx.shadowBlur = isCore ? 15 : 10;
-    ctx.shadowColor = color;
-  }
 
   // Заливка (прозрачная, ≈ 13–20% от текущего фактора стабильности)
   ctx.beginPath();

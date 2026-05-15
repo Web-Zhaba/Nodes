@@ -19,6 +19,40 @@ import { GraphCommandCenter } from "@/features/graph-visualization/components/Gr
 import { startOfDay } from "date-fns";
 import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery";
 import { NodeCard } from "@/features/nodes/components/NodeCard";
+import type { Node, Connector } from "@/types";
+
+interface NodeCardWrapperProps {
+  nodeId: string;
+  nodes: Record<string, Node>;
+  connectors: Connector[];
+  selectedDate: Date;
+  userId?: string;
+  onImpulse: (nodeId: string, value: number) => Promise<void>;
+  onUpdateQuantity: (nodeId: string, value: number) => Promise<void>;
+}
+
+const NodeCardWrapper = ({ nodeId, nodes, connectors, selectedDate, userId, onImpulse, onUpdateQuantity }: NodeCardWrapperProps) => {
+  const node = nodes[nodeId];
+  const { data: nodeImpulses = [] } = useImpulsesQuery([nodeId], selectedDate, userId);
+
+  if (!node) return null;
+
+  const todayValue = nodeImpulses.reduce((sum: number, imp: Impulse) => sum + (imp.value || 0), 0);
+  const isCompletedToday = node.node_type === "binary"
+    ? nodeImpulses.length > 0
+    : todayValue >= (node.target_value || 0);
+
+  return (
+    <NodeCard
+      node={node}
+      isCompletedToday={isCompletedToday}
+      todayValue={todayValue}
+      connectors={connectors}
+      onImpulse={async (value) => onImpulse(nodeId, value)}
+      onUpdateQuantity={async (value) => onUpdateQuantity(nodeId, value)}
+    />
+  );
+};
 
 export default function GraphPage() {
   const { t } = useTranslation();
@@ -46,29 +80,19 @@ export default function GraphPage() {
   const handleUpdateQuantity = useCallback(async (nodeId: string, value: number) => {
     await recordPulse.mutateAsync({ nodeId, value, date: selectedDate });
   }, [selectedDate, recordPulse]);
-  
-  const NodeCardWrapper = ({ nodeId }: { nodeId: string }) => {
-    const node = nodes[nodeId];
-    const { data: nodeImpulses = [] } = useImpulsesQuery([nodeId], selectedDate, user?.id);
-    
-    if (!node) return null;
 
-    const todayValue = nodeImpulses.reduce((sum: number, imp: Impulse) => sum + (imp.value || 0), 0);
-    const isCompletedToday = node.node_type === "binary"
-      ? nodeImpulses.length > 0
-      : todayValue >= (node.target_value || 0);
-
-    return (
-      <NodeCard
-        node={node}
-        isCompletedToday={isCompletedToday}
-        todayValue={todayValue}
-        connectors={Object.values(connectors)}
-        onImpulse={(value) => handleImpulse(nodeId, value)}
-        onUpdateQuantity={(value) => handleUpdateQuantity(nodeId, value)}
-      />
-    );
-  };
+  const renderNodeCard = useCallback((nodeId: string) => (
+    <NodeCardWrapper
+      key={nodeId}
+      nodeId={nodeId}
+      nodes={nodes}
+      connectors={Object.values(connectors)}
+      selectedDate={selectedDate}
+      userId={user?.id}
+      onImpulse={handleImpulse}
+      onUpdateQuantity={handleUpdateQuantity}
+    />
+  ), [nodes, connectors, selectedDate, user?.id, handleImpulse, handleUpdateQuantity]);
 
   const nodesList = useMemo(() => 
     Object.values(nodes).map(n => ({
@@ -135,7 +159,7 @@ export default function GraphPage() {
           isEditing={isEditing}
           onToggleCreating={setIsCreating}
           onToggleEditing={setIsEditing}
-          renderNodeCard={(nodeId) => <NodeCardWrapper nodeId={nodeId} />}
+          renderNodeCard={renderNodeCard}
           renderCoreActions={() => (
             <div className="flex items-center gap-1 shrink-0 bg-background/50 backdrop-blur-md p-1 rounded-2xl shadow-sm border border-white/5">
               <Button 

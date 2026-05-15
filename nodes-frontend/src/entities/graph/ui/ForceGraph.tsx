@@ -48,6 +48,7 @@ export function ForceGraph({
   // ── Zoom to fit after data loads ─────────────────────────────────────────
   useEffect(() => {
     if (graphData.nodes.length === 0) return;
+    graphRef.current?.resumeAnimation();
     const timer = setTimeout(() => graphRef.current?.zoomToFit(500, 80), 400);
     return () => clearTimeout(timer);
   }, [graphData]);
@@ -58,7 +59,7 @@ export function ForceGraph({
     if (!g) return;
     g.d3Force("charge")?.strength?.(-60);
     g.d3Force("link")?.distance?.(50);
-  });
+  }, []);
 
   // ── Theme-aware colors ──────────────────────────────────────────────────
   const [colors, setColors] = useState({
@@ -92,6 +93,10 @@ export function ForceGraph({
       const node = rawNode as GraphNode & { x: number; y: number };
       if (typeof node.x !== 'number' || typeof node.y !== 'number') return;
 
+      // Viewport culling: skip nodes that are far outside visible area
+      const maxDist = Math.max(dimensions.width, dimensions.height) * 4 / globalScale;
+      if (Math.abs(node.x) > maxDist || Math.abs(node.y) > maxDist) return;
+
       const isCore = node.nodeKind === "core";
       const radius = isCore ? CORE_RADIUS : Math.max(4, node.val ?? 4);
       const iconSize = isCore ? 14 : 10;
@@ -115,8 +120,13 @@ export function ForceGraph({
         labelColor: isCore ? node.color : colors.label // Ядра всегда своего цвета, узлы — цвета текста
       });
     },
-    [colors]
+    [colors, dimensions]
   );
+
+  // ── Engine stop handler (freeze rendering when settled) ──────────────────
+  const handleEngineStop = useCallback(() => {
+    graphRef.current?.pauseAnimation();
+  }, []);
 
   // ── Link accessors ───────────────────────────────────────────────────────
   const getLinkColor = useCallback((link: object) => (link as GraphLink).color, []);
@@ -169,7 +179,10 @@ export function ForceGraph({
         linkWidth={getLinkWidth}
         d3VelocityDecay={0.4}
         d3AlphaDecay={0.02}
+        {...({ numDimensions: 2 } as any)}
+        warmupTicks={30}
         cooldownTicks={100}
+        onEngineStop={handleEngineStop}
         onNodeClick={(node) => {
           const gn = node as GraphNode;
           if (onNodeClick) {

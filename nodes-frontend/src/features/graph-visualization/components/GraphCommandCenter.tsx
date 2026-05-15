@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { GraphData } from "@/entities/graph/model/types";
 import { GraphSidebar, type GraphCommandCenterNode, type GraphCommandCenterCore } from "./command-center/GraphSidebar";
 import { GraphViewport } from "./command-center/GraphViewport";
@@ -34,7 +34,7 @@ export function GraphCommandCenter(props: GraphCommandCenterProps) {
   const [selectedCoreId, setSelectedCoreId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleGraphClick = (id: string, kind: "node" | "core") => {
+  const handleGraphClick = useCallback((id: string, kind: "node" | "core") => {
     if (kind === "node") {
       setSelectedNodeId(id);
       setSelectedCoreId(null);
@@ -45,7 +45,7 @@ export function GraphCommandCenter(props: GraphCommandCenterProps) {
     if (props.onToggleCreating) props.onToggleCreating(false);
     if (props.onToggleEditing) props.onToggleEditing(false);
     setIsSidebarOpen(true);
-  };
+  }, [props.onToggleCreating, props.onToggleEditing]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
