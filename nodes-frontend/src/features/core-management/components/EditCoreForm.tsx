@@ -7,7 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconPicker } from "@/features/nodes/components/IconPicker";
 import { toast } from "sonner";
-import { Trash2, Globe, Lock } from "lucide-react";
+import Trash2 from "lucide-react/dist/esm/icons/trash-2";
+import Globe from "lucide-react/dist/esm/icons/globe";
+import Lock from "lucide-react/dist/esm/icons/lock";
 import { Switch } from "@/components/ui/switch";
 import type { Core } from "@/types";
 

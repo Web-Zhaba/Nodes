@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, RotateCcw } from "lucide-react";
+import Sun from "lucide-react/dist/esm/icons/sun";
+import Moon from "lucide-react/dist/esm/icons/moon";
+import RotateCcw from "lucide-react/dist/esm/icons/rotate-ccw";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "react-hook-form";

@@ -1,6 +1,9 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Target, Activity, Coffee } from "lucide-react";
+import Plus from "lucide-react/dist/esm/icons/plus";
+import Target from "lucide-react/dist/esm/icons/target";
+import Activity from "lucide-react/dist/esm/icons/activity";
+import Coffee from "lucide-react/dist/esm/icons/coffee";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { NodeCard } from "@/features/nodes/components/NodeCard";

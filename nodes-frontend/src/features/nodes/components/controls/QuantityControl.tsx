@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Check } from "lucide-react";
+import Minus from "lucide-react/dist/esm/icons/minus";
+import Plus from "lucide-react/dist/esm/icons/plus";
+import Check from "lucide-react/dist/esm/icons/check";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import type { Node } from "@/types";

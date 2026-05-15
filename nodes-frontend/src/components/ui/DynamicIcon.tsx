@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import type { LucideProps } from 'lucide-react';
-import dynamicIconImports from 'lucide-react/dynamicIconImports';
+import iconImports from '@/lib/lucide-dynamic-imports';
 
 
 interface DynamicIconProps extends Omit<LucideProps, 'ref'> {
@@ -16,10 +16,10 @@ const iconCache: Record<string, React.LazyExoticComponent<any>> = {};
 
 export function DynamicIcon({ name, fallback, ...props }: DynamicIconProps) {
   const kebabName = name ? toKebabCase(name) : undefined;
-  const iconName = (kebabName && kebabName in dynamicIconImports) ? kebabName : 'circle';
+  const iconName = (kebabName && kebabName in iconImports) ? kebabName : 'circle';
 
   if (!iconCache[iconName]) {
-    iconCache[iconName] = lazy(dynamicIconImports[iconName as keyof typeof dynamicIconImports]);
+    iconCache[iconName] = lazy(iconImports[iconName]);
   }
 
   const LucideIcon = iconCache[iconName];

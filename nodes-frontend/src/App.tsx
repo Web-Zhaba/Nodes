@@ -8,8 +8,12 @@ import { useTranslation } from "react-i18next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { lazy, Suspense, useEffect } from "react";
+
+// Lazy-load devtools only in development to reduce production bundle
+const ReactQueryDevtools = import.meta.env.DEV
+  ? lazy(() => import("@tanstack/react-query-devtools").then((m) => ({ default: m.ReactQueryDevtools })))
+  : () => null;
 import NodesListPage from "@/pages/NodesListPage";
 import { useThemeStore } from "@/store/useThemeStore";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";

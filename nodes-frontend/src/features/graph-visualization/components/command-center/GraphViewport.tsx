@@ -1,6 +1,6 @@
 import { ForceGraph } from "@/entities/graph/ui/ForceGraph";
 import { Button } from "@/components/ui/button";
-import { Settings2 } from "lucide-react";
+import Settings2 from "lucide-react/dist/esm/icons/settings-2";
 import type { GraphData } from "@/entities/graph/model/types";
 
 interface GraphViewportProps {

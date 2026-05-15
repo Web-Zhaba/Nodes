@@ -1,6 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
-import { X, Layers, TrendingUp, Share2, Plus } from "lucide-react";
+import X from "lucide-react/dist/esm/icons/x";
+import Layers from "lucide-react/dist/esm/icons/layers";
+import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
+import Share2 from "lucide-react/dist/esm/icons/share-2";
+import Plus from "lucide-react/dist/esm/icons/plus";
 import { Button } from "@/components/ui/button";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { CoreSidebarCard } from "@/features/core-management/components/CoreSidebarCard";

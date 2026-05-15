@@ -1,5 +1,10 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { User, Shield, Zap, Palette, Settings2, Globe } from "lucide-react";
+import User from "lucide-react/dist/esm/icons/user";
+import Shield from "lucide-react/dist/esm/icons/shield";
+import Zap from "lucide-react/dist/esm/icons/zap";
+import Palette from "lucide-react/dist/esm/icons/palette";
+import Settings2 from "lucide-react/dist/esm/icons/settings-2";
+import Globe from "lucide-react/dist/esm/icons/globe";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";

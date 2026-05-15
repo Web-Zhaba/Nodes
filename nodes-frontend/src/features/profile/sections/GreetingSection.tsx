@@ -4,7 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { motion, AnimatePresence } from "framer-motion";
 import { Controller } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
-import { MessageSquare } from "lucide-react";
+import MessageSquare from "lucide-react/dist/esm/icons/message-square";
 import { useTranslation } from "react-i18next";
 
 interface GreetingSectionProps {

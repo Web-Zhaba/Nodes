@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Tests
         working-directory: nodes-frontend
-        run: npx vitest run --exclude="**/EditNodeForm.test.tsx"
+        run: npx vitest run
 
       - name: Create .env.production
         working-directory: nodes-frontend

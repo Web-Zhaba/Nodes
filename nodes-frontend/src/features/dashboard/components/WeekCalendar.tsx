@@ -1,7 +1,8 @@
 import { format, addDays, subDays, startOfWeek, isSameDay, startOfDay } from "date-fns";
 import { ru, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import ChevronLeft from "lucide-react/dist/esm/icons/chevron-left";
+import ChevronRight from "lucide-react/dist/esm/icons/chevron-right";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";

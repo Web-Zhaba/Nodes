@@ -6,6 +6,53 @@ import { getNodeById, updateNode, deleteNode } from '../../nodeService';
 import { getUserConnectors } from '@/features/connectors/connectorService';
 import { toast } from 'sonner';
 
+// Мокаем react-i18next
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => {
+      const translations: Record<string, string> = {
+        'common.loading': 'Загрузка...',
+        'nodes.form.edit.title': 'Редактирование узла',
+        'nodes.form.edit.delete': 'Удалить узел',
+        'nodes.form.edit.deleteConfirm': 'Вы уверены? Это действие нельзя отменить.',
+        'nodes.form.edit.success': 'Узел обновлен',
+        'nodes.form.edit.error': 'Не удалось обновить узел',
+        'nodes.form.fields.name': 'Название узла',
+        'nodes.form.fields.type': 'Тип узла',
+        'nodes.form.fields.targetValue': 'Целевое значение',
+        'nodes.form.fields.units.minutes': 'мин',
+        'nodes.form.fields.units.units': 'ед.',
+        'nodes.form.fields.mass': 'Масса (сложность): 1.0',
+        'nodes.form.fields.connectors': 'Коннекторы',
+        'nodes.form.fields.color': 'Цвет узла',
+        'nodes.form.fields.icon': 'Иконка',
+        'nodes.form.fields.description': 'Описание (опционально)',
+        'nodes.form.fields.descriptionPlaceholder': 'Краткое описание узла...',
+        'nodes.form.fields.isFocusDefault': 'Узел по умолчанию для фокуса',
+        'nodes.form.fields.isFocusDefaultDesc': 'Этот узел будет автоматически предлагаться при планировании нового дня.',
+        'nodes.type.binary': 'Бинарный',
+        'nodes.type.quantity': 'Количество',
+        'nodes.type.duration': 'Длительность',
+        'nodes.preview.title': 'Предпросмотр',
+        'common.cancel': 'Отмена',
+        'common.save': 'Сохранить',
+        'nodes.form.edit.submitting': 'Сохранение...',
+      };
+      let result = translations[key] || key;
+      if (options) {
+        Object.entries(options).forEach(([k, v]) => {
+          result = result.replace(`{{${k}}}`, String(v));
+        });
+      }
+      return result;
+    },
+  }),
+  initReactI18next: {
+    type: '3rdParty',
+    init: () => {},
+  },
+}));
+
 // Мокаем зависимости сервисов
 vi.mock('../../nodeService', () => ({
   getNodeById: vi.fn(),
@@ -27,15 +74,17 @@ vi.mock('sonner', () => ({
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Suspense } from 'react';
 
-const queryClient = new QueryClient({
+const createQueryClient = () => new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
+      gcTime: 0,
     },
   },
 });
 
 const renderComponent = () => {
+  const queryClient = createQueryClient();
   return render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter>
@@ -59,7 +108,7 @@ describe('EditNodeForm Component', () => {
 
     renderComponent();
 
-    expect(screen.getByText(/загрузка данных узла/i)).toBeInTheDocument();
+    expect(screen.getByText(/Загрузка/i)).toBeInTheDocument();
   });
 
   it('должен правильно загружать и отображать данные узла', async () => {
@@ -84,7 +133,7 @@ describe('EditNodeForm Component', () => {
 
     // Ждем, пока исчезнет состояние загрузки и форма заполнится
     await waitFor(() => {
-      expect(screen.queryByText(/загрузка данных узла/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Загрузка/i)).not.toBeInTheDocument();
     });
 
     // Проверяем, что форма заполнилась
@@ -93,9 +142,8 @@ describe('EditNodeForm Component', () => {
     expect(screen.getByDisplayValue('30')).toBeInTheDocument(); // target_value
 
     // Проверяем тип
-    // Используем getAllByText, так как "Время" может встречаться несколько раз (в метке и в описании типа)
-    const timeElements = screen.getAllByText(/Время/i);
-    expect(timeElements.length).toBeGreaterThan(0);
+    const durationElements = screen.getAllByText(/Длительность/i);
+    expect(durationElements.length).toBeGreaterThan(0);
   });
 
   it('должен вызывать updateNode при сабмите формы', async () => {
@@ -113,11 +161,11 @@ describe('EditNodeForm Component', () => {
 
     // Ждем, пока данные загрузятся
     await waitFor(() => {
-      expect(screen.queryByText(/загрузка данных узла/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Загрузка/i)).not.toBeInTheDocument();
     });
 
     // Дополнительно ждем, пока поле заполнится (reset в useEffect может быть асинхронным в плане рендера)
-    const nameInput = await screen.findByLabelText(/название узла/i);
+    const nameInput = await screen.findByLabelText(/Название узла/i);
     await waitFor(() => {
       expect((nameInput as HTMLInputElement).value).toBe('Старое имя');
     });
@@ -126,14 +174,16 @@ describe('EditNodeForm Component', () => {
     fireEvent.change(nameInput, { target: { value: 'Новое имя' } });
 
     // Сабмит формы
-    const submitButton = screen.getByRole('button', { name: /сохранить/i });
+    const submitButton = screen.getByRole('button', { name: /Сохранить/i });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(updateNode).toHaveBeenCalledWith('test-node-1', expect.objectContaining({
-        name: 'Новое имя',
-      }));
-      expect(toast.success).toHaveBeenCalledWith('Изменения сохранены');
+      expect(updateNode).toHaveBeenCalledWith(
+        'test-node-1',
+        expect.objectContaining({ name: 'Новое имя' }),
+        undefined
+      );
+      expect(toast.success).toHaveBeenCalledWith('Узел обновлен');
     });
   });
 
@@ -148,18 +198,18 @@ describe('EditNodeForm Component', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.queryByText(/загрузка данных узла/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Загрузка/i)).not.toBeInTheDocument();
     });
 
     // Кликаем по кнопке удаления
-    const deleteButton = screen.getByRole('button', { name: /удалить узел/i });
+    const deleteButton = screen.getByRole('button', { name: /Удалить узел/i });
     fireEvent.click(deleteButton);
 
     expect(confirmSpy).toHaveBeenCalled();
 
     await waitFor(() => {
       expect(deleteNode).toHaveBeenCalledWith('test-node-1');
-      expect(toast.success).toHaveBeenCalledWith('Узел удален');
+      expect(toast.success).toHaveBeenCalledWith('Узел обновлен');
     });
 
     confirmSpy.mockRestore();

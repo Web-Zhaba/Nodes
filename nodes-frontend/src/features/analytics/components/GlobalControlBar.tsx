@@ -1,6 +1,8 @@
 import { useAnalyticsStore } from '../../../store/useAnalyticsStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Globe, Activity } from 'lucide-react';
+import X from "lucide-react/dist/esm/icons/x";
+import Globe from "lucide-react/dist/esm/icons/globe";
+import Activity from "lucide-react/dist/esm/icons/activity";
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 

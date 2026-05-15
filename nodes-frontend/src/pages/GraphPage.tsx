@@ -1,7 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { Pencil, Network } from "lucide-react";
+import Pencil from "lucide-react/dist/esm/icons/pencil";
+import Network from "lucide-react/dist/esm/icons/network";
 
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";

@@ -1,6 +1,11 @@
 import { useMemo, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Loader2, Lock, ExternalLink, Zap, Globe, Info } from "lucide-react";
+import Loader2 from "lucide-react/dist/esm/icons/loader-2";
+import Lock from "lucide-react/dist/esm/icons/lock";
+import ExternalLink from "lucide-react/dist/esm/icons/external-link";
+import Zap from "lucide-react/dist/esm/icons/zap";
+import Globe from "lucide-react/dist/esm/icons/globe";
+import Info from "lucide-react/dist/esm/icons/info";
 import { GraphCommandCenter } from "@/features/graph-visualization/components/GraphCommandCenter";
 import { Button } from "@/components/ui/button";
 import { AppFooter } from "@/components/AppFooter";

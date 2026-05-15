@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import React, { createElement } from "react";
-import dynamicIconImports from 'lucide-react/dynamicIconImports';
+import iconImports from '@/lib/lucide-dynamic-imports';
 
 const toKebabCase = (str: string) => 
   str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
@@ -45,7 +45,7 @@ async function renderIconToCache(
 
   try {
     const kebabName = toKebabCase(iconName);
-    const loadIcon = dynamicIconImports[kebabName as keyof typeof dynamicIconImports] || dynamicIconImports['circle'];
+    const loadIcon = iconImports[kebabName] || iconImports['circle'];
     const IconModule = await loadIcon();
     const IconComponent = IconModule.default;
 

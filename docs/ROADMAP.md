@@ -150,10 +150,10 @@
 | Задача | Приоритет | Статус |
 |--------|-----------|--------|
 | Вынос всех строк в `en.json/ru.json` (подготовка i18n) | Средний | ⏳ Ожидает |
-| Фикс `EditNodeForm.test.tsx` (i18n мок в тестах) | Низкий | 🔴 Failing (pre-existing) |
-| Оптимизация бандла (Code Splitting) | Низкий | ✅ Завершено |
+| Фикс `EditNodeForm.test.tsx` (i18n мок + QueryClient изоляция) | Низкий | ✅ Исправлено |
+| Оптимизация бандла (Code Splitting + Lucide tree-shaking) | Низкий | ✅ Завершено (vendor-lucide: 151 KB → 9 KB gzip) |
 | Защита от потери стейта (Race Conditions) | Критичный | ✅ Исправлено |
-| Полное покрытие Unit-тестами | Средний | ~32/36 тестов ✅ |
+| Полное покрытие Unit-тестами | Средний | 36/36 тестов ✅ |
 | Мобильная адаптивность графа | Высокий | ✅ Завершено (Sidebar Sheet) |
 | Безопасный режим JWT (ES256 + JWKS) | Критичный | ✅ Завершено |
 | Оптимизация запросов к Impulses (prefetch) | Средний | ✅ Завершено |
@@ -163,6 +163,7 @@
 | CI/CD iOS Simulator автосборка | Средний | ✅ Завершено (GitHub Actions) |
 | Haptic Feedback на импульсы | Средний | ✅ Завершено |
 | Dynamic StatusBar (Light/Dark) | Низкий | ✅ Завершено |
+| Motion (Framer) audit — CSS transitions vs layout animations | Низкий | ⏳ Запланировано |
 | Safe Area insets для notch | Высокий | ✅ Завершено |
 
 ---
@@ -172,7 +173,8 @@
 - **RLS политики:** 28
 - **Компонентов:** 35+
 - **Capacitor плагинов:** 6 (`app`, `haptics`, `keyboard`, `network`, `splash-screen`, `status-bar`)
-- **Размер бандла:** ~420 KB (Gzipped)
+- **Размер бандла:** ~570 KB (Gzipped total), vendor-lucide 9 KB (was 151 KB)
 - **Django endpoints:** 1 (`/api/v1/stability/calculate/`)
 - **GitHub Actions workflows:** 2 (Android APK, iOS Simulator)
 - **Суммарный стек:** React 19 + Vite 7 + TypeScript 5.9 + Tailwind v4 + Capacitor 8 + Supabase + Django DRF
+- **Lazy dev-only imports:** ReactQueryDevtools (не попадает в продакшн)

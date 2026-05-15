@@ -3,14 +3,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  ArrowLeft,
-  Sparkles,
-  Zap,
-  BarChart3,
-  Timer,
-  Check,
-} from "lucide-react";
+import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
+import Sparkles from "lucide-react/dist/esm/icons/sparkles";
+import Zap from "lucide-react/dist/esm/icons/zap";
+import BarChart3 from "lucide-react/dist/esm/icons/bar-chart-3";
+import Timer from "lucide-react/dist/esm/icons/timer";
+import Check from "lucide-react/dist/esm/icons/check";
 import { toast } from "sonner";
 import type { NodeType } from "@/types";
 import { useAuth } from "@/hooks/useAuth";

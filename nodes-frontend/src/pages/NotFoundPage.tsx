@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft } from 'lucide-react'
+import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 
 export default function NotFoundPage() {
   return (

@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormContext } from "react-hook-form";
-import { Loader2, Save } from "lucide-react";
+import Loader2 from "lucide-react/dist/esm/icons/loader-2";
+import Save from "lucide-react/dist/esm/icons/save";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";

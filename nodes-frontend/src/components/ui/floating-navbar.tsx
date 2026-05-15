@@ -2,7 +2,10 @@ import * as React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
-import { Home, Share2, BarChart3, User } from 'lucide-react';
+import Home from "lucide-react/dist/esm/icons/home";
+import Share2 from "lucide-react/dist/esm/icons/share-2";
+import BarChart3 from "lucide-react/dist/esm/icons/bar-chart-3";
+import User from "lucide-react/dist/esm/icons/user";
 import { useTranslation } from 'react-i18next';
 
 interface NavItem {
