@@ -63,3 +63,15 @@ input, textarea {
 body.keyboard-open .keyboard-safe-bottom {
   padding-bottom: 8px;
 }
+
+/* Mobile page wrapper with safe area top padding */
+.mobile-page-wrapper {
+  padding-top: max(env(safe-area-inset-top), 8px);
+}
+
+/* Ensure status bar doesn't overlap content */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .mobile-safe-header {
+    padding-top: env(safe-area-inset-top);
+  }
+}

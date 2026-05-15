@@ -75,7 +75,7 @@ export default function Layout() {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto max-w-7xl px-4 md:pt-24 pb-6 md:pb-6">
+      <main className="flex-1 container mx-auto max-w-7xl px-4 pt-[max(env(safe-area-inset-top),8px)] md:pt-24 pb-6 md:pb-6">
         <Outlet />
       </main>
 

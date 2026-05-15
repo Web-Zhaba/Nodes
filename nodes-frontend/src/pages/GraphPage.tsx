@@ -2,7 +2,6 @@ import { useState, useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { Pencil, Network } from "lucide-react";
-import { useImmersiveMode } from "@/hooks/useImmersiveMode";
 
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -23,8 +22,6 @@ import { NodeCard } from "@/features/nodes/components/NodeCard";
 export default function GraphPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  useImmersiveMode(true);
-  
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
