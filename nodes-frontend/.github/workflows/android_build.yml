@@ -47,6 +47,16 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('nodes-frontend/android/**/*.gradle*', 'nodes-frontend/android/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
@@ -55,7 +65,9 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Upload APK
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
           path: nodes-frontend/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
