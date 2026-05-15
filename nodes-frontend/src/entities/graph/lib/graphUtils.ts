@@ -11,8 +11,8 @@ import type { GraphNode } from "../model/types";
 /** Радиус ядра в graph-единицах */
 export const CORE_RADIUS = 18;
 
-/** Рендерим иконки в 2× разрешении → баланс sharpness / VRAM для стандартных экранов */
-export const ICON_PIXEL_RATIO = 2;
+/** Рендерим иконки в 3× разрешении → баланс sharpness / VRAM для стандартных экранов */
+export const ICON_PIXEL_RATIO = 3;
 
 export type DrawNodeLabelProps = {
   // Узел
