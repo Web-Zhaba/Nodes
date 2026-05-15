@@ -1,7 +1,11 @@
 # 🗺️ ROADMAP & PROGRESS: Nodes
 
-## 📊 Текущий статус: Фаза 5 (В процессе — Подготовка к релизу)
-**Общий прогресс:** ~90% к MVP.
+## 📊 Текущий статус: Фаза 7 (Мобильная экосистема — Core завершён)
+**Общий прогресс:** ~95% к MVP.
+- ✅ Frontend: 100% (React + Capacitor + All Features)
+- ✅ Backend: 100% (Django + Supabase Integration)
+- ✅ Mobile: 90% (Native UX, CI/CD, остались SFX и Biometrics)
+- 🔄 Осталось: Offline-First (PWA + Sync Engine), Push Notifications, Monetization
 
 ---
 
@@ -72,6 +76,7 @@
 - [x] **Визуализация стабильности на графе** (яркость рёбер = stability_score ядра).
 - [x] Дашборд со статистикой ядер.
 - [x] Графики активности (Recharts).
+- [x] Heatmap активности узлов (12 недель).
 - [ ] Инсайты по "остывающим" узлам (Спроектировано).
 
 ## 📅 Фаза 4: Управление делами (Inbox) (ОТЛОЖЕНО ДО ЛУЧШИХ ВРЕМЕН)
@@ -80,7 +85,7 @@
 - [ ] Impact Levels (приоритеты) для задач.
 - [ ] Логирование выполненных дел.
 
-## 📅 Фаза 5: Персонализация и Интеграции
+## ✅ Фаза 5: Персонализация и Интеграции (100%)
 - [x] **Theming 2.0:** Полная настройка цветовых палитр для Light/Dark тем (CSS Variables).
 - [x] **Глубокая локализация:** Поддержка i18next, адаптация форматов дат/времени и таймзон.
 - [x] **Account Management:** Смена Email/Password, привязка Social Providers (Oauth), управление сессиями.
@@ -90,26 +95,43 @@
   - Вкладка «Приватность» в настройках профиля: тоггл профиля, custom slug, bio, per-node visibility
   - `publicService.ts` — анонимный доступ через Supabase RLS (`anon` role)
   - Migration `004_public_sharing.sql` — колонки `is_public`, `public_slug`, `share_token`
+- [x] **Landing Page:** Промо-страница с Astro, адаптивная вёрстка, i18n.
+- [x] **Onboarding Flow:** Пошаговое знакомство с приложением при первом запуске.
+
+## 📅 Фаза 5+ (Продолжение)
 - [ ] **Deep Storage:** Прикрепление Markdown-заметок и медиафайлов к импульсам (Supabase Storage).
 - [ ] **External Sync:** Двусторонняя интеграция с Google Calendar (авто-импульсы из событий).
 - [ ] **Notifications:** Настройка уведомлений по каналам (Browser, Email, Telegram).
 
-## 📅 Фаза 6: Автономность и Устойчивость (Offline-First)
+## ✅ Фаза 6: Автономность и Устойчивость (Offline-First) — Foundation (50%)
+- [x] **Connectivity UI:** Индикатор offline-баннера при потере соединения (`@capacitor/network` + React state).
 - [ ] **PWA Foundation:** Установка `vite-plugin-pwa` и настройка манифеста.
 - [ ] **Resource Caching:** Service Worker стратегии для кэширования шрифтов, иконок и логики.
 - [ ] **Data Persistence:** Интеграция `persistQueryClient` для сохранения кэша React Query в LocalStorage/IndexedDB.
 - [ ] **Offline Mutations:** Система «Оптимистичных обновлений» для создания импульсов без сети.
 - [ ] **Sync Engine:** Очередь фоновой синхронизации (Zustand + Background Sync API) для отправки данных при появлении сети.
-- [ ] **Connectivity UI:** Индикаторы состояния сети (Online/Offline/Syncing) и плашки «Ожидает синхронизации» на узлах.
 
-## 📅 Фаза 7: Мобильная экосистема (Hybrid Mobile)
-- [ ] **Capacitor Core:** Инициализация и настройка iOS/Android платформ.
+## ✅ Фаза 7: Мобильная экосистема (Hybrid Mobile) — Core (90%)
+- [x] **Capacitor Core:** Инициализация и настройка iOS/Android платформ (`@capacitor/core`, `@capacitor/cli`).
+- [x] **Capacitor Plugins:** Все необходимые плагины установлены и сконфигурированы:
+  - `@capacitor/app` (back button, deep links, app state)
+  - `@capacitor/haptics` (vibro feedback на импульсы)
+  - `@capacitor/keyboard` (native resize mode)
+  - `@capacitor/network` (offline detection)
+  - `@capacitor/splash-screen` (branded splash)
+  - `@capacitor/status-bar` (dynamic Light/Dark theme)
+- [x] **Sensory Layer (Haptics):** Нативный виброотклик на Binary/Quantity/Duration импульсы и навигацию.
+- [x] **Mobile Auth:** Deep Links настроены (`nodes://` scheme), обработка back button для Android.
+- [x] **Native UI:**
+  - Branded Adaptive Icons & Splash Screens (`@capacitor/assets`)
+  - Safe Area insets CSS (`env(safe-area-inset-top/bottom)`)
+  - Keyboard scroll-to-input (`scroll-margin-bottom`, `font-size: 16px`)
+  - Dynamic StatusBar (MutationObserver на `<html class>` для Light/Dark)
+  - HashRouter для `file://` совместимости
+- [x] **CI/CD:** GitHub Actions для автосборки Android APK (`assembleDebug`) и iOS Simulator.
 - [ ] **Pulse Resonance:** Система аудио-визуального отклика (SFX паки + анимации) при активации узлов.
-- [ ] **Sensory Layer:** Нативный виброотклик (Haptic Feedback) для импульсов и переходов.
-- [ ] **Mobile Auth:** Настройка Deep Links и обратных редиректов для Supabase Auth.
-- [ ] **Native UI:** Адаптация статус-бара, сплэш-скринов и мобильных жестов.
 - [ ] **Biometrics:** Дополнительный слой защиты через FaceID/TouchID (по выбору пользователя).
-- [ ] **App Store Assets:** Подготовка иконок, скриншотов и релизных манифестов.
+- [ ] **App Store Assets:** Подготовка финальных скриншотов и релизных манифестов.
 
 ## 📅 Фаза 8: Monetization & Expansion (Neural Expansion)
 - [ ] **Infrastructure:** Интеграция Stripe/LemonSqueezy через Supabase Edge Functions.
@@ -119,6 +141,8 @@
 - [ ] **Theme Slots:** Система управления пресетами тем (1 Free / Unlimited Pro).
 - [ ] **Crystal Marketplace:** Реализация покупки и менеджмента дополнительных Crystal Slots.
 
+---
+
 
 ---
 
@@ -126,21 +150,29 @@
 | Задача | Приоритет | Статус |
 |--------|-----------|--------|
 | Вынос всех строк в `en.json/ru.json` (подготовка i18n) | Средний | ⏳ Ожидает |
+| Фикс `EditNodeForm.test.tsx` (i18n мок в тестах) | Низкий | 🔴 Failing (pre-existing) |
 | Оптимизация бандла (Code Splitting) | Низкий | ✅ Завершено |
 | Защита от потери стейта (Race Conditions) | Критичный | ✅ Исправлено |
-| Полное покрытие Unit-тестами | Средний | 30% (CRUD & Stores ✅) |
+| Полное покрытие Unit-тестами | Средний | ~32/36 тестов ✅ |
 | Мобильная адаптивность графа | Высокий | ✅ Завершено (Sidebar Sheet) |
 | Безопасный режим JWT (ES256 + JWKS) | Критичный | ✅ Завершено |
 | Оптимизация запросов к Impulses (prefetch) | Средний | ✅ Завершено |
 | Продакшн-деплой Django бэкенда | Высокий | ✅ Завершено |
 | Подготовка к продакшну (Build ✅, PRODUCTION.md ✅) | Высокий | ✅ Завершено |
+| CI/CD Android APK автосборка | Высокий | ✅ Завершено (GitHub Actions) |
+| CI/CD iOS Simulator автосборка | Средний | ✅ Завершено (GitHub Actions) |
+| Haptic Feedback на импульсы | Средний | ✅ Завершено |
+| Dynamic StatusBar (Light/Dark) | Низкий | ✅ Завершено |
+| Safe Area insets для notch | Высокий | ✅ Завершено |
 
 ---
 
 ## 🎯 Метрики проекта
 - **Количество таблиц:** 9 (+ `node_connectors`, `core_connectors`)
 - **RLS политики:** 28
-- **Компонентов:** 25+
+- **Компонентов:** 35+
+- **Capacitor плагинов:** 6 (`app`, `haptics`, `keyboard`, `network`, `splash-screen`, `status-bar`)
 - **Размер бандла:** ~420 KB (Gzipped)
 - **Django endpoints:** 1 (`/api/v1/stability/calculate/`)
-- **Суммарный стек:** React + Vite + TS + Supabase + Django DRF
+- **GitHub Actions workflows:** 2 (Android APK, iOS Simulator)
+- **Суммарный стек:** React 19 + Vite 7 + TypeScript 5.9 + Tailwind v4 + Capacitor 8 + Supabase + Django DRF
