@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { motion } from "motion/react";
 import type { Node } from "@/types";
 import { useTranslation } from "react-i18next";
+import { hapticImpact, hapticNotification } from "@/services/haptics.service";
 
 interface BinaryControlProps {
   node: Node;
@@ -34,16 +35,19 @@ export function BinaryControl({
     try {
       if (isCompletedToday) {
         await onImpulse(0);
+        hapticImpact('medium');
         toast.success(t("nodes.controls.binary.marked", "Отметка снята"), {
           description: t("nodes.controls.binary.markedDescription", "Выполнение за сегодня отменено"),
         });
       } else {
         await onImpulse(1);
+        hapticImpact('medium');
         toast.success(t("nodes.controls.binary.completed", "Узел выполнен!"), {
           description: t("nodes.controls.binary.completedDescription", { name: node.name }),
         });
       }
     } catch (error) {
+      hapticNotification('error');
       toast.error(t("common.error"), {
         description: t("nodes.controls.binary.error", "Не удалось отметить выполнение"),
       });

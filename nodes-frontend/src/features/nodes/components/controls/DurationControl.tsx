@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { motion } from "motion/react";
 import type { Node } from "@/types";
 import { useTranslation } from "react-i18next";
+import { hapticImpact, hapticNotification } from "@/services/haptics.service";
 
 interface DurationControlProps {
   node: Node;
@@ -47,6 +48,7 @@ export function DurationControl({
   const handleStart = () => {
     if (intervalRef.current) return;
 
+    hapticImpact('medium');
     setIsRunning(true);
     startTimeRef.current = Date.now();
 
@@ -65,6 +67,7 @@ export function DurationControl({
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+    hapticImpact('light');
     // Сохраняем текущее значение перед паузой
     pausedElapsedRef.current = elapsed;
     setIsRunning(false);
@@ -92,6 +95,8 @@ export function DurationControl({
       const totalToSave = elapsedToday + finalElapsed;
       await onImpulse(totalToSave);
       
+      hapticImpact('medium');
+      
       const totalElapsed = totalToSave;
 
       const newIsOverdrive = totalElapsed > targetValue;
@@ -108,6 +113,7 @@ export function DurationControl({
       setHasSavedToday(true);
 
     } catch (error) {
+      hapticNotification('error');
       toast.error(t("common.error"), {
         description: t("nodes.controls.duration.errorSaving", "Не удалось сохранить время"),
       });

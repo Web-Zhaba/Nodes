@@ -14,6 +14,7 @@ import NodesListPage from "@/pages/NodesListPage";
 import { useThemeStore } from "@/store/useThemeStore";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useStatusBarTheme } from "@/hooks/useStatusBarTheme";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -102,6 +103,7 @@ function AuthRedirect() {
 function App() {
   const applyTheme = useThemeStore((state) => state.applyTheme);
   const isOnline = useNetworkStatus();
+  useStatusBarTheme();
 
   useEffect(() => {
     applyTheme();

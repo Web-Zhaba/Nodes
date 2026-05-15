@@ -13,13 +13,16 @@ const config: CapacitorConfig = {
       launchShowDuration: 2000,
       launchAutoHide: true,
       backgroundColor: '#030303',
-      androidSplashResourceName: 'splash',
       androidScaleType: 'CENTER_CROP',
     },
     StatusBar: {
       style: 'DARK',
       backgroundColor: '#030303',
       overlaysWebView: false,
+    },
+    Keyboard: {
+      resize: 'native',
+      style: 'dark',
     },
   },
 };

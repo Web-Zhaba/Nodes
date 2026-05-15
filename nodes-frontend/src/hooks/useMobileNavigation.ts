@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { App } from '@capacitor/app';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { hapticImpact } from '@/services/haptics.service';
 
 export function useMobileNavigation() {
   const navigate = useNavigate();
@@ -8,6 +9,7 @@ export function useMobileNavigation() {
 
   useEffect(() => {
     const backListener = App.addListener('backButton', () => {
+      hapticImpact('light');
       if (location.pathname === '/' || location.pathname === '/nodes') {
         // Exit app on main screen
         App.exitApp();

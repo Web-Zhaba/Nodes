@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { motion } from "motion/react";
 import type { Node } from "@/types";
 import { useTranslation } from "react-i18next";
+import { hapticImpact, hapticNotification } from "@/services/haptics.service";
 
 interface QuantityControlProps {
   node: Node;
@@ -36,12 +37,14 @@ export function QuantityControl({
 
   const handleIncrement = () => {
     const newValue = displayValue + 1;
+    hapticImpact('light');
     setLocalValue(newValue); // Мгновенное обновление локально
   };
 
   const handleDecrement = () => {
     if (displayValue > 0) {
       const newValue = displayValue - 1;
+      hapticImpact('light');
       setLocalValue(newValue); // Мгновенное обновление локально
     }
   };
@@ -57,6 +60,8 @@ export function QuantityControl({
       if (localValue !== null || overrideValue !== undefined) {
         await onUpdateValue(valueToSubmit);
       }
+
+      hapticImpact('medium');
 
       if (valueToSubmit >= targetValue) {
         toast.success(
@@ -78,6 +83,7 @@ export function QuantityControl({
       setHasSavedToday(true);
       setSavedValue(valueToSubmit); // Фиксируем значение
     } catch (error) {
+      hapticNotification('error');
       toast.error(t("common.error"), {
         description: t("nodes.controls.quantity.errorSaving", "Не удалось сохранить прогресс"),
       });

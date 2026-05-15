@@ -35,6 +35,18 @@ export async function initializeMobileApp() {
     console.log('Network status changed', status.connected);
   });
 
+  // Handle keyboard show/hide for CSS adjustments
+  try {
+    Keyboard.addListener('keyboardWillShow', () => {
+      document.body.classList.add('keyboard-open');
+    });
+    Keyboard.addListener('keyboardWillHide', () => {
+      document.body.classList.remove('keyboard-open');
+    });
+  } catch (e) {
+    console.warn('Keyboard listeners failed', e);
+  }
+
   // Hide splash after init
   setTimeout(() => {
     SplashScreen.hide();

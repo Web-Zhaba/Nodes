@@ -35,3 +35,31 @@ button, a, [role="button"] {
 html {
   -webkit-text-size-adjust: 100%;
 }
+
+/* Keyboard open adjustments */
+body.keyboard-open .bottom-nav,
+body.keyboard-open .mobile-tab-bar {
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+/* Scroll padding for focused inputs */
+input:focus,
+textarea:focus,
+[contenteditable]:focus {
+  scroll-margin-bottom: 140px;
+}
+
+/* Prevent focus overlay on mobile */
+input, textarea {
+  font-size: 16px; /* Prevents iOS zoom on focus */
+}
+
+/* Keyboard safe bottom padding for fixed elements */
+.keyboard-safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 20px);
+}
+
+body.keyboard-open .keyboard-safe-bottom {
+  padding-bottom: 8px;
+}
