@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import type { Impulse } from "@/types";
 
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
+import { useOnboardingStore } from "@/features/onboarding/useOnboardingStore";
 
 /**
  * Главная страница "Сегодня" (Focus Mode)
@@ -60,6 +61,16 @@ export default function NodesListPage() {
   const { data: nodes = {}, isLoading: isNodesLoading } = useNodesQuery(user?.id);
   const { data: connectors = {}, isLoading: isConnectorsLoading } = useConnectorsQuery(user?.id);
   const { data: focusNodeIds = [], isLoading: isFocusLoading } = useDailyFocusQuery(selectedDate, user?.id);
+  const onboardingOpenFn = useOnboardingStore((s) => s.open);
+
+  const hasCheckedOnboarding = useRef(false);
+  useEffect(() => {
+    if (hasCheckedOnboarding.current || isNodesLoading || !user?.id || !profile) return;
+    hasCheckedOnboarding.current = true;
+    if (!profile.onboarding_completed && Object.keys(nodes).length === 0) {
+      onboardingOpenFn();
+    }
+  }, [isNodesLoading, nodes, profile, user?.id, onboardingOpenFn]);
   
   // Get node IDs for the impulses query
   const allNodeIds = useMemo(() => Object.keys(nodes), [nodes]);

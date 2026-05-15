@@ -1,0 +1,30 @@
+{
+  "framework": "astro",
+  "redirects": [
+    {
+      "source": "/auth",
+      "destination": "https://nodes-coral.vercel.app/signup",
+      "permanent": false
+    },
+    {
+      "source": "/auth/:path*",
+      "destination": "https://nodes-coral.vercel.app/auth/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/login",
+      "destination": "https://nodes-coral.vercel.app/login",
+      "permanent": false
+    },
+    {
+      "source": "/signup",
+      "destination": "https://nodes-coral.vercel.app/signup",
+      "permanent": false
+    },
+    {
+      "source": "/app/:path*",
+      "destination": "https://nodes-coral.vercel.app/:path*",
+      "permanent": false
+    }
+  ]
+}

@@ -364,6 +364,9 @@
       "logout": "System Logout",
       "logoutDesc": "End current management session",
       "logoutButton": "Sign Out",
+      "restartOnboarding": "Restart Onboarding",
+      "restartOnboardingDesc": "Run the getting-started wizard again",
+      "restartOnboardingButton": "Restart",
       "saveChanges": "Save Changes",
       "saveSuccess": "Settings saved successfully",
       "saveError": "Failed to save settings",
@@ -531,6 +534,52 @@
         "viewFullGraph": "Full Graph",
         "createOwn": "Create Your Own"
       }
+    }
+  },
+  "onboarding": {
+    "progress": "Step {{current}} of {{total}}",
+    "skip": "Skip",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Go to Dashboard",
+    "welcome": {
+      "title": "Welcome to NODES",
+      "subtitle": "Let's build your neural network. We'll guide you through the basics in 4 steps.",
+      "start": "Let's Start"
+    },
+    "createNode": {
+      "title": "Create Your First Node",
+      "subtitle": "A node is a habit, task, or anything you want to track.",
+      "nameLabel": "Node name",
+      "namePlaceholder": "e.g. Morning run",
+      "typeLabel": "Node type",
+      "typeBinary": "Yes / No",
+      "typeBinaryDesc": "Did you do it or not",
+      "typeQuantity": "Quantity",
+      "typeQuantityDesc": "How much / how many",
+      "typeDuration": "Duration",
+      "typeDurationDesc": "How long",
+      "targetLabel": "Target",
+      "targetPlaceholder": "e.g. 30"
+    },
+    "firstImpulse": {
+      "title": "Mark It Done!",
+      "subtitle": "Click the impulse button to record your first completion.",
+      "hint": "Tap the node above to mark it complete",
+      "completed": "Great job! Your first impulse is recorded.",
+      "skipImpulse": "Next"
+    },
+    "createCore": {
+      "title": "Organize with a Core",
+      "subtitle": "A core groups related nodes together — like a gravity center.",
+      "nameLabel": "Core name",
+      "namePlaceholder": "e.g. Health",
+      "colorLabel": "Color"
+    },
+    "seeGraph": {
+      "title": "Your Neural Network",
+      "subtitle": "This is your graph — nodes orbit around cores. It grows as you add more.",
+      "graphHint": "Your graph will look even better with more nodes!"
     }
   }
 }

@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNodesQuery } from '@/features/nodes/hooks/useNodesQuery';
 import { useAnalyticsStore } from '@/store/useAnalyticsStore';
@@ -46,6 +46,8 @@ export default function AnalyticsPage() {
         return { totalNodes, avgStability };
     }, [nodes]);
 
+    const [now] = useState(() => Date.now());
+
     const focusedNodeData = useMemo(() => {
         if (focusEntity?.type !== 'node') return null;
         const node = nodes[focusEntity.id];
@@ -53,14 +55,14 @@ export default function AnalyticsPage() {
 
         const nodeImpulses = rawStabilitySeries.filter(s => s.node_id === node.id);
         const totalImpulses = nodeImpulses.reduce((acc, s) => acc + (s.pulse_count || 0), 0);
-        const daysInNetwork = Math.floor((Date.now() - new Date(node.created_at).getTime()) / 86400000);
+        const daysInNetwork = Math.floor((now - new Date(node.created_at).getTime()) / 86400000);
 
         return {
             ...node,
             totalImpulses,
             daysInNetwork
         };
-    }, [focusEntity, nodes, rawStabilitySeries]);
+    }, [focusEntity, nodes, rawStabilitySeries, now]);
 
     useEffect(() => {
         useAnalyticsStore.getState().fetchData(365);

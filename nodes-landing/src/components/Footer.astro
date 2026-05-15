@@ -1,0 +1,53 @@
+---
+interface Props {
+  lang: 'en' | 'ru';
+}
+
+const { lang } = Astro.props;
+
+import en from '../i18n/en.json';
+import ru from '../i18n/ru.json';
+const translations: Record<string, any> = { en, ru };
+const t = translations[lang];
+const altLang = lang === 'en' ? 'ru' : 'en';
+const altPath = lang === 'en' ? '/ru' : '/';
+---
+
+<footer class="border-t border-border py-12">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid md:grid-cols-4 gap-8 mb-8">
+      <div>
+        <span class="text-xl font-bold tracking-tight">{t.footer.brand}</span>
+        <p class="text-sm text-muted-foreground mt-2">{t.footer.tagline}</p>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-3">{t.footer.links.product}</h4>
+        <ul class="space-y-2 text-sm text-muted-foreground">
+          <li><a href="#features" class="hover:text-foreground transition-colors">{t.footer.links.features}</a></li>
+          <li><a href="#pricing" class="hover:text-foreground transition-colors">{t.footer.links.pricing}</a></li>
+          <li><a href="#" class="hover:text-foreground transition-colors">{t.footer.links.about}</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-3">Legal</h4>
+        <ul class="space-y-2 text-sm text-muted-foreground">
+          <li><a href="#" class="hover:text-foreground transition-colors">{t.footer.legal.privacy}</a></li>
+          <li><a href="#" class="hover:text-foreground transition-colors">{t.footer.legal.terms}</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-3">Language</h4>
+        <a href={altPath} data-lang-switch={altLang} class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          {t.languageSwitcher[altLang]}
+        </a>
+      </div>
+    </div>
+
+    <div class="border-t border-border pt-8 text-center text-sm text-muted-foreground">
+      {t.footer.copyright}
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,53 @@
+---
+interface Props {
+  lang: 'en' | 'ru';
+}
+
+const { lang } = Astro.props;
+
+import en from '../i18n/en.json';
+import ru from '../i18n/ru.json';
+const translations: Record<string, any> = { en, ru };
+const t = translations[lang];
+
+function splitToLetters(text: string) {
+  return text.split('').map((char, i) => {
+    if (char === ' ') return `<span class="hero-letter" style="animation-delay:${i * 40}ms">&nbsp;</span>`;
+    return `<span class="hero-letter" style="animation-delay:${i * 40}ms">${char}</span>`;
+  }).join('');
+}
+---
+
+<section class="relative min-h-screen flex items-center justify-center">
+  <div class="relative z-10 max-w-6xl mx-auto px-6 text-center pointer-events-none">
+    <div class="reveal reveal-delay-1 inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5 mb-8 pointer-events-auto">
+      <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+      <span class="text-sm font-medium text-primary">{t.hero.badge}</span>
+    </div>
+
+    <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-6">
+      <span set:html={splitToLetters(t.hero.title)} />
+      <br />
+      <span class="text-primary" set:html={splitToLetters(t.hero.titleAccent)} />
+    </h1>
+
+    <p class="reveal reveal-delay-3 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+      {t.hero.subtitle}
+    </p>
+
+    <div class="reveal reveal-delay-4 flex flex-col sm:flex-row items-center justify-center gap-4 pointer-events-auto">
+      <a
+        href="https://nodes-coral.vercel.app/signup"
+        class="btn-shimmer inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground px-8 py-3.5 text-base font-semibold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-105 active:scale-[0.98] transition-transform"
+      >
+        {t.hero.cta}
+      </a>
+      <a
+        href="#how-it-works"
+        class="inline-flex items-center justify-center rounded-xl border border-border bg-background px-8 py-3.5 text-base font-medium text-foreground hover:bg-secondary hover:border-primary/20 transition-all duration-300 hover:scale-105 active:scale-[0.98]"
+      >
+        {t.hero.ctaSecondary}
+      </a>
+    </div>
+  </div>
+</section>

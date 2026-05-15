@@ -9,6 +9,7 @@ import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
 import { useAppStore } from "@/store/useAppStore";
 import { useEffect } from "react";
 import { AppFooter } from "@/components/AppFooter";
+import { OnboardingWizard } from "@/features/onboarding/components/OnboardingWizard";
 
 export default function Layout() {
   const location = useLocation();
@@ -77,6 +78,8 @@ export default function Layout() {
       <main className="flex-1 container mx-auto max-w-7xl px-4 md:pt-24 pb-6 md:pb-6">
         <Outlet />
       </main>
+
+      <OnboardingWizard />
 
       {/* Footer */}
       <AppFooter className="hidden md:block mt-auto" />

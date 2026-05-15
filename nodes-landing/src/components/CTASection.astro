@@ -1,0 +1,32 @@
+---
+interface Props {
+  lang: 'en' | 'ru';
+}
+
+const { lang } = Astro.props;
+
+import en from '../i18n/en.json';
+import ru from '../i18n/ru.json';
+const translations: Record<string, any> = { en, ru };
+const t = translations[lang];
+---
+
+<section class="py-24 md:py-32 relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent"></div>
+
+  <div class="relative max-w-3xl mx-auto px-6 text-center">
+    <h2 class="reveal text-3xl md:text-5xl font-bold tracking-tighter mb-4">
+      {t.cta.title}
+    </h2>
+    <p class="reveal reveal-delay-1 text-muted-foreground text-lg mb-10">
+      {t.cta.subtitle}
+    </p>
+    <a
+        href="https://nodes-coral.vercel.app/signup"
+      class="reveal reveal-delay-2 btn-shimmer inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground px-10 py-4 text-lg font-semibold hover:bg-primary/90 transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-105 active:scale-[0.98]"
+    >
+      {t.cta.button}
+    </a>
+    <p class="reveal reveal-delay-3 text-sm text-muted-foreground mt-4">{t.cta.note}</p>
+  </div>
+</section>

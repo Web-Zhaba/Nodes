@@ -1,0 +1,113 @@
+---
+import en from '../i18n/en.json';
+import ru from '../i18n/ru.json';
+const translations: Record<string, any> = { en, ru };
+
+interface Props {
+  lang?: 'en' | 'ru';
+}
+
+const { lang = 'en' } = Astro.props;
+const t = translations[lang];
+const altLang = lang === 'en' ? 'ru' : 'en';
+const altPath = lang === 'en' ? '/ru' : '/';
+
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang={lang} class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:image" content={t.meta.ogImage} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen antialiased relative">
+    <div class="fixed inset-0 z-0 pointer-events-none">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+    <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border transition-all duration-300">
+      <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between transition-all duration-300">
+        <a href={lang === 'en' ? '/' : '/ru'} class="text-xl font-bold tracking-tight text-foreground">
+          NODES
+        </a>
+        <div class="flex items-center gap-6">
+          <a href="#features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            {t.nav.features}
+          </a>
+          <a href="#pricing" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            {t.nav.pricing}
+          </a>
+          <a href={altPath} data-lang-switch={altLang} class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            {t.languageSwitcher[altLang]}
+          </a>
+          <a
+            href="https://nodes-coral.vercel.app/login"
+            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {t.nav.signIn}
+          </a>
+          <a
+            href="https://nodes-coral.vercel.app/signup"
+            class="btn-shimmer inline-flex items-center justify-center rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-all duration-300 hover:scale-105 active:scale-[0.98] shadow-md shadow-primary/20 hover:shadow-primary/30"
+          >
+            {t.nav.getStarted}
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <script>
+      const nav = document.getElementById('main-nav');
+      let lastScroll = 0;
+
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        if (nav) {
+          if (scrollY > 50) {
+            nav.classList.add('nav-scrolled');
+          } else {
+            nav.classList.remove('nav-scrolled');
+          }
+        }
+        lastScroll = scrollY;
+      }, { passive: true });
+
+      const revealElements = document.querySelectorAll('.reveal, .reveal-fade, .reveal-scale, .quote-reveal');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px',
+      });
+
+      revealElements.forEach((el) => observer.observe(el));
+
+      document.querySelectorAll('[data-lang-switch]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var lang = (el as HTMLElement).getAttribute('data-lang-switch');
+          if (lang) localStorage.setItem('nodes-lang', lang);
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { useThemeStore } from "@/store/useThemeStore";
 import { Sun, Moon, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useFormContext } from "react-hook-form";
 
 const THEME_PRESETS = [
   {
@@ -111,23 +111,26 @@ const THEME_PRESETS = [
 ];
 
 export function AppearanceTab() {
-  const { config, setMode, setColor, applyPalette, resetToDefaults } = useThemeStore();
-  const { t } = useTranslation();
-  const isDark = config.mode === "dark";
+  const { t } = useTranslation()
+  const { setValue, watch } = useFormContext()
+  
+  // Watch themeConfig from form - this is our source of truth
+  const formThemeConfig = watch("themeConfig")
+  const isDark = formThemeConfig?.mode === "dark"
 
   const FONT_OPTIONS = [
     { label: t("profile.appearance.fonts.jakarta", "По умолчанию (Plus Jakarta)"), value: "Plus Jakarta Sans, sans-serif" },
     { label: t("profile.appearance.fonts.lora", "Классический (Lora Serif)"), value: "Lora, serif" },
     { label: t("profile.appearance.fonts.plex", "Машинописный (Plex Mono)"), value: "IBM Plex Mono, monospace" },
     { label: t("profile.appearance.fonts.rounded", "Округлый (Rounded)"), value: "ui-rounded, 'Nunito', sans-serif" },
-  ];
+  ]
 
   const RADIUS_OPTIONS = [
     { label: t("profile.appearance.radii.sharp", "Острые (0px)"), value: "-1000px" },
     { label: t("profile.appearance.radii.minimal", "Минимальные (4px)"), value: "0.25rem" },
     { label: t("profile.appearance.radii.soft", "Мягкие (14px)"), value: "0.9rem" },
     { label: t("profile.appearance.radii.round", "Круглые (24px)"), value: "1.5rem" },
-  ];
+  ]
 
   const CUSTOM_TOKENS = [
     { label: t("profile.appearance.tokens.primary", "Акцентный цвет"), token: "--primary" },
@@ -138,13 +141,46 @@ export function AppearanceTab() {
     { label: t("profile.appearance.tokens.border", "Границы"), token: "--border" },
     { label: t("profile.appearance.tokens.secondary", "Вторичный"), token: "--secondary" },
     { label: t("profile.appearance.tokens.accent", "Второстепенный акцент"), token: "--accent" },
-  ];
+  ]
+
+  const setFormMode = (mode: "light" | "dark") => {
+    setValue("themeConfig", { ...formThemeConfig, mode }, { shouldDirty: true })
+  }
+
+  const setFormColor = (token: string, value: string | null) => {
+    const mode = formThemeConfig.mode
+    const newColors = { ...formThemeConfig.colors }
+    const modeColors = { ...newColors[mode] }
+    
+    if (value === null) {
+      delete modeColors[token]
+    } else {
+      modeColors[token] = value
+    }
+    
+    newColors[mode] = modeColors
+    setValue("themeConfig", { ...formThemeConfig, colors: newColors }, { shouldDirty: true })
+  }
+
+  const applyFormPalette = (light: any, dark: any) => {
+    setValue("themeConfig", { 
+      ...formThemeConfig, 
+      colors: { light, dark } 
+    }, { shouldDirty: true })
+  }
+
+  const resetFormToDefaults = () => {
+    setValue("themeConfig", { 
+      ...formThemeConfig, 
+      colors: { light: {}, dark: {} } 
+    }, { shouldDirty: true })
+  }
 
   const toggleTheme = () => {
-    const nextMode = isDark ? "light" : "dark";
-    setMode(nextMode);
-    toast.success(t("profile.appearance.themeApplied", { mode: t(`profile.appearance.${nextMode}`) }));
-  };
+    const nextMode = isDark ? "light" : "dark"
+    setFormMode(nextMode)
+    toast.info(t("profile.appearance.themeToggled", `Режим изменён: ${nextMode === "dark" ? "Тёмный" : "Светлый"} (сохраните для применения)`))
+  }
 
   return (
     <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -155,10 +191,10 @@ export function AppearanceTab() {
             <p className="text-sm text-muted-foreground">{t("profile.appearance.subtitle", "Настройте визуальный резонанс интерфейса.")}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={toggleTheme} className="rounded-xl shrink-0 h-10 w-10 shadow-sm">
+            <Button variant="outline" size="icon" onClick={toggleTheme} className="rounded-xl shrink-0 h-10 w-10 shadow-sm" title={isDark ? "Переключить на светлый" : "Переключить на тёмный"}>
               {isDark ? <Moon className="w-4 h-4 text-indigo-400" /> : <Sun className="w-4 h-4 text-orange-400" />}
             </Button>
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest hidden sm:inline">
               {t("profile.appearance.themeMode", { mode: isDark ? "Dark" : "Light" })}
             </span>
           </div>
@@ -173,23 +209,24 @@ export function AppearanceTab() {
         </div>
         <div className="flex flex-wrap gap-3">
             {THEME_PRESETS.map((preset) => {
-              const presetPrimary = (preset as any)[config.mode]["--primary"];
-              const currentPrimary = (config.colors as any)[config.mode]["--primary"];
-              const isSelected = presetPrimary === currentPrimary;
+              const mode = formThemeConfig.mode
+              const presetPrimary = (preset as any)[mode]["--primary"]
+              const currentPrimary = (formThemeConfig.colors as any)[mode]["--primary"]
+              const isSelected = presetPrimary === currentPrimary
               
               return (
                 <Button
                   key={preset.name}
                   variant={isSelected ? "default" : "outline"}
                   onClick={() => {
-                    applyPalette(preset.light as Record<string, string>, preset.dark as Record<string, string>);
-                    toast.success(t("profile.appearance.presetApplied", { name: preset.name }));
+                    applyFormPalette(preset.light, preset.dark)
+                    toast.info(t("profile.appearance.presetSelected", `Палитра «${preset.name}» выбрана — нажмите Сохранить для применения`))
                   }}
                   className="rounded-xl text-xs"
                 >
                   {preset.name}
                 </Button>
-              );
+              )
             })}
         </div>
         </section>
@@ -200,7 +237,10 @@ export function AppearanceTab() {
             <h3 className="font-bold">{t("profile.appearance.fineTuning", "Тонкая настройка")}</h3>
             <p className="text-xs text-muted-foreground">{t("profile.appearance.personalization", { mode: isDark ? t("profile.appearance.dark") : t("profile.appearance.light") })}</p>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => { resetToDefaults(); toast.success(t("profile.appearance.resetSuccess", "Сброшено по умолчанию")); }}>
+          <Button variant="ghost" size="icon" onClick={() => { 
+            resetFormToDefaults() 
+            toast.info(t("profile.appearance.colorsReset", "Цвета сброшены — нажмите Сохранить для применения")) 
+          }}>
             <RotateCcw className="w-4 h-4" />
           </Button>
         </div>
@@ -212,8 +252,8 @@ export function AppearanceTab() {
             </div>
             <select
               className="bg-muted text-sm rounded-lg border-0 focus:ring-2 focus:ring-primary py-1 px-2 shrink-0 cursor-pointer max-w-[120px]"
-              value={(config.colors as any)[config.mode]["--font-sans"] || ""}
-              onChange={(e) => setColor("--font-sans", e.target.value || null)}
+              value={(formThemeConfig.colors as any)[formThemeConfig.mode]["--font-sans"] || ""}
+              onChange={(e) => setFormColor("--font-sans", e.target.value || null)}
             >
               <option value="">{t("profile.appearance.default", "По умолчанию")}</option>
               {FONT_OPTIONS.map(opt => (
@@ -228,8 +268,8 @@ export function AppearanceTab() {
             </div>
             <select
               className="bg-muted text-sm rounded-lg border-0 focus:ring-2 focus:ring-primary py-1 px-2 shrink-0 cursor-pointer max-w-[120px]"
-              value={(config.colors as any)[config.mode]["--radius"] || ""}
-              onChange={(e) => setColor("--radius", e.target.value || null)}
+              value={(formThemeConfig.colors as any)[formThemeConfig.mode]["--radius"] || ""}
+              onChange={(e) => setFormColor("--radius", e.target.value || null)}
             >
               <option value="">{t("profile.appearance.default", "По умолчанию")}</option>
               {RADIUS_OPTIONS.map(opt => (
@@ -241,18 +281,18 @@ export function AppearanceTab() {
           <div className="flex flex-col gap-3 p-3 bg-background border border-border/50 rounded-xl">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium">{t("profile.appearance.effects", "Спецэффекты (Scanlines)")}</p>
-              <span className="text-xs font-mono opacity-50">{Math.round((parseFloat((config.colors as any)[config.mode]["--effects-opacity"] || "0")) * 100)}%</span>
+              <span className="text-xs font-mono opacity-50">{Math.round((parseFloat((formThemeConfig.colors as any)[formThemeConfig.mode]["--effects-opacity"] || "0")) * 100)}%</span>
             </div>
             <input 
               type="range" min="0" max="1" step="0.05" 
-              value={(config.colors as any)[config.mode]["--effects-opacity"] !== undefined ? (config.colors as any)[config.mode]["--effects-opacity"] : 0}
-              onChange={(e) => setColor("--effects-opacity", e.target.value)}
+              value={(formThemeConfig.colors as any)[formThemeConfig.mode]["--effects-opacity"] !== undefined ? (formThemeConfig.colors as any)[formThemeConfig.mode]["--effects-opacity"] : 0}
+              onChange={(e) => setFormColor("--effects-opacity", e.target.value)}
               className="w-full accent-primary h-1.5 bg-muted rounded-lg appearance-none cursor-pointer"
             />
           </div>
 
           {CUSTOM_TOKENS.map(({ label, token }) => {
-            const currentValue = (config.colors as any)[config.mode][token];
+            const currentValue = (formThemeConfig.colors as any)[formThemeConfig.mode][token]
             return (
               <div key={token} className="flex items-center justify-between p-3 bg-background border border-border/50 rounded-xl">
                 <div className="min-w-0 flex-1 mr-4">
@@ -261,7 +301,8 @@ export function AppearanceTab() {
                 <div className="flex items-center gap-2 shrink-0">
                   {currentValue && (
                     <button 
-                      onClick={() => setColor(token, null)}
+                      type="button"
+                      onClick={() => setFormColor(token, null)}
                       className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                       title={t("profile.appearance.resetColor", "Сбросить цвет")}
                     >
@@ -272,7 +313,7 @@ export function AppearanceTab() {
                     <input
                       type="color"
                       value={currentValue?.startsWith("#") ? currentValue : "#888888"}
-                      onChange={(e) => setColor(token, e.target.value)}
+                      onChange={(e) => setFormColor(token, e.target.value)}
                       className="absolute inset-[-10px] w-[50px] h-[50px] cursor-pointer"
                       title={t("profile.appearance.selectColor", "Выбрать цвет")}
                     />
@@ -284,10 +325,10 @@ export function AppearanceTab() {
                   </div>
                 </div>
               </div>
-            );
+            )
           })}
         </div>
       </section>
     </div>
-  );
+  )
 }

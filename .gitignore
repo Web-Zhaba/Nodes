@@ -32,6 +32,9 @@
 *.sublime-project
 *.sublime-workspace
 
+# OpenCode (contains tokens/secrets)
+opencode.json
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -47,5 +50,3 @@ desktop.ini
 # Scripts
 claudeforfree.bat
 
-# Documentation
-docs/plans/

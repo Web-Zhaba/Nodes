@@ -1,0 +1,60 @@
+---
+interface Props {
+  lang: 'en' | 'ru';
+}
+
+const { lang } = Astro.props;
+
+import en from '../i18n/en.json';
+import ru from '../i18n/ru.json';
+import HeroGraph from '../components/HeroGraph';
+const translations: Record<string, any> = { en, ru };
+const t = translations[lang];
+---
+
+<section class="relative py-24 overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-b from-background via-secondary/30 to-background"></div>
+  
+  <div class="relative z-10 max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold tracking-tighter mb-4">
+        {t.graphSection.title}
+      </h2>
+      <p class="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+        {t.graphSection.subtitle}
+      </p>
+    </div>
+
+    <div class="relative rounded-2xl border border-border bg-card/50 backdrop-blur-sm overflow-hidden shadow-2xl shadow-primary/5">
+      <div class="relative w-full rounded-xl overflow-hidden" style="height: 600px;">
+        <HeroGraph client:load lang={lang} />
+      </div>
+    </div>
+
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center p-6 rounded-xl bg-card border border-border">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">{t.graphSection.features[0].title}</h3>
+        <p class="text-muted-foreground">{t.graphSection.features[0].description}</p>
+      </div>
+
+      <div class="text-center p-6 rounded-xl bg-card border border-border">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">{t.graphSection.features[1].title}</h3>
+        <p class="text-muted-foreground">{t.graphSection.features[1].description}</p>
+      </div>
+
+      <div class="text-center p-6 rounded-xl bg-card border border-border">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">{t.graphSection.features[2].title}</h3>
+        <p class="text-muted-foreground">{t.graphSection.features[2].description}</p>
+      </div>
+    </div>
+  </div>
+</section>

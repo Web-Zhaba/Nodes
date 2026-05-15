@@ -134,6 +134,8 @@ export interface Profile {
   custom_greeting: string;
   theme_config?: any;
 
+  onboarding_completed: boolean;
+
   // Neural Public Sharing
   is_public?: boolean;
   public_slug?: string;

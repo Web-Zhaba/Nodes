@@ -1,0 +1,68 @@
+---
+interface Props {
+  lang: 'en' | 'ru';
+}
+
+const { lang } = Astro.props;
+
+import en from '../i18n/en.json';
+import ru from '../i18n/ru.json';
+const translations: Record<string, any> = { en, ru };
+const t = translations[lang];
+---
+
+<section id="pricing" class="py-24 md:py-32 bg-secondary/30">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <span class="reveal inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5 text-sm font-medium text-primary mb-4">
+        {t.pricing.badge}
+      </span>
+      <h2 class="reveal reveal-delay-1 text-3xl md:text-5xl font-bold tracking-tighter mb-4">
+        {t.pricing.title}
+      </h2>
+      <p class="reveal reveal-delay-2 text-muted-foreground text-lg">{t.pricing.subtitle}</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+      {t.pricing.plans.map((plan: any, i: number) => (
+        <div class:list={[
+          `reveal card-hover reveal-delay-${i + 1} rounded-2xl border bg-card p-8 flex flex-col`,
+          plan.highlighted ? 'border-primary shadow-lg shadow-primary/10' : 'border-border',
+        ]}>
+          {plan.highlighted && (
+            <span class="inline-flex self-start items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary mb-4">
+              Popular
+            </span>
+          )}
+          <h3 class="text-xl font-semibold mb-2">{plan.name}</h3>
+          <div class="flex items-baseline gap-1 mb-2">
+            <span class="text-4xl font-bold">{plan.price}</span>
+            <span class="text-muted-foreground text-sm">{plan.period}</span>
+          </div>
+          <p class="text-muted-foreground text-sm mb-6">{plan.description}</p>
+
+          <ul class="space-y-3 mb-8 flex-1">
+            {plan.features.map((feature: string) => (
+              <li class="flex items-center gap-3 text-sm">
+                <svg class="w-4 h-4 text-primary shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                {feature}
+              </li>
+            ))}
+          </ul>
+
+          <a
+            href="https://nodes-coral.vercel.app/signup"
+            class:list={[
+              'btn-shimmer inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 hover:scale-105 active:scale-[0.98]',
+              plan.highlighted
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-primary/40'
+                : 'border border-border bg-background text-foreground hover:bg-secondary hover:border-primary/20',
+            ]}
+          >
+            {plan.cta}
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

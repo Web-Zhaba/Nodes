@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   Loader2, Lock, ArrowLeft, Zap, TrendingUp,
@@ -37,6 +37,8 @@ export default function PublicNodePage() {
   const navigate = useNavigate();
 
   const { node, impulses, profile, isLoading, error } = usePublicNodeData(token);
+  const [now] = useState(() => Date.now());
+  const daysOnline = node ? Math.floor((now - new Date(node.created_at).getTime()) / 86400000) : 0;
 
   useEffect(() => {
     if (node) {
@@ -166,7 +168,7 @@ export default function PublicNodePage() {
               { label: t("public.node.stats.completions", "Completions"), value: node.completion_count, icon: Award },
               { label: t("public.node.stats.mass", "Node Mass"), value: node.mass, icon: Zap },
               { label: t("public.node.stats.impulses", "Impulses"), value: impulses.length, icon: TrendingUp },
-              { label: t("public.node.stats.daysOnline", "Days Online"), value: Math.floor((Date.now() - new Date(node.created_at).getTime()) / 86400000), icon: Globe },
+              { label: t("public.node.stats.daysOnline", "Days Online"), value: daysOnline, icon: Globe },
             ].map((stat, i) => (
               <div key={i} className="bg-background/40 border border-border/40 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm">
                 <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground mb-1">

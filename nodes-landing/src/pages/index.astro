@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import Philosophy from '../components/Philosophy.astro';
+import GraphSection from '../components/GraphSection.astro';
+import Features from '../components/Features.astro';
+import Pricing from '../components/Pricing.astro';
+import CTASection from '../components/CTASection.astro';
+import Footer from '../components/Footer.astro';
+
+const lang = 'en';
+---
+
+<BaseLayout lang={lang}>
+  <script is:inline>
+    (function () {
+      var saved = localStorage.getItem('nodes-lang');
+      if (saved === 'en') return;
+      var nav = navigator.languages || [navigator.language || 'en'];
+      for (var i = 0; i < nav.length; i++) {
+        if (nav[i].startsWith('ru')) {
+          location.replace('/ru');
+          return;
+        }
+      }
+    })();
+  </script>
+  <Hero lang={lang} />
+  <HowItWorks lang={lang} />
+  <Philosophy lang={lang} />
+  <GraphSection lang={lang} />
+  <Features lang={lang} />
+  <Pricing lang={lang} />
+  <CTASection lang={lang} />
+  <Footer lang={lang} />
+</BaseLayout>

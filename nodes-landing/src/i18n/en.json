@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "title": "NODES — Your Second Brain, Visualized",
+    "description": "Delegate knowledge, track habits, visualize your neural network. Build a second brain that keeps you accountable.",
+    "ogImage": "/og-image.png"
+  },
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "signIn": "Sign In",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "badge": "Your Second Brain",
+    "title": "Delegate Knowledge.",
+    "titleAccent": "Free Your Mind.",
+    "subtitle": "Track habits, visualize connections, and build stability across every area of your life — with a system that remembers for you.",
+    "cta": "Start Building",
+    "ctaSecondary": "See How It Works",
+    "graphToast": "This is your node. Sign up to create your own."
+  },
+  "howItWorks": {
+    "badge": "How It Works",
+    "title": "Three Steps to Your Neural Network",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Create Cores",
+        "description": "Define gravity centers — the key areas of your life: Health, Career, Creativity, Relationships."
+      },
+      {
+        "number": "02",
+        "title": "Add Nodes",
+        "description": "Create action units within each core. Morning run, daily reading, meditation — every habit becomes a node."
+      },
+      {
+        "number": "03",
+        "title": "Track with Impulses",
+        "description": "Mark completions and watch stability grow. The system tracks your consistency so you don't have to."
+      }
+    ]
+  },
+  "philosophy": {
+    "badge": "Philosophy",
+    "quote": "Delegating knowledge frees your mind. When your habits live outside your head, you gain the clarity to focus on what matters.",
+    "attribution": "The Second Brain Principle",
+    "description": "Your brain is for having ideas, not holding them. NODES externalizes your commitments into a living, visual system that never forgets."
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Everything You Need to Build Stability",
+    "items": [
+      {
+        "icon": "graph",
+        "title": "Graph Visualization",
+        "description": "See your entire life as an interconnected network. Cores, nodes, and connectors form a neural map unique to you."
+      },
+      {
+        "icon": "stability",
+        "title": "Stability Engine",
+        "description": "Each node tracks its own stability score based on consistency. Watch habits crystallize from initiation to rock-solid."
+      },
+      {
+        "icon": "cores",
+        "title": "Cores & Connectors",
+        "description": "Organize nodes around gravity centers. Connectors link related habits so your network grows organically."
+      },
+      {
+        "icon": "impulse",
+        "title": "Impulse Tracking",
+        "description": "One-tap habit completion. Binary, quantity, or duration — every type of habit finds its home."
+      },
+      {
+        "icon": "analytics",
+        "title": "Analytics & Heatmap",
+        "description": "Historical stability charts, activity heatmaps, and per-node statistics reveal patterns invisible to the naked eye."
+      },
+      {
+        "icon": "multi",
+        "title": "Cross-Platform",
+        "description": "Web today, mobile tomorrow. Your neural network travels with you, always in sync."
+      }
+    ]
+  },
+  "pricing": {
+    "badge": "Pricing",
+    "title": "Simple, Honest Pricing",
+    "subtitle": "Start free. Upgrade when you need more power.",
+    "plans": [
+      {
+        "name": "Free",
+        "price": "$0",
+        "period": "forever",
+        "description": "Everything you need to start building your second brain.",
+        "features": [
+          "Unlimited nodes & cores",
+          "Graph visualization",
+          "Stability tracking",
+          "Analytics & heatmap",
+          "Public profile sharing"
+        ],
+        "cta": "Get Started Free",
+        "highlighted": false
+      },
+      {
+        "name": "Pro",
+        "price": "$5",
+        "period": "/month",
+        "description": "For those who want deeper insights and integrations.",
+        "features": [
+          "Everything in Free",
+          "Advanced analytics",
+          "Priority support",
+          "Custom themes",
+          "Integrations (coming soon)"
+        ],
+        "cta": "Coming Soon",
+        "highlighted": true
+      }
+    ]
+  },
+  "cta": {
+    "title": "Start Building Your Neural Network",
+    "subtitle": "Join people who delegate knowledge and build lasting habits.",
+    "button": "Create Free Account",
+    "note": "No credit card required. Start in 30 seconds."
+  },
+  "footer": {
+    "brand": "NODES",
+    "tagline": "Your Second Brain, Visualized",
+    "links": {
+      "product": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "about": "About"
+    },
+    "legal": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "copyright": "© 2026 NODES. All rights reserved."
+  },
+  "languageSwitcher": {
+    "en": "English",
+    "ru": "Русский"
+  },
+  "graphSection": {
+    "title": "See Your Life as a Network",
+    "subtitle": "Every habit, goal, and connection visualized as a living neural map.",
+    "features": [
+      {
+        "title": "Visual Stability",
+        "description": "Watch how consistent habits glow brighter and unstable ones fade — your network tells the truth."
+      },
+      {
+        "title": "Organic Growth",
+        "description": "Add nodes and cores as your life evolves. The graph adapts and grows with you."
+      },
+      {
+        "title": "Interconnected Insights",
+        "description": "See how habits influence each other through connectors. Discover patterns you never noticed."
+      }
+    ]
+  }
+}

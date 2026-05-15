@@ -1,0 +1,32 @@
+---
+interface Props {
+  lang: 'en' | 'ru';
+}
+
+const { lang } = Astro.props;
+
+import en from '../i18n/en.json';
+import ru from '../i18n/ru.json';
+const translations: Record<string, any> = { en, ru };
+const t = translations[lang];
+---
+
+<section class="py-24 md:py-32 relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent"></div>
+
+  <div class="relative max-w-4xl mx-auto px-6 text-center">
+    <span class="reveal inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5 text-sm font-medium text-primary mb-4">
+      {t.philosophy.badge}
+    </span>
+
+    <blockquote class="quote-reveal text-2xl md:text-4xl font-serif font-semibold leading-snug tracking-tight mb-8">
+      &ldquo;{t.philosophy.quote}&rdquo;
+    </blockquote>
+
+    <p class="reveal reveal-delay-2 text-sm text-primary font-medium mb-4">{t.philosophy.attribution}</p>
+
+    <p class="reveal reveal-delay-3 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+      {t.philosophy.description}
+    </p>
+  </div>
+</section>

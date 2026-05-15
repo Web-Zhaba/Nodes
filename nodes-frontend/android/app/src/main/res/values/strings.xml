@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Nodes</string>
+    <string name="title_activity_main">Nodes</string>
+    <string name="package_name">com.nodes.app</string>
+    <string name="custom_url_scheme">com.nodes.app</string>
+</resources>
