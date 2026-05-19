@@ -1,5 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
+const isLiveReload = process.env.CAPACITOR_LIVE_RELOAD === 'true';
+
 const config: CapacitorConfig = {
   appId: 'com.nodes.app',
   appName: 'Nodes',
@@ -7,6 +9,9 @@ const config: CapacitorConfig = {
   server: {
     cleartext: true,
     androidScheme: 'https',
+    ...(isLiveReload && {
+      url: process.env.CAPACITOR_SERVER_URL || 'http://localhost:5173',
+    }),
   },
   plugins: {
     SplashScreen: {

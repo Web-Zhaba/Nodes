@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import Calendar from "lucide-react/dist/esm/icons/calendar";
-import Loader2 from "lucide-react/dist/esm/icons/loader-2";
+import { Calendar } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { ContributionGraph } from "@/components/ui/smoothui/contribution-graph";
 import type { ContributionData } from "@/components/ui/smoothui/contribution-graph";

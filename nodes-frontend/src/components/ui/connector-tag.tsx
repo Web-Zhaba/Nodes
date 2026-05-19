@@ -1,6 +1,6 @@
 import * as React from "react";
-import Tag from "lucide-react/dist/esm/icons/tag";
-import X from "lucide-react/dist/esm/icons/x";
+import { Tag } from 'lucide-react';
+import { X } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 

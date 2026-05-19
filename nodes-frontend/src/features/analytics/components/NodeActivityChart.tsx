@@ -8,8 +8,8 @@ import {
   AreaChart, Area, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid,
 } from "recharts";
-import Loader2 from "lucide-react/dist/esm/icons/loader-2";
-import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
+import { Loader2 } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { useResponsiveAnalytics } from "../hooks/useResponsiveAnalytics";
 

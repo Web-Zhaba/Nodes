@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Github from "lucide-react/dist/esm/icons/github";
+import { Github } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 

@@ -7,7 +7,10 @@ import ProtectedRoute from "@/widgets/ProtectedRoute";
 import { useTranslation } from "react-i18next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import { get, set, del } from "idb-keyval";
 import { lazy, Suspense, useEffect } from "react";
 
 // Lazy-load devtools only in development to reduce production bundle
@@ -19,13 +22,32 @@ import { useThemeStore } from "@/store/useThemeStore";
 import { useMobileNavigation } from "@/hooks/useMobileNavigation";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useStatusBarTheme } from "@/hooks/useStatusBarTheme";
+import { useSyncManager } from "@/hooks/useSyncManager"
 
-// Create a client
+// IndexedDB persister for TanStack Query cache
+const idbPersister = createAsyncStoragePersister({
+  storage: {
+    getItem: async (key: string) => (await get<string>(key)) ?? null,
+    setItem: async (key: string, value: string) => await set(key, value),
+    removeItem: async (key: string) => await del(key),
+  },
+  key: "nodes-tanstack-cache",
+  throttleTime: 1000,
+});
+
+// Create a client with offline-friendly defaults
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false, // Не рефетчить при возврате на вкладку
-      staleTime: 1000 * 60 * 5, // Кэш живет 5 минут
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours — keeps data for offline restart
+      networkMode: "always", // Queue requests even when offline; retry when back
+      retry: (failureCount) => failureCount < 3,
+    },
+    mutations: {
+      retry: 3,
+      networkMode: "always",
     },
   },
 });
@@ -46,6 +68,7 @@ const PublicNodePage = lazy(() => import("@/pages/PublicNodePage"));
 function AppRouter() {
   const { t } = useTranslation();
   useMobileNavigation();
+  useSyncManager()
 
   return (
     <Suspense
@@ -114,7 +137,10 @@ function App() {
   }, [applyTheme]);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: idbPersister, maxAge: 1000 * 60 * 60 * 24 * 7 }}
+    >
       <ErrorBoundary>
         {/* React Query Devtools для отладки кэша (только в dev) */}
         <ReactQueryDevtools initialIsOpen={false} position="bottom" />
@@ -141,7 +167,7 @@ function App() {
       <Analytics />
         <SpeedInsights />
       </ErrorBoundary>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }
 

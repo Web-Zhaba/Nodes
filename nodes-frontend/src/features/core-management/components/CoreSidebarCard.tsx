@@ -1,6 +1,6 @@
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { useTranslation } from "react-i18next";
-import Sparkles from "lucide-react/dist/esm/icons/sparkles";
+import { Sparkles } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { ConnectorTag } from "@/components/ui/connector-tag";
 import { Card, CardContent } from "@/components/ui/card";

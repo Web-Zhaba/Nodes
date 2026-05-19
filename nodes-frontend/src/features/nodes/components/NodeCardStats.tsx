@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import CheckCircle2 from "lucide-react/dist/esm/icons/check-circle-2";
-import Circle from "lucide-react/dist/esm/icons/circle";
+import { CheckCircle2 } from 'lucide-react';
+import { Circle } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 
 interface NodeCardStatsProps {

@@ -5,11 +5,11 @@ import { useAnalyticsStore } from '@/store/useAnalyticsStore';
 import { GlobalControlBar } from '@/features/analytics/components/GlobalControlBar';
 import { StabilityHeroChart } from '@/features/analytics/components/StabilityHeroChart';
 import { PulseHeatmap } from '@/features/analytics/components/PulseHeatmap';
-import Award from "lucide-react/dist/esm/icons/award";
-import Zap from "lucide-react/dist/esm/icons/zap";
-import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
-import Globe from "lucide-react/dist/esm/icons/globe";
-import Activity from "lucide-react/dist/esm/icons/activity";
+import { Award } from 'lucide-react';
+import { Zap } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
+import { Globe } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { DynamicIcon } from '../components/ui/DynamicIcon';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -117,60 +117,60 @@ export default function AnalyticsPage() {
                         className="space-y-8"
                     >
                         {/* Node Header */}
-                        <div className="flex items-start justify-between gap-4">
-                            <div className="flex items-center gap-4">
-                                <div 
-                                    className="w-16 h-16 rounded-[2rem] flex items-center justify-center shadow-lg"
-                                    style={{ 
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                            <div className="flex items-center gap-4 min-w-0">
+                                <div
+                                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-[2rem] flex items-center justify-center shadow-lg shrink-0"
+                                    style={{
                                         backgroundColor: `${focusedNodeData.color}15`,
                                         border: `1px solid ${focusedNodeData.color}30`
                                     }}
                                 >
-                                    <DynamicIcon name={focusedNodeData.icon || 'zap'} className="w-8 h-8" style={{ color: focusedNodeData.color || '#6366f1' }} />
+                                    <DynamicIcon name={focusedNodeData.icon || 'zap'} className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: focusedNodeData.color || '#6366f1' }} />
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <h2 className="text-2xl md:text-3xl font-black tracking-tighter">{focusedNodeData.name}</h2>
+                                <div className="min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
+                                        <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tighter break-words">{focusedNodeData.name}</h2>
                                         <StabilityBadge score={focusedNodeData.stability_score || 0} />
                                     </div>
-                                    <div className="flex items-center gap-3 text-xs md:text-sm text-muted-foreground font-medium">
+                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs md:text-sm text-muted-foreground font-medium">
                                         <span className="bg-muted/50 px-2.5 py-0.5 rounded-lg border border-border/40">
                                             {t(`nodes.type.${focusedNodeData.node_type}`, focusedNodeData.node_type)}
                                         </span>
-                                        <span className="w-1 h-1 rounded-full bg-border" />
-                                        <span>
-                                            {t("public.node.createdAt", "Создан {{date}}", { 
-                                                date: new Date(focusedNodeData.created_at).toLocaleDateString(i18n.language === "ru" ? "ru-RU" : "en-US") 
+                                        <span className="w-1 h-1 rounded-full bg-border hidden sm:inline" />
+                                        <span className="hidden sm:inline">
+                                            {t("public.node.createdAt", "Создан {{date}}", {
+                                                date: new Date(focusedNodeData.created_at).toLocaleDateString(i18n.language === "ru" ? "ru-RU" : "en-US")
                                             })}
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div className="text-right">
+
+                            <div className="text-left sm:text-right">
                                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">
                                     {t("analytics.nodeStats.stability", "Стабильность")}
                                 </p>
-                                <p className="text-3xl font-black font-mono tracking-tighter" style={{ color: focusedNodeData.color || '#6366f1' }}>
+                                <p className="text-2xl sm:text-3xl font-black font-mono tracking-tighter" style={{ color: focusedNodeData.color || '#6366f1' }}>
                                     {Math.round(focusedNodeData.stability_score || 0)}%
                                 </p>
                             </div>
                         </div>
 
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-8">
                             {[
                                 { label: t("analytics.nodeStats.completions", "Выполнений"), value: focusedNodeData.completion_count, icon: Award },
                                 { label: t("analytics.nodeStats.mass", "Масса узла"), value: focusedNodeData.mass, icon: Zap },
                                 { label: t("analytics.nodeStats.impulses", "Импульсов"), value: focusedNodeData.totalImpulses, icon: TrendingUp },
                                 { label: t("analytics.nodeStats.daysOnline", "Дней в сети"), value: focusedNodeData.daysInNetwork, icon: Globe },
                             ].map((stat, i) => (
-                                <div key={i} className="bg-background/40 border border-border/40 rounded-2xl p-4 shadow-sm">
-                                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                                        <stat.icon className="w-3.5 h-3.5" />
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">{stat.label}</span>
+                                <div key={i} className="bg-background/40 border border-border/40 rounded-2xl p-3 sm:p-4 shadow-sm min-w-0">
+                                    <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground mb-1">
+                                        <stat.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                                        <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider truncate">{stat.label}</span>
                                     </div>
-                                    <p className="text-xl font-black">{stat.value}</p>
+                                    <p className="text-lg sm:text-xl font-black truncate">{stat.value}</p>
                                 </div>
                             ))}
                         </div>

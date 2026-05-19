@@ -130,7 +130,6 @@
   - HashRouter для `file://` совместимости
 - [x] **CI/CD:** GitHub Actions для автосборки Android APK (`assembleDebug`) и iOS Simulator.
 - [ ] **Pulse Resonance:** Система аудио-визуального отклика (SFX паки + анимации) при активации узлов.
-- [ ] **Biometrics:** Дополнительный слой защиты через FaceID/TouchID (по выбору пользователя).
 - [ ] **App Store Assets:** Подготовка финальных скриншотов и релизных манифестов.
 
 ## 📅 Фаза 8: Monetization & Expansion (Neural Expansion)

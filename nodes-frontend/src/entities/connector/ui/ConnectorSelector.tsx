@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import Plus from "lucide-react/dist/esm/icons/plus";
-import X from "lucide-react/dist/esm/icons/x";
+import { Plus } from 'lucide-react';
+import { X } from 'lucide-react';
 import type { Connector } from "@/types";
 import {
   getUserConnectors,

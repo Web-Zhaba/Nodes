@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
+import { Capacitor } from "@capacitor/core";
+import { Browser } from "@capacitor/browser";
 
 export const authService = {
   /**
@@ -71,6 +73,21 @@ export const authService = {
    * Вход через OAuth (Google, GitHub и т.д.)
    */
   async signInWithOAuth(provider: 'google' | 'github'): Promise<{ error: any }> {
+    if (Capacitor.isNativePlatform()) {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          skipBrowserRedirect: true,
+          redirectTo: 'nodes://auth/callback',
+        },
+      });
+      if (error) return { error };
+      if (data?.url) {
+        await Browser.open({ url: data.url });
+      }
+      return { error: null };
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {

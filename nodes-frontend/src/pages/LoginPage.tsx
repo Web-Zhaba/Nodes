@@ -15,9 +15,9 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import Github from "lucide-react/dist/esm/icons/github";
-import Chrome from "lucide-react/dist/esm/icons/chrome";
-import Loader2 from "lucide-react/dist/esm/icons/loader-2";
+import { Github } from 'lucide-react';
+import { Chrome } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email('Некорректный email'),

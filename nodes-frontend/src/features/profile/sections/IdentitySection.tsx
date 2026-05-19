@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Edit2 from "lucide-react/dist/esm/icons/edit-2";
-import Check from "lucide-react/dist/esm/icons/check";
+import { Edit2 } from 'lucide-react';
+import { Check } from 'lucide-react';
 import type { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 

@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import Mail from "lucide-react/dist/esm/icons/mail";
-import Send from "lucide-react/dist/esm/icons/send";
-import Bell from "lucide-react/dist/esm/icons/bell";
-import CalendarDays from "lucide-react/dist/esm/icons/calendar-days";
-import Activity from "lucide-react/dist/esm/icons/activity";
-import Clock from "lucide-react/dist/esm/icons/clock";
-import Zap from "lucide-react/dist/esm/icons/zap";
-import ExternalLink from "lucide-react/dist/esm/icons/external-link";
-import ChevronRight from "lucide-react/dist/esm/icons/chevron-right";
+import { Mail } from 'lucide-react';
+import { Send } from 'lucide-react';
+import { Bell } from 'lucide-react';
+import { CalendarDays } from 'lucide-react';
+import { Activity } from 'lucide-react';
+import { Clock } from 'lucide-react';
+import { Zap } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 interface IntegrationCardProps {

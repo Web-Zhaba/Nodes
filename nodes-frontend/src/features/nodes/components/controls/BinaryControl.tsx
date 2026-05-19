@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import Check from "lucide-react/dist/esm/icons/check";
-import Zap from "lucide-react/dist/esm/icons/zap";
+import { Check } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import type { Node } from "@/types";

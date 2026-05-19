@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import BrainCircuit from "lucide-react/dist/esm/icons/brain-circuit";
-import AlertTriangle from "lucide-react/dist/esm/icons/alert-triangle";
+import { BrainCircuit } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 interface CapacityBarProps {
   currentMass: number;

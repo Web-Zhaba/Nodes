@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import Play from "lucide-react/dist/esm/icons/play";
-import Pause from "lucide-react/dist/esm/icons/pause";
-import Check from "lucide-react/dist/esm/icons/check";
-import Timer from "lucide-react/dist/esm/icons/timer";
+import { Play } from 'lucide-react';
+import { Pause } from 'lucide-react';
+import { Check } from 'lucide-react';
+import { Timer } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import type { Node } from "@/types";

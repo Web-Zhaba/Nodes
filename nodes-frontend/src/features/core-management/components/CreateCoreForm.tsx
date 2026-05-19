@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconPicker } from "@/features/nodes/components/IconPicker";
 import { toast } from "sonner";
-import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
+import { ArrowLeft } from 'lucide-react';
 
 interface CreateCoreFormProps {
   onSuccess?: (coreId: string) => void;
