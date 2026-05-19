@@ -41,7 +41,7 @@ jobs:
       - name: Build iOS (Simulator)
         working-directory: nodes-frontend/ios/App
         run: |
-          xcodebuild build -scheme App -destination 'platform=iOS Simulator,name=iPhone 15' -derivedDataPath DerivedData
+          xcodebuild build -scheme App -destination 'platform=iOS Simulator,name=iPhone 16,OS:18.5' -derivedDataPath DerivedData
 
       - name: Upload iOS Build
         if: github.event_name == 'workflow_dispatch'
