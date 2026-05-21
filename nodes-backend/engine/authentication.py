@@ -14,15 +14,17 @@ _jwks_cache: dict = {}
 _jwks_cache_time: float = 0
 _JWKS_CACHE_TTL: int = 3600  # Обновлять ключи раз в час
 
+from django.core.cache import cache as django_cache
+
 def _get_jwks() -> dict:
     """
     Получает JSON Web Key Set (JWKS) от Supabase.
-    Результат кэшируется в памяти с TTL = 1 час.
-    При ошибке обновления использует устаревший кэш как fallback.
+    Использует Django Cache (LocMem) для сохранения между запросами в Vercel.
     """
-    global _jwks_cache, _jwks_cache_time
-    if _jwks_cache and (_time.time() - _jwks_cache_time) < _JWKS_CACHE_TTL:
-        return _jwks_cache
+    cache_key = "supabase_jwks_data"
+    cached = django_cache.get(cache_key)
+    if cached:
+        return cached
 
     supabase_url = settings.SUPABASE_URL
     jwks_url = f"{supabase_url}/auth/v1/.well-known/jwks.json"
@@ -30,15 +32,13 @@ def _get_jwks() -> dict:
     try:
         response = requests.get(jwks_url, timeout=5)
         response.raise_for_status()
-        _jwks_cache = response.json()
-        _jwks_cache_time = _time.time()
-        logger.info("Successfully loaded/refreshed Supabase JWKS.")
-        return _jwks_cache
+        data = response.json()
+        # Кэшируем на 1 час
+        django_cache.set(cache_key, data, 3600)
+        logger.info("Successfully loaded/refreshed Supabase JWKS (stored in Django cache).")
+        return data
     except requests.RequestException as e:
         logger.error(f"Failed to fetch Supabase JWKS: {e}")
-        if _jwks_cache:
-            logger.warning("Using stale JWKS cache as fallback.")
-            return _jwks_cache
         return {}
 
 

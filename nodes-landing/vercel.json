@@ -3,27 +3,27 @@
   "redirects": [
     {
       "source": "/auth",
-      "destination": "https://nodes-coral.vercel.app/signup",
+      "destination": "https://www.nodes-tracker.ru/signup",
       "permanent": false
     },
     {
       "source": "/auth/:path*",
-      "destination": "https://nodes-coral.vercel.app/auth/:path*",
+      "destination": "https://www.nodes-tracker.ru/auth/:path*",
       "permanent": false
     },
     {
       "source": "/login",
-      "destination": "https://nodes-coral.vercel.app/login",
+      "destination": "https://www.nodes-tracker.ru/login",
       "permanent": false
     },
     {
       "source": "/signup",
-      "destination": "https://nodes-coral.vercel.app/signup",
+      "destination": "https://www.nodes-tracker.ru/signup",
       "permanent": false
     },
     {
       "source": "/app/:path*",
-      "destination": "https://nodes-coral.vercel.app/:path*",
+      "destination": "https://www.nodes-tracker.ru/:path*",
       "permanent": false
     }
   ]

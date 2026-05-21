@@ -112,7 +112,7 @@ export default function PublicGraphPage() {
             </div>
             <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-muted-foreground mt-1 truncate">
               <Globe className="w-3 h-3 shrink-0" />
-              <span className="font-mono truncate">nodes.life/{profile.public_slug}</span>
+              <span className="font-mono truncate">nodes-tracker.ru/{profile.public_slug}</span>
             </div>
           </div>
         </div>

@@ -6,20 +6,21 @@
 
 ## ✅ Фаза 0: Подготовка — ЗАВЕРШЕНА (100%)
 
-| Задача | Время | Приоритет | Статус | Примечание |
-|--------|-------|-----------|--------|------------|
-| Создать GitHub репозиторий | 30 мин | Must | ✅ | https://github.com/Web-Zhaba/Nodes |
-| Настроить React + Vite + TypeScript | 2 часа | Must | ✅ | React 19, Vite 7 |
-| Настроить Tailwind CSS | 1 час | Must | ✅ | Tailwind v4 |
-| Настроить Shadcn UI | 2 часа | Must | ✅ | Button, Card, Input, Label |
-| Создать Supabase проект | 1 час | Must | ✅ | Проект создан |
-| Настроить деплой на Vercel | 1 час | Must | ✅ | https://nodes-coral.vercel.app |
-| Создать базовую структуру папок | 1 час | Must | ✅ | FSD-lite структура |
-| Нарисовать wireframes в Figma/Excalidraw | 3 часа | Should | ❌ | Пропущено (некритично) |
+| Задача                                   | Время  | Приоритет | Статус | Примечание                         |
+| ---------------------------------------- | ------ | --------- | ------ | ---------------------------------- |
+| Создать GitHub репозиторий               | 30 мин | Must      | ✅     | https://github.com/Web-Zhaba/Nodes |
+| Настроить React + Vite + TypeScript      | 2 часа | Must      | ✅     | React 19, Vite 7                   |
+| Настроить Tailwind CSS                   | 1 час  | Must      | ✅     | Tailwind v4                        |
+| Настроить Shadcn UI                      | 2 часа | Must      | ✅     | Button, Card, Input, Label         |
+| Создать Supabase проект                  | 1 час  | Must      | ✅     | Проект создан                      |
+| Настроить деплой на Vercel               | 1 час  | Must      | ✅     | https://www.nodes-tracker.ru       |
+| Создать базовую структуру папок          | 1 час  | Must      | ✅     | FSD-lite структура                 |
+| Нарисовать wireframes в Figma/Excalidraw | 3 часа | Should    | ❌     | Пропущено (некритично)             |
 
 **Результат фазы 0:**
+
 - ✅ Working development environment
-- ✅ Деплой на Vercel: https://nodes-coral.vercel.app
+- ✅ Деплой на Vercel: https://www.nodes-tracker.ru
 - ✅ База данных готова (SQL схема подготовлена)
 - ✅ Git репозиторий: https://github.com/Web-Zhaba/Nodes
 - ❌ Дизайн-концепция (wireframes) — опционально
@@ -30,23 +31,23 @@
 
 ### Неделя 2: Аутентификация + Инфраструктура
 
-| Задача | Время | Приоритет | Статус |
-|--------|-------|-----------|--------|
-| Настроить React Router DOM | 1 час | Must | ✅ |
-| Страница входа (Login) | 2 часа | Must | ✅ |
-| Страница регистрации (Signup) | 2 часа | Must | ✅ |
-| Protected routes | 1 час | Must | ✅ |
-| Theme toggle (light/dark) | 1 час | Must | ✅ |
-| Toast уведомления (Sonner) | 1 час | Must | ✅ |
-| Error Boundary | 1 час | Must | ✅ |
-| 404 страница | 30 мин | Must | ✅ |
-| Layout с навигацией | 1 час | Must | ✅ |
-| Настроить Vitest + Testing Library | 1 час | Must | ✅ |
-| Хук useAuth | 30 мин | Must | ✅ |
-| Редирект с /login для авторизованных | 30 мин | Must | ✅ |
-| Кнопка выхода на HomePage | 30 мин | Must | ✅ |
-| Форма создания узла | 4 часа | Must | ❌ |
-| Сохранение узла в БД | 2 часа | Must | ❌ |
+| Задача                               | Время  | Приоритет | Статус |
+| ------------------------------------ | ------ | --------- | ------ |
+| Настроить React Router DOM           | 1 час  | Must      | ✅     |
+| Страница входа (Login)               | 2 часа | Must      | ✅     |
+| Страница регистрации (Signup)        | 2 часа | Must      | ✅     |
+| Protected routes                     | 1 час  | Must      | ✅     |
+| Theme toggle (light/dark)            | 1 час  | Must      | ✅     |
+| Toast уведомления (Sonner)           | 1 час  | Must      | ✅     |
+| Error Boundary                       | 1 час  | Must      | ✅     |
+| 404 страница                         | 30 мин | Must      | ✅     |
+| Layout с навигацией                  | 1 час  | Must      | ✅     |
+| Настроить Vitest + Testing Library   | 1 час  | Must      | ✅     |
+| Хук useAuth                          | 30 мин | Must      | ✅     |
+| Редирект с /login для авторизованных | 30 мин | Must      | ✅     |
+| Кнопка выхода на HomePage            | 30 мин | Must      | ✅     |
+| Форма создания узла                  | 4 часа | Must      | ❌     |
+| Сохранение узла в БД                 | 2 часа | Must      | ❌     |
 
 ### 📦 Установленные зависимости
 
@@ -160,7 +161,7 @@ nodes-frontend/
 ## 📝 Заметки
 
 - Dev-сервер: `http://localhost:5173`
-- Vercel деплой: https://nodes-coral.vercel.app
+- Vercel деплой: https://www.nodes-tracker.ru
 - Тесты: `npm run test` или `npm run test:ui`
 - Все зависимости установлены ✅
 
@@ -168,17 +169,17 @@ nodes-frontend/
 
 ## ✅ Закрытые технические вопросы
 
-| Вопрос | Решение | Статус |
-|--------|---------|--------|
-| ESLint: setState в useEffect | Переписал на `useCallback` + эффект с зависимостями | ✅ |
-| ESLint: button.tsx экспорты | Добавил `eslint-disable` для Shadcn UI | ✅ |
-| Zustand v5 синтаксис | Использовал `create<T>()()` | ✅ |
-| Vitest config | Вынес в отдельный `vitest.config.ts` | ✅ |
-| CheckSupabasePage не нужен | Удалил (выполнял отладочную роль) | ✅ |
-| Нет хука для аутентификации | Создал `useAuth` | ✅ |
-| Нет редиректа с /login | Добавил `AuthRedirect` компонент | ✅ |
-| Выход из системы | Добавил кнопку на HomePage с toast | ✅ |
-| Большой бандл (>500KB) | Требуется code splitting | ⏳ Фаза 4 |
+| Вопрос                       | Решение                                             | Статус    |
+| ---------------------------- | --------------------------------------------------- | --------- |
+| ESLint: setState в useEffect | Переписал на `useCallback` + эффект с зависимостями | ✅        |
+| ESLint: button.tsx экспорты  | Добавил `eslint-disable` для Shadcn UI              | ✅        |
+| Zustand v5 синтаксис         | Использовал `create<T>()()`                         | ✅        |
+| Vitest config                | Вынес в отдельный `vitest.config.ts`                | ✅        |
+| CheckSupabasePage не нужен   | Удалил (выполнял отладочную роль)                   | ✅        |
+| Нет хука для аутентификации  | Создал `useAuth`                                    | ✅        |
+| Нет редиректа с /login       | Добавил `AuthRedirect` компонент                    | ✅        |
+| Выход из системы             | Добавил кнопку на HomePage с toast                  | ✅        |
+| Большой бандл (>500KB)       | Требуется code splitting                            | ⏳ Фаза 4 |
 
 ---
 
@@ -186,13 +187,14 @@ nodes-frontend/
 
 ### Цветовая схема
 
-| Переменная | Светлая тема | Тёмная тема |
-|------------|--------------|-------------|
-| `--primary` | Фиолетовый (286°) | Светло-фиолетовый (291°) |
-| `--background` | Почти белый | Тёмно-синий |
-| `--accent` | Светло-фиолетовый | Насыщенный фиолетовый |
+| Переменная     | Светлая тема      | Тёмная тема              |
+| -------------- | ----------------- | ------------------------ |
+| `--primary`    | Фиолетовый (286°) | Светло-фиолетовый (291°) |
+| `--background` | Почти белый       | Тёмно-синий              |
+| `--accent`     | Светло-фиолетовый | Насыщенный фиолетовый    |
 
 **Характеристики:**
+
 - **Акцент:** Фиолетовый (нейросеть/киберпанк)
 - **Шрифты:** Plus Jakarta Sans, Lora, IBM Plex Mono
 - **Скругления:** 1.4rem (современный вид)

@@ -1,9 +1,9 @@
 {
   "lighthouseVersion": "13.0.2",
-  "requestedUrl": "https://nodes-coral.vercel.app/",
-  "mainDocumentUrl": "https://nodes-coral.vercel.app/",
-  "finalDisplayedUrl": "https://nodes-coral.vercel.app/",
-  "finalUrl": "https://nodes-coral.vercel.app/",
+  "requestedUrl": "https://www.nodes-tracker.ru/",
+  "mainDocumentUrl": "https://www.nodes-tracker.ru/",
+  "finalDisplayedUrl": "https://www.nodes-tracker.ru/",
+  "finalUrl": "https://www.nodes-tracker.ru/",
   "fetchTime": "2026-05-06T20:12:02.963Z",
   "gatherMode": "navigation",
   "runWarnings": [],
@@ -258,7 +258,7 @@
         ],
         "items": [
           {
-            "url": "https://nodes-coral.vercel.app/",
+            "url": "https://www.nodes-tracker.ru/",
             "responseTime": 40
           }
         ],
@@ -516,9 +516,7 @@
             "duration": 5.778999999999998
           }
         ],
-        "sortedBy": [
-          "duration"
-        ]
+        "sortedBy": ["duration"]
       },
       "guidanceLevel": 1
     },
@@ -563,13 +561,13 @@
         ],
         "items": [
           {
-            "url": "https://nodes-coral.vercel.app/",
+            "url": "https://www.nodes-tracker.ru/",
             "total": 176.532,
             "scripting": 17.527000000000033,
             "scriptParseCompile": 10.273
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/index-DfMgkc5-.js",
+            "url": "https://www.nodes-tracker.ru/assets/index-DfMgkc5-.js",
             "total": 155.22899999999973,
             "scripting": 65.9929999999999,
             "scriptParseCompile": 0.509
@@ -578,9 +576,7 @@
         "summary": {
           "wastedMs": 94.30199999999994
         },
-        "sortedBy": [
-          "total"
-        ]
+        "sortedBy": ["total"]
       },
       "guidanceLevel": 1
     },
@@ -678,7 +674,7 @@
         ],
         "items": [
           {
-            "url": "https://nodes-coral.vercel.app/",
+            "url": "https://www.nodes-tracker.ru/",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 0,
@@ -695,7 +691,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/PlusJakartaSans-Regular.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/PlusJakartaSans-Regular.woff2",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 119.93799999728799,
@@ -713,7 +709,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/PlusJakartaSans-Medium.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/PlusJakartaSans-Medium.woff2",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.11700000241399,
@@ -731,7 +727,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/PlusJakartaSans-Bold.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/PlusJakartaSans-Bold.woff2",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.19200000166893,
@@ -749,7 +745,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/PlusJakartaSans-SemiBold.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/PlusJakartaSans-SemiBold.woff2",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.26800000295043,
@@ -767,7 +763,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/IBMPlexMono-Regular.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/IBMPlexMono-Regular.woff2",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.33999999985099,
@@ -785,7 +781,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/IBMPlexMono-Medium.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/IBMPlexMono-Medium.woff2",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.4129999987781,
@@ -803,7 +799,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/index-DfMgkc5-.js",
+            "url": "https://www.nodes-tracker.ru/assets/index-DfMgkc5-.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.48499999940395,
@@ -820,7 +816,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-react-BtQxNZJG.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-react-BtQxNZJG.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.59100000187755,
@@ -838,7 +834,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-ui-BsMXSVok.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-ui-BsMXSVok.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.67400000244379,
@@ -856,7 +852,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-supabase-DqPyHwfE.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-supabase-DqPyHwfE.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.75499999895692,
@@ -874,7 +870,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-lucide-Bq3JWYtg.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-lucide-Bq3JWYtg.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.84099999815226,
@@ -892,7 +888,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-animation-7ZAAxKGL.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-animation-7ZAAxKGL.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 120.97199999913573,
@@ -910,7 +906,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/index-C3KoISEZ.css",
+            "url": "https://www.nodes-tracker.ru/assets/index-C3KoISEZ.css",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 121.07200000062585,
@@ -927,7 +923,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/_vercel/insights/script.js",
+            "url": "https://www.nodes-tracker.ru/_vercel/insights/script.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 355.4590000025928,
@@ -944,7 +940,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/_vercel/speed-insights/script.js",
+            "url": "https://www.nodes-tracker.ru/_vercel/speed-insights/script.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 355.85400000214577,
@@ -961,7 +957,7 @@
             "entity": "vercel.app"
           },
           {
-            "url": "https://nodes-coral.vercel.app/_vercel/insights/view",
+            "url": "https://www.nodes-tracker.ru/_vercel/insights/view",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 436.78099999949336,
@@ -995,7 +991,7 @@
             "entity": "supabase.co"
           },
           {
-            "url": "https://nodes-coral.vercel.app/vite.svg",
+            "url": "https://www.nodes-tracker.ru/vite.svg",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 463.31700000166893,
@@ -1133,79 +1129,79 @@
           "initiators": [
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 6,
               "columnNumber": 108
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 7,
               "columnNumber": 107
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 8,
               "columnNumber": 105
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 9,
               "columnNumber": 109
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 10,
               "columnNumber": 104
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 11,
               "columnNumber": 103
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 14,
               "columnNumber": 68
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 15,
               "columnNumber": 80
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 16,
               "columnNumber": 77
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 17,
               "columnNumber": 83
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 18,
               "columnNumber": 81
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 19,
               "columnNumber": 84
             },
             {
               "type": "parser",
-              "url": "https://nodes-coral.vercel.app/",
+              "url": "https://www.nodes-tracker.ru/",
               "lineNumber": 20,
               "columnNumber": 71
             },
@@ -1259,13 +1255,11 @@
             "rtt": 3.564720000000001
           },
           {
-            "origin": "https://nodes-coral.vercel.app",
+            "origin": "https://www.nodes-tracker.ru",
             "rtt": 0.05969999999999999
           }
         ],
-        "sortedBy": [
-          "rtt"
-        ]
+        "sortedBy": ["rtt"]
       }
     },
     "network-server-latency": {
@@ -1294,7 +1288,7 @@
         ],
         "items": [
           {
-            "origin": "https://nodes-coral.vercel.app",
+            "origin": "https://www.nodes-tracker.ru",
             "serverResponseTime": 104.69879999999999
           },
           {
@@ -1302,9 +1296,7 @@
             "serverResponseTime": 79.85078
           }
         ],
-        "sortedBy": [
-          "serverResponseTime"
-        ]
+        "sortedBy": ["serverResponseTime"]
       }
     },
     "main-thread-tasks": {
@@ -2618,7 +2610,7 @@
         ],
         "items": [
           {
-            "scriptUrl": "https://nodes-coral.vercel.app/assets/vendor-lucide-Bq3JWYtg.js",
+            "scriptUrl": "https://www.nodes-tracker.ru/assets/vendor-lucide-Bq3JWYtg.js",
             "subItems": {
               "type": "subitems",
               "items": [
@@ -2629,7 +2621,7 @@
             }
           },
           {
-            "scriptUrl": "https://nodes-coral.vercel.app/assets/index-DfMgkc5-.js",
+            "scriptUrl": "https://www.nodes-tracker.ru/assets/index-DfMgkc5-.js",
             "subItems": {
               "type": "subitems",
               "items": [
@@ -2907,37 +2899,37 @@
             "unusedBytes": 30096
           },
           {
-            "name": "https://nodes-coral.vercel.app/assets/index-DfMgkc5-.js",
+            "name": "https://www.nodes-tracker.ru/assets/index-DfMgkc5-.js",
             "resourceBytes": 652051,
             "encodedBytes": 159870,
             "unusedBytes": 374583
           },
           {
-            "name": "https://nodes-coral.vercel.app/assets/vendor-ui-BsMXSVok.js",
+            "name": "https://www.nodes-tracker.ru/assets/vendor-ui-BsMXSVok.js",
             "resourceBytes": 36401,
             "encodedBytes": 11622,
             "unusedBytes": 16752
           },
           {
-            "name": "https://nodes-coral.vercel.app/assets/vendor-react-BtQxNZJG.js",
+            "name": "https://www.nodes-tracker.ru/assets/vendor-react-BtQxNZJG.js",
             "resourceBytes": 48268,
             "encodedBytes": 17871,
             "unusedBytes": 23032
           },
           {
-            "name": "https://nodes-coral.vercel.app/assets/vendor-supabase-DqPyHwfE.js",
+            "name": "https://www.nodes-tracker.ru/assets/vendor-supabase-DqPyHwfE.js",
             "resourceBytes": 171177,
             "encodedBytes": 46635,
             "unusedBytes": 136255
           },
           {
-            "name": "https://nodes-coral.vercel.app/assets/vendor-lucide-Bq3JWYtg.js",
+            "name": "https://www.nodes-tracker.ru/assets/vendor-lucide-Bq3JWYtg.js",
             "resourceBytes": 687245,
             "encodedBytes": 141357,
             "unusedBytes": 0
           },
           {
-            "name": "https://nodes-coral.vercel.app/assets/vendor-animation-7ZAAxKGL.js",
+            "name": "https://www.nodes-tracker.ru/assets/vendor-animation-7ZAAxKGL.js",
             "resourceBytes": 94390,
             "encodedBytes": 33192,
             "unusedBytes": 69926
@@ -2949,13 +2941,13 @@
             "unusedBytes": 620
           },
           {
-            "name": "https://nodes-coral.vercel.app/_vercel/insights/script.js",
+            "name": "https://www.nodes-tracker.ru/_vercel/insights/script.js",
             "resourceBytes": 2495,
             "encodedBytes": 1318,
             "unusedBytes": 682
           },
           {
-            "name": "https://nodes-coral.vercel.app/_vercel/speed-insights/script.js",
+            "name": "https://www.nodes-tracker.ru/_vercel/speed-insights/script.js",
             "resourceBytes": 12567,
             "encodedBytes": 4764,
             "unusedBytes": 6432
@@ -4085,49 +4077,47 @@
         ],
         "items": [
           {
-            "url": "https://nodes-coral.vercel.app/assets/index-DfMgkc5-.js",
+            "url": "https://www.nodes-tracker.ru/assets/index-DfMgkc5-.js",
             "totalBytes": 159980
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-lucide-Bq3JWYtg.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-lucide-Bq3JWYtg.js",
             "totalBytes": 141410
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-supabase-DqPyHwfE.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-supabase-DqPyHwfE.js",
             "totalBytes": 46752
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-animation-7ZAAxKGL.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-animation-7ZAAxKGL.js",
             "totalBytes": 33272
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/IBMPlexMono-Medium.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/IBMPlexMono-Medium.woff2",
             "totalBytes": 19784
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/IBMPlexMono-Regular.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/IBMPlexMono-Regular.woff2",
             "totalBytes": 19379
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-react-BtQxNZJG.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-react-BtQxNZJG.js",
             "totalBytes": 17923
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/index-C3KoISEZ.css",
+            "url": "https://www.nodes-tracker.ru/assets/index-C3KoISEZ.css",
             "totalBytes": 13632
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/PlusJakartaSans-Bold.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/PlusJakartaSans-Bold.woff2",
             "totalBytes": 12568
           },
           {
-            "url": "https://nodes-coral.vercel.app/fonts/PlusJakartaSans-Medium.woff2",
+            "url": "https://www.nodes-tracker.ru/fonts/PlusJakartaSans-Medium.woff2",
             "totalBytes": 12560
           }
         ],
-        "sortedBy": [
-          "totalBytes"
-        ]
+        "sortedBy": ["totalBytes"]
       },
       "guidanceLevel": 1
     },
@@ -4150,9 +4140,7 @@
         "items": [],
         "overallSavingsMs": 0,
         "overallSavingsBytes": 0,
-        "sortedBy": [
-          "wastedBytes"
-        ],
+        "sortedBy": ["wastedBytes"],
         "debugData": {
           "type": "debugdata",
           "metricSavings": {
@@ -4183,9 +4171,7 @@
         "items": [],
         "overallSavingsMs": 0,
         "overallSavingsBytes": 0,
-        "sortedBy": [
-          "wastedBytes"
-        ],
+        "sortedBy": ["wastedBytes"],
         "debugData": {
           "type": "debugdata",
           "metricSavings": {
@@ -4215,9 +4201,7 @@
         "items": [],
         "overallSavingsMs": 0,
         "overallSavingsBytes": 0,
-        "sortedBy": [
-          "wastedBytes"
-        ],
+        "sortedBy": ["wastedBytes"],
         "debugData": {
           "type": "debugdata",
           "metricSavings": {
@@ -4272,7 +4256,7 @@
         ],
         "items": [
           {
-            "url": "https://nodes-coral.vercel.app/assets/index-DfMgkc5-.js",
+            "url": "https://www.nodes-tracker.ru/assets/index-DfMgkc5-.js",
             "totalBytes": 158789,
             "wastedBytes": 91220,
             "wastedPercent": 57.44688682326996
@@ -4284,13 +4268,13 @@
             "wastedPercent": 67.00731804129187
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-supabase-DqPyHwfE.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-supabase-DqPyHwfE.js",
             "totalBytes": 46634,
             "wastedBytes": 37120,
             "wastedPercent": 79.5988947113222
           },
           {
-            "url": "https://nodes-coral.vercel.app/assets/vendor-animation-7ZAAxKGL.js",
+            "url": "https://www.nodes-tracker.ru/assets/vendor-animation-7ZAAxKGL.js",
             "totalBytes": 33192,
             "wastedBytes": 24589,
             "wastedPercent": 74.08200021188685
@@ -4298,9 +4282,7 @@
         ],
         "overallSavingsMs": 80,
         "overallSavingsBytes": 192482,
-        "sortedBy": [
-          "wastedBytes"
-        ],
+        "sortedBy": ["wastedBytes"],
         "debugData": {
           "type": "debugdata",
           "metricSavings": {
@@ -4985,9 +4967,7 @@
           }
         ],
         "items": [],
-        "skipSumming": [
-          "wastedMs"
-        ]
+        "skipSumming": ["wastedMs"]
       },
       "guidanceLevel": 3
     },
@@ -5019,7 +4999,7 @@
               {
                 "source": {
                   "type": "source-location",
-                  "url": "https://nodes-coral.vercel.app/assets/index-DfMgkc5-.js",
+                  "url": "https://www.nodes-tracker.ru/assets/index-DfMgkc5-.js",
                   "urlProvider": "network",
                   "line": 2,
                   "column": 3092
@@ -5282,20 +5262,20 @@
               "type": "network-tree",
               "chains": {
                 "CED652EEE153D47AD582021E09550CC4": {
-                  "url": "https://nodes-coral.vercel.app/",
+                  "url": "https://www.nodes-tracker.ru/",
                   "navStartToEndTime": 126,
                   "transferSize": 679,
                   "isLongest": true,
                   "children": {
                     "25108.8": {
-                      "url": "https://nodes-coral.vercel.app/assets/index-DfMgkc5-.js",
+                      "url": "https://www.nodes-tracker.ru/assets/index-DfMgkc5-.js",
                       "navStartToEndTime": 306,
                       "transferSize": 159980,
                       "isLongest": true,
                       "children": {}
                     },
                     "25108.14": {
-                      "url": "https://nodes-coral.vercel.app/assets/index-C3KoISEZ.css",
+                      "url": "https://www.nodes-tracker.ru/assets/index-C3KoISEZ.css",
                       "navStartToEndTime": 216,
                       "transferSize": 13632,
                       "children": {}
@@ -5361,7 +5341,7 @@
         ],
         "items": [
           {
-            "url": "https://nodes-coral.vercel.app/assets/index-C3KoISEZ.css",
+            "url": "https://www.nodes-tracker.ru/assets/index-C3KoISEZ.css",
             "totalBytes": 13632
           }
         ]
@@ -5616,22 +5596,13 @@
     "extraHeaders": null,
     "precomputedLanternData": null,
     "onlyAudits": null,
-    "onlyCategories": [
-      "performance",
-      "accessibility",
-      "best-practices",
-      "seo"
-    ],
+    "onlyCategories": ["performance", "accessibility", "best-practices", "seo"],
     "skipAudits": null
   },
   "categories": {
     "performance": {
       "title": "Performance",
-      "supportedModes": [
-        "navigation",
-        "timespan",
-        "snapshot"
-      ],
+      "supportedModes": ["navigation", "timespan", "snapshot"],
       "auditRefs": [
         {
           "id": "first-contentful-paint",
@@ -5892,10 +5863,7 @@
       "title": "Accessibility",
       "description": "These checks highlight opportunities to [improve the accessibility of your web app](https://developer.chrome.com/docs/lighthouse/accessibility/). Automatic detection can only detect a subset of issues and does not guarantee the accessibility of your web app, so [manual testing](https://web.dev/articles/how-to-review) is also encouraged.",
       "manualDescription": "These items address areas which an automated testing tool cannot cover. Learn more in our guide on [conducting an accessibility review](https://web.dev/articles/how-to-review).",
-      "supportedModes": [
-        "navigation",
-        "snapshot"
-      ],
+      "supportedModes": ["navigation", "snapshot"],
       "auditRefs": [
         {
           "id": "accesskeys",
@@ -6258,11 +6226,7 @@
     },
     "best-practices": {
       "title": "Best Practices",
-      "supportedModes": [
-        "navigation",
-        "timespan",
-        "snapshot"
-      ],
+      "supportedModes": ["navigation", "timespan", "snapshot"],
       "auditRefs": [
         {
           "id": "is-on-https",
@@ -6372,10 +6336,7 @@
       "title": "SEO",
       "description": "These checks ensure that your page is following basic search engine optimization advice. There are many additional factors Lighthouse does not score here that may affect your search ranking, including performance on [Core Web Vitals](https://web.dev/explore/vitals). [Learn more about Google Search Essentials](https://support.google.com/webmasters/answer/35769).",
       "manualDescription": "Run these additional validators on your site to check additional SEO best practices.",
-      "supportedModes": [
-        "navigation",
-        "snapshot"
-      ],
+      "supportedModes": ["navigation", "snapshot"],
       "auditRefs": [
         {
           "id": "is-crawlable",
@@ -6512,17 +6473,13 @@
   "entities": [
     {
       "name": "vercel.app",
-      "origins": [
-        "https://nodes-coral.vercel.app"
-      ],
+      "origins": ["https://www.nodes-tracker.ru"],
       "isFirstParty": true,
       "isUnrecognized": true
     },
     {
       "name": "supabase.co",
-      "origins": [
-        "https://dgyosqcjyaiqaaitjlir.supabase.co"
-      ],
+      "origins": ["https://dgyosqcjyaiqaaitjlir.supabase.co"],
       "isUnrecognized": true
     }
   ],
@@ -9555,9 +9512,7 @@
   "i18n": {
     "rendererFormattedStrings": {},
     "icuMessagePaths": {
-      "core/audits/is-on-https.js | title": [
-        "audits[is-on-https].title"
-      ],
+      "core/audits/is-on-https.js | title": ["audits[is-on-https].title"],
       "core/audits/is-on-https.js | description": [
         "audits[is-on-https].description"
       ],
@@ -9567,9 +9522,7 @@
       "core/audits/is-on-https.js | columnResolution": [
         "audits[is-on-https].details.headings[1].label"
       ],
-      "core/audits/redirects-http.js | title": [
-        "audits[redirects-http].title"
-      ],
+      "core/audits/redirects-http.js | title": ["audits[redirects-http].title"],
       "core/audits/redirects-http.js | description": [
         "audits[redirects-http].description"
       ],
@@ -9623,9 +9576,7 @@
       "core/audits/metrics/largest-contentful-paint.js | description": [
         "audits[largest-contentful-paint].description"
       ],
-      "core/lib/i18n/i18n.js | speedIndexMetric": [
-        "audits[speed-index].title"
-      ],
+      "core/lib/i18n/i18n.js | speedIndexMetric": ["audits[speed-index].title"],
       "core/audits/metrics/speed-index.js | description": [
         "audits[speed-index].description"
       ],
@@ -9733,15 +9684,11 @@
         "audits[network-rtt].details.headings[1].label",
         "audits[network-server-latency].details.headings[1].label"
       ],
-      "core/lib/i18n/i18n.js | interactiveMetric": [
-        "audits.interactive.title"
-      ],
+      "core/lib/i18n/i18n.js | interactiveMetric": ["audits.interactive.title"],
       "core/audits/metrics/interactive.js | description": [
         "audits.interactive.description"
       ],
-      "core/audits/user-timings.js | title": [
-        "audits[user-timings].title"
-      ],
+      "core/audits/user-timings.js | title": ["audits[user-timings].title"],
       "core/audits/user-timings.js | description": [
         "audits[user-timings].description"
       ],
@@ -9771,9 +9718,7 @@
         "audits[lcp-breakdown-insight].details.items[0].headings[1].label",
         "audits[render-blocking-insight].details.headings[2].label"
       ],
-      "core/audits/redirects.js | title": [
-        "audits.redirects.title"
-      ],
+      "core/audits/redirects.js | title": ["audits.redirects.title"],
       "core/audits/redirects.js | description": [
         "audits.redirects.description"
       ],
@@ -9804,9 +9749,7 @@
       "core/audits/image-size-responsive.js | columnExpected": [
         "audits[image-size-responsive].details.headings[4].label"
       ],
-      "core/audits/deprecations.js | title": [
-        "audits.deprecations.title"
-      ],
+      "core/audits/deprecations.js | title": ["audits.deprecations.title"],
       "core/audits/deprecations.js | description": [
         "audits.deprecations.description"
       ],
@@ -9828,9 +9771,7 @@
       "core/audits/mainthread-work-breakdown.js | columnCategory": [
         "audits[mainthread-work-breakdown].details.headings[0].label"
       ],
-      "core/audits/bootup-time.js | title": [
-        "audits[bootup-time].title"
-      ],
+      "core/audits/bootup-time.js | title": ["audits[bootup-time].title"],
       "core/audits/bootup-time.js | description": [
         "audits[bootup-time].description"
       ],
@@ -9843,9 +9784,7 @@
       "core/audits/bootup-time.js | columnScriptParse": [
         "audits[bootup-time].details.headings[3].label"
       ],
-      "core/audits/network-rtt.js | title": [
-        "audits[network-rtt].title"
-      ],
+      "core/audits/network-rtt.js | title": ["audits[network-rtt].title"],
       "core/audits/network-rtt.js | description": [
         "audits[network-rtt].description"
       ],
@@ -9896,9 +9835,7 @@
       "core/lib/i18n/i18n.js | thirdPartyResourceType": [
         "audits[resource-summary].details.items[8].label"
       ],
-      "core/audits/layout-shifts.js | title": [
-        "audits[layout-shifts].title"
-      ],
+      "core/audits/layout-shifts.js | title": ["audits[layout-shifts].title"],
       "core/audits/layout-shifts.js | description": [
         "audits[layout-shifts].description"
       ],
@@ -9919,9 +9856,7 @@
       "core/audits/layout-shifts.js | columnScore": [
         "audits[layout-shifts].details.headings[1].label"
       ],
-      "core/audits/long-tasks.js | title": [
-        "audits[long-tasks].title"
-      ],
+      "core/audits/long-tasks.js | title": ["audits[long-tasks].title"],
       "core/audits/long-tasks.js | description": [
         "audits[long-tasks].description"
       ],
@@ -10634,9 +10569,7 @@
           "path": "audits[non-composited-animations].details.items[21].subItems.items[4].failureReason"
         }
       ],
-      "core/audits/unsized-images.js | title": [
-        "audits[unsized-images].title"
-      ],
+      "core/audits/unsized-images.js | title": ["audits[unsized-images].title"],
       "core/audits/unsized-images.js | description": [
         "audits[unsized-images].description"
       ],
@@ -10653,12 +10586,8 @@
         "audits[valid-source-maps].details.items[0].subItems.items[0].error",
         "audits[valid-source-maps].details.items[1].subItems.items[0].error"
       ],
-      "core/audits/csp-xss.js | title": [
-        "audits[csp-xss].title"
-      ],
-      "core/audits/csp-xss.js | description": [
-        "audits[csp-xss].description"
-      ],
+      "core/audits/csp-xss.js | title": ["audits[csp-xss].title"],
+      "core/audits/csp-xss.js | description": ["audits[csp-xss].description"],
       "core/audits/csp-xss.js | columnDirective": [
         "audits[csp-xss].details.headings[1].label"
       ],
@@ -10674,12 +10603,8 @@
       "core/audits/csp-xss.js | noCsp": [
         "audits[csp-xss].details.items[0].description"
       ],
-      "core/audits/has-hsts.js | title": [
-        "audits[has-hsts].title"
-      ],
-      "core/audits/has-hsts.js | description": [
-        "audits[has-hsts].description"
-      ],
+      "core/audits/has-hsts.js | title": ["audits[has-hsts].title"],
+      "core/audits/has-hsts.js | description": ["audits[has-hsts].description"],
       "core/audits/has-hsts.js | columnDirective": [
         "audits[has-hsts].details.headings[1].label"
       ],
@@ -10890,9 +10815,7 @@
       "core/audits/accessibility/button-name.js | description": [
         "audits[button-name].description"
       ],
-      "core/audits/accessibility/bypass.js | title": [
-        "audits.bypass.title"
-      ],
+      "core/audits/accessibility/bypass.js | title": ["audits.bypass.title"],
       "core/audits/accessibility/bypass.js | description": [
         "audits.bypass.description"
       ],
@@ -10908,9 +10831,7 @@
       "core/audits/accessibility/definition-list.js | description": [
         "audits[definition-list].description"
       ],
-      "core/audits/accessibility/dlitem.js | title": [
-        "audits.dlitem.title"
-      ],
+      "core/audits/accessibility/dlitem.js | title": ["audits.dlitem.title"],
       "core/audits/accessibility/dlitem.js | description": [
         "audits.dlitem.description"
       ],
@@ -11004,9 +10925,7 @@
       "core/audits/accessibility/label-content-name-mismatch.js | description": [
         "audits[label-content-name-mismatch].description"
       ],
-      "core/audits/accessibility/label.js | title": [
-        "audits.label.title"
-      ],
+      "core/audits/accessibility/label.js | title": ["audits.label.title"],
       "core/audits/accessibility/label.js | description": [
         "audits.label.description"
       ],
@@ -11028,9 +10947,7 @@
       "core/audits/accessibility/link-in-text-block.js | description": [
         "audits[link-in-text-block].description"
       ],
-      "core/audits/accessibility/list.js | title": [
-        "audits.list.title"
-      ],
+      "core/audits/accessibility/list.js | title": ["audits.list.title"],
       "core/audits/accessibility/list.js | description": [
         "audits.list.description"
       ],
@@ -11175,15 +11092,11 @@
         "audits[font-display-insight].details.headings[1].label",
         "audits[image-delivery-insight].details.headings[3].label"
       ],
-      "core/audits/dobetterweb/doctype.js | title": [
-        "audits.doctype.title"
-      ],
+      "core/audits/dobetterweb/doctype.js | title": ["audits.doctype.title"],
       "core/audits/dobetterweb/doctype.js | description": [
         "audits.doctype.description"
       ],
-      "core/audits/dobetterweb/charset.js | title": [
-        "audits.charset.title"
-      ],
+      "core/audits/dobetterweb/charset.js | title": ["audits.charset.title"],
       "core/audits/dobetterweb/charset.js | description": [
         "audits.charset.description"
       ],
@@ -11232,9 +11145,7 @@
       "core/audits/seo/http-status-code.js | description": [
         "audits[http-status-code].description"
       ],
-      "core/audits/seo/link-text.js | title": [
-        "audits[link-text].title"
-      ],
+      "core/audits/seo/link-text.js | title": ["audits[link-text].title"],
       "core/audits/seo/link-text.js | description": [
         "audits[link-text].description"
       ],
@@ -11247,9 +11158,7 @@
       "core/audits/seo/crawlable-anchors.js | columnFailingLink": [
         "audits[crawlable-anchors].details.headings[0].label"
       ],
-      "core/audits/seo/is-crawlable.js | title": [
-        "audits[is-crawlable].title"
-      ],
+      "core/audits/seo/is-crawlable.js | title": ["audits[is-crawlable].title"],
       "core/audits/seo/is-crawlable.js | description": [
         "audits[is-crawlable].description"
       ],
@@ -11267,15 +11176,11 @@
           "path": "audits[robots-txt].displayValue"
         }
       ],
-      "core/audits/seo/hreflang.js | title": [
-        "audits.hreflang.title"
-      ],
+      "core/audits/seo/hreflang.js | title": ["audits.hreflang.title"],
       "core/audits/seo/hreflang.js | description": [
         "audits.hreflang.description"
       ],
-      "core/audits/seo/canonical.js | title": [
-        "audits.canonical.title"
-      ],
+      "core/audits/seo/canonical.js | title": ["audits.canonical.title"],
       "core/audits/seo/canonical.js | description": [
         "audits.canonical.description"
       ],
@@ -11285,12 +11190,8 @@
       "core/audits/seo/manual/structured-data.js | description": [
         "audits[structured-data].description"
       ],
-      "core/audits/bf-cache.js | title": [
-        "audits[bf-cache].title"
-      ],
-      "core/audits/bf-cache.js | description": [
-        "audits[bf-cache].description"
-      ],
+      "core/audits/bf-cache.js | title": ["audits[bf-cache].title"],
+      "core/audits/bf-cache.js | description": ["audits[bf-cache].description"],
       "node_modules/@paulirish/trace_engine/models/trace/insights/Cache.js | title": [
         "audits[cache-insight].title"
       ],

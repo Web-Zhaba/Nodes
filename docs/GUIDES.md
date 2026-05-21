@@ -27,7 +27,7 @@ npm run dev
 
 ### Автоматический деплой
 Приложение настроено на автоматический деплой при пуше в ветку `main`.
-- **URL проекта:** https://nodes-coral.vercel.app
+- **URL проекта:** https://www.nodes-tracker.ru/
 - **CI/CD:** GitHub Actions (опционально) или Vercel Git Integration.
 
 ### Настройка Environment Variables в Vercel
