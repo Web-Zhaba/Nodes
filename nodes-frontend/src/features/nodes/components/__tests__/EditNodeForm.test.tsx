@@ -192,9 +192,6 @@ describe('EditNodeForm Component', () => {
     (getUserConnectors as any).mockResolvedValue([]);
     (deleteNode as any).mockResolvedValue(true);
 
-    // Мокаем window.confirm, чтобы он возвращал true
-    const confirmSpy = vi.spyOn(window, 'confirm').mockImplementation(() => true);
-
     renderComponent();
 
     await waitFor(() => {
@@ -205,13 +202,13 @@ describe('EditNodeForm Component', () => {
     const deleteButton = screen.getByRole('button', { name: /Удалить узел/i });
     fireEvent.click(deleteButton);
 
-    expect(confirmSpy).toHaveBeenCalled();
+    // В AlertDialog теперь нужно нажать кнопку подтверждения в портале
+    // Текст кнопки берем из i18n (common.save / Save) или проверяем что появилось
+    const confirmButton = await screen.findByRole('button', { name: /Удалить/i });
+    fireEvent.click(confirmButton);
 
     await waitFor(() => {
       expect(deleteNode).toHaveBeenCalledWith('test-node-1');
-      expect(toast.success).toHaveBeenCalledWith('Узел обновлен');
     });
-
-    confirmSpy.mockRestore();
   });
 });

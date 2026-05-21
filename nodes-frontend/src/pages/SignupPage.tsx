@@ -19,11 +19,16 @@ import { Github } from 'lucide-react';
 import { Chrome } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
+import { Checkbox } from '@/components/ui/checkbox'
+
 const signupSchema = z
   .object({
     email: z.string().email('Некорректный email'),
     password: z.string().min(6, 'Пароль должен быть не менее 6 символов'),
     confirmPassword: z.string(),
+    acceptTerms: z.boolean().refine((val) => val === true, {
+      message: 'Вы должны принять условия использования',
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Пароли не совпадают',
@@ -42,6 +47,7 @@ export default function SignupPage() {
       email: '',
       password: '',
       confirmPassword: '',
+      acceptTerms: undefined as any,
     },
   })
 
@@ -138,6 +144,35 @@ export default function SignupPage() {
               {form.formState.errors.confirmPassword && (
                 <p className="text-sm text-destructive mt-1">
                   {form.formState.errors.confirmPassword.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-start space-x-2 p-1">
+                <Checkbox 
+                  id="acceptTerms" 
+                  className="mt-1"
+                  onCheckedChange={(checked) => form.setValue('acceptTerms', checked === true)}
+                  disabled={isLoading}
+                />
+                <label
+                  htmlFor="acceptTerms"
+                  className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none"
+                >
+                  Я согласен с{' '}
+                  <Link to="/terms" className="text-primary hover:underline font-bold">
+                    Условиями использования
+                  </Link>{' '}
+                  и{' '}
+                  <Link to="/privacy" className="text-primary hover:underline font-bold">
+                    Политикой конфиденциальности
+                  </Link>
+                </label>
+              </div>
+              {form.formState.errors.acceptTerms && (
+                <p className="text-xs text-destructive px-1">
+                  {form.formState.errors.acceptTerms.message}
                 </p>
               )}
             </div>

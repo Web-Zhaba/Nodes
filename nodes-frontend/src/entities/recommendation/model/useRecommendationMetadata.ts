@@ -1,4 +1,5 @@
-import { Video, Book, FileText, GraduationCap, Github, Code, Newspaper, ShoppingCart, LucideIcon } from "lucide-react";
+import { Video, Book, FileText, GraduationCap, Github, Code, Newspaper, ShoppingCart } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { Recommendation } from "@/types";
 
 export const useRecommendationMetadata = (content_type: Recommendation["content_type"], source: string) => {

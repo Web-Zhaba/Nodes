@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { ExternalLink, Bookmark, Play } from "lucide-react";
-import type { Recommendation } from "@/types";
+import type { Recommendation, Connector } from "@/types";
 import { cn } from "@/lib/utils";
 import { useRecommendationMetadata } from "../model/useRecommendationMetadata";
 import { useTranslation } from "react-i18next";
