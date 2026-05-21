@@ -1,4 +1,49 @@
 {
+  "legal": {
+    "lastUpdated": "Last updated",
+    "privacy": {
+      "title": "Privacy Policy",
+      "sections": [
+        {
+          "title": "1. Information Collection",
+          "content": "We collect information you provide directly to us when using Nodes, such as when you create an account, create nodes, or communicate with us."
+        },
+        {
+          "title": "2. Use of Information",
+          "content": "We use the information we collect to provide, maintain, and improve our services, as well as to develop new features and protect our users."
+        },
+        {
+          "title": "3. Data Security",
+          "content": "We implement appropriate technical and organizational measures to protect the security of your personal information against unauthorized access, alteration, disclosure, or destruction."
+        },
+        {
+          "title": "4. Contact Us",
+          "content": "If you have any questions about this Privacy Policy, please contact us."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "sections": [
+        {
+          "title": "1. Acceptance of Terms",
+          "content": "By accessing or using Nodes, you agree to be bound by these Terms of Service and all applicable laws and regulations."
+        },
+        {
+          "title": "2. Use License",
+          "content": "We grant you a personal, non-exclusive, non-transferable license to use the Nodes platform for your personal or internal business purposes in accordance with these Terms."
+        },
+        {
+          "title": "3. User Content",
+          "content": "You retain all rights to the content you create and store in Nodes. You are responsible for ensuring your content complies with applicable laws."
+        },
+        {
+          "title": "4. Disclaimer",
+          "content": "The materials in Nodes are provided on an 'as is' basis. We make no warranties, expressed or implied, and hereby disclaim and negate all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights."
+        }
+      ]
+    }
+  },
   "dashboard": {
     "calendar": {
       "backToToday": "Back to Today"
@@ -83,6 +128,7 @@
     "nodes": "Nodes",
     "graph": "Graph",
     "analytics": "Analytics",
+    "recommendations": "Ideas",
     "profile": "Profile",
     "home": "Home",
     "logout": "Logout"
@@ -214,6 +260,20 @@
       "stabilityAuto": "Stability is calculated automatically",
       "connectorsLogic": "Connectors link nodes semantically",
       "massLogic": "Mass affects the speed of stability accumulation"
+    }
+  },
+  "recommendations": {
+    "title": "Recommendations",
+    "subtitle": "Content selected based on your habits",
+    "empty": {
+      "title": "No recommendations yet",
+      "description": "Complete more nodes to help the system understand your interests!"
+    },
+    "error": "Failed to load recommendations",
+    "actions": {
+      "open": "Open",
+      "save": "Save",
+      "discard": "Hide"
     }
   },
   "profile": {

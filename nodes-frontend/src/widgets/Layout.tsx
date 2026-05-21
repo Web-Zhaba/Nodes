@@ -2,7 +2,7 @@ import { Link, useLocation, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Home } from 'lucide-react';
 import { Share2 } from 'lucide-react';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, Lightbulb } from 'lucide-react';
 import { User } from 'lucide-react';
 import { FloatingNavbar } from "@/components/ui/floating-navbar";
 import { motion } from "motion/react";
@@ -32,6 +32,7 @@ export default function Layout() {
     { path: "/", label: t("nav.dashboard", "Сегодня"), icon: Home },
     { path: "/graph", label: t("nav.graph", "Граф"), icon: Share2 },
     { path: "/analytics", label: t("nav.analytics", "Аналитика"), icon: BarChart3 },
+    { path: "/recommendations", label: t("nav.recommendations", "Идеи"), icon: Lightbulb },
     { path: "/profile", label: t("nav.profile", "Профиль"), icon: User },
   ];
 
@@ -78,7 +79,7 @@ export default function Layout() {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto max-w-7xl px-4 pt-[max(env(safe-area-inset-top),8px)] md:pt-24 pb-6 md:pb-6">
+      <main className="flex-1 flex flex-col min-h-0 pt-[max(env(safe-area-inset-top),8px)] md:pt-20">
         <Outlet />
       </main>
 

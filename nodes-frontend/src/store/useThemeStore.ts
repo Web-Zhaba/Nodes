@@ -21,6 +21,7 @@ interface ThemeState {
   applyPalette: (lightColors: Record<string, string>, darkColors: Record<string, string>) => void
   resetToDefaults: () => void
   loadFromCloud: (userId: string) => Promise<void>
+  clearCache: () => void
   updateConfig: (config: ThemeConfig) => void
 }
 
@@ -28,7 +29,7 @@ export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
       config: {
-        mode: "light",
+        mode: "dark",
         colors: { light: {}, dark: {} },
       },
       isInitialized: false,
@@ -79,6 +80,16 @@ export const useThemeStore = create<ThemeState>()(
         }))
         get().applyTheme()
       },
+      clearCache: () => {
+        set({
+          config: {
+            mode: "dark",
+            colors: { light: {}, dark: {} },
+          },
+          isInitialized: false
+        })
+        get().applyTheme()
+      },
       applyTheme: () => {
         const { config } = get()
         const root = document.documentElement
@@ -112,8 +123,6 @@ export const useThemeStore = create<ThemeState>()(
         })
       },
       loadFromCloud: async (userId: string) => {
-        if (get().isInitialized) return
-
         const { data, error } = await supabase
           .from("profiles")
           .select("theme_config")

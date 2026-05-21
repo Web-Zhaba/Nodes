@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { User, Session } from '@supabase/supabase-js'
+import { useThemeStore } from '@/store/useThemeStore'
 
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null)
@@ -12,6 +13,9 @@ export function useAuth() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
+      if (session?.user) {
+        useThemeStore.getState().loadFromCloud(session.user.id)
+      }
       setIsLoading(false)
     })
 
@@ -21,6 +25,9 @@ export function useAuth() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
+      if (session?.user) {
+        useThemeStore.getState().loadFromCloud(session.user.id)
+      }
       setIsLoading(false)
     })
 

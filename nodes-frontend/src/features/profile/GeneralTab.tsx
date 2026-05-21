@@ -15,9 +15,13 @@ import { useOnboardingStore } from "@/features/onboarding/useOnboardingStore";
 import { IdentitySection } from "./sections/IdentitySection";
 import { RegionalSection } from "./sections/RegionalSection";
 import { GreetingSection } from "./sections/GreetingSection";
+import { RecommendationsSection } from "./sections/RecommendationsSection";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 export function GeneralTab() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const { isLoading: isProfileLoading } = useProfileQuery(user?.id);
   const { t } = useTranslation();
   const form = useFormContext();
@@ -36,6 +40,7 @@ export function GeneralTab() {
   const handleLogout = async () => {
     try {
       await authService.signOut();
+      queryClient.clear(); // Полная очистка кэша React Query
       toast.success(t("profile.general.logoutSuccess", "Session ended"));
     } catch (_) {
       toast.error(t("profile.general.logoutError", "Error signing out"));
@@ -54,7 +59,7 @@ export function GeneralTab() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <IdentitySection form={form} isLoading={isSubmitting} email={user?.email || ""} />
 
-      <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-8">
+      <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-4 sm:p-8 shadow-xl space-y-8">
         <div>
           <h2 className="text-xl font-bold">{t("profile.general.systemSettings", "System Settings")}</h2>
           <p className="text-sm text-muted-foreground">{t("profile.general.systemSettingsDesc", "Configuration of your node environment.")}</p>
@@ -64,6 +69,10 @@ export function GeneralTab() {
         
         <div className="border-t border-border/40 pt-8">
           <GreetingSection form={form} isLoading={isSubmitting} />
+        </div>
+
+        <div className="border-t border-border/40 pt-8">
+          <RecommendationsSection form={form} isLoading={isSubmitting} />
         </div>
 
         <div className="border-t border-border/40 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">

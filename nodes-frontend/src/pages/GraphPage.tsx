@@ -127,12 +127,12 @@ export default function GraphPage() {
 
   return (
     <div className={cn(
-      "w-full max-w-7xl mx-auto flex flex-col relative gap-4 p-4",
-      "h-[calc(100vh-6rem)] md:h-[calc(100vh-4rem)] pb-24 md:pb-4"
+      "w-full max-w-7xl mx-auto flex flex-col relative gap-8 p-4 sm:p-6 mb-20",
+      "animate-in fade-in slide-in-from-bottom-4 duration-700"
     )}>
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div>
-          <p className="text-xs font-medium text-muted-foreground mb-1">
+          <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
             {t("graph.category")}
           </p>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/50">
@@ -145,8 +145,8 @@ export default function GraphPage() {
         </div>
       </header>
 
-      {/* Main Area: Integrated Graph + Command Center */}
-      <div className="flex-1 rounded-[2.5rem] md:rounded-3xl border border-primary/10 overflow-hidden relative bg-background/50 backdrop-blur-sm shadow-inner min-h-0">
+      {/* Main Area: Integrated Graph + Command Center (Natural height) */}
+      <div className="rounded-[2.5rem] md:rounded-3xl border border-primary/10 relative bg-background/50 backdrop-blur-sm shadow-inner min-h-[600px]">
         <GraphCommandCenter
           graphData={graphData}
           nodes={nodesList}

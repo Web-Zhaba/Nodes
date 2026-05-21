@@ -24,13 +24,13 @@ export function IdentitySection({ form, isLoading, email }: IdentitySectionProps
         </span>
       </div>
       <div className="flex-1 space-y-1 w-full min-w-0">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           {isEditingName ? (
-            <div className="flex items-center gap-2 w-full">
+            <div className="flex items-center gap-2 w-full min-w-0">
               <Input
                 id="displayName"
                 {...form.register("displayName")}
-                className="bg-background/50 border-primary/30 h-10 rounded-xl"
+                className="bg-background/50 border-primary/30 h-10 rounded-xl w-full min-w-0"
                 autoFocus
                 disabled={isLoading}
               />
@@ -45,13 +45,13 @@ export function IdentitySection({ form, isLoading, email }: IdentitySectionProps
             </div>
           ) : (
             <>
-              <h3 className="text-2xl font-bold tracking-tight truncate max-w-[300px]">
+              <h3 className="text-xl sm:text-2xl font-bold tracking-tight truncate min-w-0 flex-1">
                 {form.watch("displayName") || t("profile.identity.anonymousNode", "Анонимный узел")}
               </h3>
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="w-8 h-8 rounded-lg text-muted-foreground hover:text-primary transition-colors"
+                className="w-8 h-8 rounded-lg text-muted-foreground hover:text-primary transition-colors shrink-0"
                 onClick={() => setIsEditingName(true)}
               >
                 <Edit2 className="w-3 h-3" />
@@ -59,7 +59,7 @@ export function IdentitySection({ form, isLoading, email }: IdentitySectionProps
             </>
           )}
         </div>
-        <p className="text-sm text-muted-foreground truncate px-1">
+        <p className="text-xs sm:text-sm text-muted-foreground truncate px-1">
           {email || "node-operator@system.nodes"}
         </p>
       </div>

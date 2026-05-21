@@ -39,7 +39,7 @@ export default function AnalyticsPage() {
     const { t, i18n } = useTranslation();
     const { user } = useAuth();
     const { focusEntity, rawStabilitySeries } = useAnalyticsStore();
-    const { data: nodes = {}, isLoading: nodesLoading } = useNodesQuery(user?.id);
+    const { data: nodes = {} } = useNodesQuery(user?.id);
 
     const systemStats = useMemo(() => {
         const nodesList = Object.values(nodes);
@@ -73,138 +73,150 @@ export default function AnalyticsPage() {
     }, []);
 
     return (
-        <div className="p-4 sm:p-6 mb-20 space-y-6">
-            <GlobalControlBar />
-
-            {/* System Summary (Always Visible) */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-primary/5 border border-primary/10 rounded-[2rem] p-6 shadow-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                        <Award className="w-4 h-4 text-primary" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider">
-                            {t("analytics.systemStats.totalNodes", "Всего узлов")}
-                        </span>
-                    </div>
-                    {nodesLoading ? (
-                        <div className="h-8 w-16 bg-muted animate-pulse rounded-lg" />
-                    ) : (
-                        <p className="text-3xl font-black tracking-tighter">{systemStats.totalNodes}</p>
-                    )}
+        <div className={cn(
+            "w-full max-w-7xl mx-auto flex flex-col relative gap-8 p-4 sm:p-6 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700"
+        )}>
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+                <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">
+                        {t("analytics.category", "Статистика")}
+                    </p>
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/50">
+                        {t("nav.analytics", "Аналитика")}
+                    </h1>
+                    <p className="text-xs sm:text-sm font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1 opacity-80 text-cyan-400">
+                        <TrendingUp className="w-3.5 h-3.5" />
+                        {t("analytics.subtitle", "Динамика системы")}
+                    </p>
                 </div>
 
-                <div className="bg-background border border-border/40 rounded-[2rem] p-6 shadow-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                        <TrendingUp className="w-4 h-4 text-cyan-400" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider">
-                            {t("analytics.systemStats.avgStability", "Стабильность системы")}
-                        </span>
+                {/* System Summary */}
+                <div className="flex items-center gap-3">
+                    <div className="bg-primary/5 border border-primary/10 rounded-2xl px-4 py-2 shadow-sm">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <Award className="w-3 h-3 text-primary" />
+                            <span className="text-[9px] font-bold uppercase tracking-wider">
+                                {t("analytics.systemStats.totalNodes", "Узлов")}
+                            </span>
+                        </div>
+                        <p className="text-lg font-black tracking-tighter">{systemStats.totalNodes}</p>
                     </div>
-                    {nodesLoading ? (
-                        <div className="h-8 w-16 bg-muted animate-pulse rounded-lg" />
-                    ) : (
-                        <p className="text-3xl font-black tracking-tighter text-cyan-400">{systemStats.avgStability}%</p>
-                    )}
-                </div>
-            </div>
 
-            <AnimatePresence mode="wait">
-                {focusedNodeData ? (
-                    <motion.section
-                        key="focused-node"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="space-y-8"
-                    >
-                        {/* Node Header */}
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                            <div className="flex items-center gap-4 min-w-0">
-                                <div
-                                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-[2rem] flex items-center justify-center shadow-lg shrink-0"
-                                    style={{
-                                        backgroundColor: `${focusedNodeData.color}15`,
-                                        border: `1px solid ${focusedNodeData.color}30`
-                                    }}
-                                >
-                                    <DynamicIcon name={focusedNodeData.icon || 'zap'} className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: focusedNodeData.color || '#6366f1' }} />
+                    <div className="bg-background border border-border/40 rounded-2xl px-4 py-2 shadow-sm">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <TrendingUp className="w-3 h-3 text-cyan-400" />
+                            <span className="text-[9px] font-bold uppercase tracking-wider">
+                                {t("analytics.systemStats.avgStability", "Стабильность")}
+                            </span>
+                        </div>
+                        <p className="text-lg font-black tracking-tighter text-cyan-400">{systemStats.avgStability}%</p>
+                    </div>
+                </div>
+            </header>
+
+            {/* Main Area (Natural height, no internal scroll) */}
+            <div className="flex flex-col gap-8">
+                <GlobalControlBar />
+                
+                <AnimatePresence mode="wait">
+                    {focusedNodeData ? (
+                        <motion.section
+                            key="focused-node"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="space-y-8"
+                        >
+                            {/* Node Header */}
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                                <div className="flex items-center gap-4 min-w-0">
+                                    <div
+                                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-[2rem] flex items-center justify-center shadow-lg shrink-0"
+                                        style={{
+                                            backgroundColor: `${focusedNodeData.color}15`,
+                                            border: `1px solid ${focusedNodeData.color}30`
+                                        }}
+                                    >
+                                        <DynamicIcon name={focusedNodeData.icon || 'zap'} className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: focusedNodeData.color || '#6366f1' }} />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
+                                            <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tighter break-words">{focusedNodeData.name}</h2>
+                                            <StabilityBadge score={focusedNodeData.stability_score || 0} />
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs md:text-sm text-muted-foreground font-medium">
+                                            <span className="bg-muted/50 px-2.5 py-0.5 rounded-lg border border-border/40">
+                                                {t(`nodes.type.${focusedNodeData.node_type}`, focusedNodeData.node_type)}
+                                            </span>
+                                            <span className="w-1 h-1 rounded-full bg-border hidden sm:inline" />
+                                            <span className="hidden sm:inline">
+                                                {t("public.node.createdAt", "Создан {{date}}", {
+                                                    date: new Date(focusedNodeData.created_at).toLocaleDateString(i18n.language === "ru" ? "ru-RU" : "en-US")
+                                                })}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="min-w-0">
-                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
-                                        <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tighter break-words">{focusedNodeData.name}</h2>
-                                        <StabilityBadge score={focusedNodeData.stability_score || 0} />
-                                    </div>
-                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs md:text-sm text-muted-foreground font-medium">
-                                        <span className="bg-muted/50 px-2.5 py-0.5 rounded-lg border border-border/40">
-                                            {t(`nodes.type.${focusedNodeData.node_type}`, focusedNodeData.node_type)}
-                                        </span>
-                                        <span className="w-1 h-1 rounded-full bg-border hidden sm:inline" />
-                                        <span className="hidden sm:inline">
-                                            {t("public.node.createdAt", "Создан {{date}}", {
-                                                date: new Date(focusedNodeData.created_at).toLocaleDateString(i18n.language === "ru" ? "ru-RU" : "en-US")
-                                            })}
-                                        </span>
-                                    </div>
+
+                                <div className="text-left sm:text-right">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">
+                                        {t("analytics.nodeStats.stability", "Стабильность")}
+                                    </p>
+                                    <p className="text-2xl sm:text-3xl font-black font-mono tracking-tighter" style={{ color: focusedNodeData.color || '#6366f1' }}>
+                                        {Math.round(focusedNodeData.stability_score || 0)}%
+                                    </p>
                                 </div>
                             </div>
 
-                            <div className="text-left sm:text-right">
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">
-                                    {t("analytics.nodeStats.stability", "Стабильность")}
-                                </p>
-                                <p className="text-2xl sm:text-3xl font-black font-mono tracking-tighter" style={{ color: focusedNodeData.color || '#6366f1' }}>
-                                    {Math.round(focusedNodeData.stability_score || 0)}%
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Stats Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-8">
-                            {[
-                                { label: t("analytics.nodeStats.completions", "Выполнений"), value: focusedNodeData.completion_count, icon: Award },
-                                { label: t("analytics.nodeStats.mass", "Масса узла"), value: focusedNodeData.mass, icon: Zap },
-                                { label: t("analytics.nodeStats.impulses", "Импульсов"), value: focusedNodeData.totalImpulses, icon: TrendingUp },
-                                { label: t("analytics.nodeStats.daysOnline", "Дней в сети"), value: focusedNodeData.daysInNetwork, icon: Globe },
-                            ].map((stat, i) => (
-                                <div key={i} className="bg-background/40 border border-border/40 rounded-2xl p-3 sm:p-4 shadow-sm min-w-0">
-                                    <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground mb-1">
-                                        <stat.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                                        <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider truncate">{stat.label}</span>
+                            {/* Stats Grid */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-8">
+                                {[
+                                    { label: t("analytics.nodeStats.completions", "Выполнений"), value: focusedNodeData.completion_count, icon: Award },
+                                    { label: t("analytics.nodeStats.mass", "Масса узла"), value: focusedNodeData.mass, icon: Zap },
+                                    { label: t("analytics.nodeStats.impulses", "Импульсов"), value: focusedNodeData.totalImpulses, icon: TrendingUp },
+                                    { label: t("analytics.nodeStats.daysOnline", "Дней в сети"), value: focusedNodeData.daysInNetwork, icon: Globe },
+                                ].map((stat, i) => (
+                                    <div key={i} className="bg-background/40 border border-border/40 rounded-2xl p-3 sm:p-4 shadow-sm min-w-0">
+                                        <div className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground mb-1">
+                                            <stat.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                                            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider truncate">{stat.label}</span>
+                                        </div>
+                                        <p className="text-lg sm:text-xl font-black truncate">{stat.value}</p>
                                     </div>
-                                    <p className="text-lg sm:text-xl font-black truncate">{stat.value}</p>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
 
-                        {/* Charts for focused node */}
-                        <div className="space-y-6">
+                            {/* Charts for focused node */}
+                            <div className="space-y-6">
+                                <StabilityHeroChart />
+                                <PulseHeatmap />
+                            </div>
+                        </motion.section>
+                    ) : (
+                        <motion.div
+                            key="global-stats"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="space-y-8"
+                        >
                             <StabilityHeroChart />
                             <PulseHeatmap />
-                        </div>
-                    </motion.section>
-                ) : (
-                    <motion.div
-                        key="global-stats"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="space-y-8"
-                    >
-                        <StabilityHeroChart />
-                        <PulseHeatmap />
-                        
-                        {/* Hint for selection */}
-                        <div className="bg-muted/5 border border-border/10 rounded-[2.5rem] p-8 text-center opacity-80">
-                            <div className="w-12 h-12 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-4">
-                                <Activity className="w-6 h-6 text-muted-foreground/40" />
+                            
+                            {/* Hint for selection */}
+                            <div className="bg-muted/5 border border-border/10 rounded-[2.5rem] p-8 text-center opacity-80">
+                                <div className="w-12 h-12 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-4">
+                                    <Activity className="w-6 h-6 text-muted-foreground/40" />
+                                </div>
+                                <h3 className="text-lg font-bold tracking-tight mb-2">{t("analytics.emptyState.selectNodeTitle", "Выберите узел для анализа")}</h3>
+                                <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                                    {t("analytics.emptyState.selectNodeDescription", "Нажмите на любой узел в списке или на графе, чтобы увидеть детальную статистику его развития.")}
+                                </p>
                             </div>
-                            <h3 className="text-lg font-bold tracking-tight mb-2">{t("analytics.emptyState.selectNodeTitle", "Выберите узел для анализа")}</h3>
-                            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                                {t("analytics.emptyState.selectNodeDescription", "Нажмите на любой узел в списке или на графе, чтобы увидеть детальную статистику его развития.")}
-                            </p>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
         </div>
     );
 }

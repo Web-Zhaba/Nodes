@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useAuth } from "@/hooks/useAuth";
@@ -62,13 +62,26 @@ const AuthCallbackPage = lazy(() => import("@/pages/AuthCallbackPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const GraphPage = lazy(() => import("@/pages/GraphPage"));
 const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
+const RecommendationsPage = lazy(() => import("@/pages/RecommendationsPage"));
 const PublicGraphPage = lazy(() => import("@/pages/PublicGraphPage"));
 const PublicNodePage = lazy(() => import("@/pages/PublicNodePage"));
+const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
+const TermsPage = lazy(() => import("@/pages/TermsPage"));
 
 function AppRouter() {
   const { t } = useTranslation();
+  const location = useLocation();
   useMobileNavigation();
-  useSyncManager()
+  useSyncManager();
+
+  // Track page views in Google Analytics on route change
+  useEffect(() => {
+    if (typeof (window as any).gtag === 'function') {
+      (window as any).gtag('config', 'G-D4PDMWV3T6', {
+        page_path: location.pathname + location.search,
+      });
+    }
+  }, [location]);
 
   return (
     <Suspense
@@ -78,6 +91,8 @@ function AppRouter() {
         <Route path="/login" element={<AuthRedirect />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
 
         {/* Neural Public Sharing — read-only, no auth required */}
         <Route path="/share/u/:slug" element={<PublicGraphPage />} />
@@ -99,6 +114,7 @@ function AppRouter() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="graph" element={<GraphPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="recommendations" element={<RecommendationsPage />} />
         </Route>
 
         {/* 404 */}
@@ -161,9 +177,9 @@ function App() {
           duration: 4000,
         }}
       />
-      <HashRouter>
+      <BrowserRouter>
         <AppRouter />
-      </HashRouter>
+      </BrowserRouter>
       <Analytics />
         <SpeedInsights />
       </ErrorBoundary>

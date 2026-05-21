@@ -2,7 +2,7 @@ import { useAnalyticsStore } from '../../../store/useAnalyticsStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Globe } from 'lucide-react';
-import { Activity } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 
@@ -16,29 +16,13 @@ export function GlobalControlBar() {
     : null;
 
   return (
-    <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-        <div>
-          <p className="text-xs font-medium text-muted-foreground mb-1">
-            {t("analytics.stats")}
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-foreground/50">
-            {t("analytics.title")}
-          </h1>
-          <p className="text-xs sm:text-sm font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1 opacity-80 text-primary">
-            <Activity className="w-3.5 h-3.5" />
-            {t("analytics.metrics")}
-          </p>
-        </div>
-        
-        {/* Separator */}
-        <div className="h-6 w-px bg-border/50 hidden md:block"></div>
-
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
         {/* Current Context Indicator / Reset Button */}
         <button 
           onClick={focusedNode ? clearFocus : undefined}
           className={cn(
-            "flex items-center gap-2 text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 rounded-md border transition-all truncate max-w-[200px] sm:max-w-none",
+            "flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-xl border transition-all truncate max-w-[200px] sm:max-w-none",
             focusedNode 
               ? "bg-primary/10 border-primary/30 text-primary cursor-pointer hover:bg-primary/20 hover:border-primary/50 shadow-[0_0_15px_rgba(var(--primary),0.1)]" 
               : "bg-muted/30 border-border/50 text-muted-foreground cursor-default"
@@ -63,11 +47,11 @@ export function GlobalControlBar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
               transition={{ duration: 0.2 }}
-              className="truncate"
+              className="truncate font-bold tracking-tight"
             >
               {focusedNode ? (
                 <span className="flex items-center gap-1.5 sm:gap-2 truncate">
-                  <span className="hidden xs:inline">{t("analytics.focus")}</span> <span style={{ color: focusedNode.color ?? undefined }} className="font-semibold truncate">{focusedNode.name}</span>
+                  <span className="hidden xs:inline">{t("analytics.focus")}</span> <span style={{ color: focusedNode.color ?? undefined }} className="truncate">{focusedNode.name}</span>
                 </span>
               ) : (
                 <span>{t("analytics.allNodes")}</span>
@@ -84,6 +68,6 @@ export function GlobalControlBar() {
           </span>
         )}
       </div>
-    </header>
+    </div>
   );
 }

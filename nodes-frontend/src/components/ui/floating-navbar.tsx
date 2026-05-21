@@ -2,11 +2,10 @@ import * as React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
-import { Home } from 'lucide-react';
-import { Share2 } from 'lucide-react';
-import { BarChart3 } from 'lucide-react';
-import { User } from 'lucide-react';
+import { Home, Share2, BarChart3, User, Lightbulb } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/hooks/useAuth';
+import { useProfileQuery } from '@/features/profile/hooks/useProfileQuery';
 
 interface NavItem {
   icon: React.ElementType;
@@ -17,12 +16,20 @@ interface NavItem {
 export function FloatingNavbar() {
   const location = useLocation();
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { data: profile } = useProfileQuery(user?.id);
 
   const NAV_ITEMS: NavItem[] = [
     { icon: Home, href: '/', label: t("nav.dashboard", "Сегодня") },
     { icon: Share2, href: '/graph', label: t("nav.graph", "Граф") },
     { icon: BarChart3, href: '/analytics', label: t("nav.analytics", "Аналитика") },
-  ];
+    { icon: Lightbulb, href: '/recommendations', label: t("nav.recommendations", "Идеи") },
+  ].filter(item => {
+    if (item.href === '/recommendations' && profile?.show_recommendations === false) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 justify-center pt-4 sm:pt-6 pointer-events-none">

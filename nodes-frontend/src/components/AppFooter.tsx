@@ -26,10 +26,16 @@ export function AppFooter({ className }: AppFooterProps) {
         </div>
         <div className="flex items-center gap-5">
           <Link
-            to="/"
+            to="/privacy"
             className="text-[10px] font-bold uppercase tracking-widest hover:text-foreground transition-colors"
           >
-            {t("nav.home", "Home")}
+            {t("legal.privacy.title", "Privacy")}
+          </Link>
+          <Link
+            to="/terms"
+            className="text-[10px] font-bold uppercase tracking-widest hover:text-foreground transition-colors"
+          >
+            {t("legal.terms.title", "Terms")}
           </Link>
           <a
             href="https://github.com/Web-Zhaba/Nodes"

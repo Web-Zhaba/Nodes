@@ -33,6 +33,17 @@ import { IconPicker } from "./IconPicker";
 import { NodePreview } from "./NodePreview";
 import { ConnectorSelector } from "@/entities/connector/ui/ConnectorSelector";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 interface EditNodeFormProps {
   nodeId: string;
 }
@@ -52,6 +63,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
   const deleteMutation = useDeleteNodeMutation();
 
   const [nodeType, setNodeType] = useState<NodeType>("binary");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // React Hook Form
   const {
@@ -98,10 +110,6 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
 
   // Удаление узла
   const handleDelete = async () => {
-    if (!window.confirm(t("nodes.form.edit.deleteConfirm"))) {
-      return;
-    }
-
     try {
       await deleteMutation.mutateAsync(nodeId);
       toast.success(t("nodes.form.edit.success"));
@@ -177,7 +185,7 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
           type="button"
           variant="outline"
           size="sm"
-          onClick={handleDelete}
+          onClick={() => setShowDeleteDialog(true)}
           disabled={deleteMutation.isPending}
           className="text-destructive hover:bg-destructive/10 border-destructive/20 gap-2 w-fit"
         >
@@ -189,6 +197,42 @@ export function EditNodeForm({ nodeId }: EditNodeFormProps) {
           {t("nodes.form.edit.delete")}
         </Button>
       </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="rounded-3xl border-border/40 bg-background/80 backdrop-blur-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold">
+              {t("nodes.form.edit.deleteConfirmTitle", "Удаление узла")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
+              {t("nodes.form.edit.deleteConfirm", "Вы уверены, что хотите удалить этот узел? Все данные о прогрессе будут потеряны навсегда.")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-6 gap-3">
+            <AlertDialogCancel 
+              className="rounded-2xl border-border/40 hover:bg-muted/50 transition-all"
+              disabled={deleteMutation.isPending}
+            >
+              {t("common.cancel", "Отмена")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
+              className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20 transition-all gap-2"
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
+              {t("nodes.form.edit.delete", "Удалить")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="grid gap-8 lg:grid-cols-2">
         <div className="space-y-8">
