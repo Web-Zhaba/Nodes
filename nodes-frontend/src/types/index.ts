@@ -140,6 +140,7 @@ export interface Profile {
   is_public?: boolean;
   public_slug?: string;
   bio?: string;
+  show_recommendations: boolean;
 
   created_at: string;
   updated_at: string;
@@ -154,5 +155,25 @@ export interface Impulse {
   node_id: string;
   value: number;
   completed_at: string; // YYYY-MM-DD
+  created_at: string;
+}
+
+/**
+ * Recommendation (Рекомендация) — обучающий контент на основе привычек
+ */
+export interface Recommendation {
+  id: string;
+  connectors?: Connector[];
+  content_type: "video" | "book" | "course" | "article";
+  title: string;
+  description?: string;
+  url: string;
+  thumbnail_url?: string;
+  source: string;
+  score: number;
+  affiliate_url?: string;
+  is_viewed: boolean;
+  is_saved: boolean;
+  is_discarded: boolean;
   created_at: string;
 }

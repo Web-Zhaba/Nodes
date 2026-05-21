@@ -58,7 +58,7 @@ export const RecommendationCard = ({
 
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          {connectors?.map((connector) => (
+          {connectors?.map((connector: Connector) => (
             <div 
               key={connector.id}
               className="rounded-md px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ring-1 ring-inset"
