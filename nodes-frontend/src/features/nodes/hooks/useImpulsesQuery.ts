@@ -6,9 +6,6 @@ import {
 } from "../nodeService";
 import { recordImpulse } from "@/lib/api/stability";
 import { format } from "date-fns";
-import { useSyncStore } from "@/store/useSyncStore";
-import { Network } from "@capacitor/network";
-import { toast } from "sonner";
 
 export const impulseKeys = {
   all: ["impulses"] as const,
@@ -32,7 +29,7 @@ export function useRecordPulseMutation() {
     onMutate: async ({ nodeId, value, date }: { nodeId: string; value: number; date: Date }) => {
       const dateStr = format(date, "yyyy-MM-dd");
       const impulseKey = impulseKeys.date(date);
-      
+
       // Отменяем исходящие запросы, чтобы они не перезаписали наш оптимизм
       await Promise.all([
         queryClient.cancelQueries({ queryKey: impulseKey }),
@@ -65,131 +62,47 @@ export function useRecordPulseMutation() {
       activeMutationsRef.current.add(nodeId);
       try {
         const dateStr = format(date, "yyyy-MM-dd");
-
-        let online = navigator.onLine;
-        try {
-          const status = await Network.getStatus();
-          online = status.connected;
-        } catch {}
-
-        if (!online) {
-          // Enqueue task in sync store
-          useSyncStore.getState().enqueueTask({
-            type: "pulse",
-            nodeId,
-            value,
-            dateStr,
-          });
-          return { success: true, offline: true };
-        }
-
         return await recordImpulse(nodeId, value, dateStr);
       } finally {
         activeMutationsRef.current.delete(nodeId);
       }
     },
     onSuccess: (res, variables) => {
-      // Проверяем тип результата
-      if (res && "skipped" in res) return
-
-      if (res && "offline" in res && res.offline) {
-        toast.info("Сохранено офлайн", {
-          description: "Действие будет синхронизировано при подключении к сети.",
-          id: `offline-pulse-${variables.nodeId}`,
-        })
-        return
-      }
-
-      // После ранних выходов res гарантированно является результатом от сервера
-      const serverRes = res as {
-        success: boolean
-        new_stability_score?: number
-        new_completion_count?: number
-      }
-
-      if (serverRes && serverRes.success && serverRes.new_stability_score !== undefined) {
+      // Сужаем тип результата через проверку на skipped
+      if (!('skipped' in res) && res.success && res.new_stability_score !== undefined) {
         // Вместо инвалидации (нового запроса) — просто вписываем точное число от сервера
         queryClient.setQueryData(["nodes"], (old: Record<string, any> = {}) => {
-          const node = old[variables.nodeId]
-          if (!node) return old
+          const node = old[variables.nodeId];
+          if (!node) return old;
           return {
             ...old,
-            [variables.nodeId]: { 
-              ...node, 
-              stability_score: serverRes.new_stability_score,
-              completion_count: serverRes.new_completion_count ?? node.completion_count
+            [variables.nodeId]: {
+              ...node,
+              stability_score: res.new_stability_score,
+              completion_count: res.new_completion_count ?? node.completion_count
             }
-          }
-        })
+          };
+        });
         // Тихая инвалидация ядер, так как их сложнее рассчитать точно на фронте
-        queryClient.invalidateQueries({ queryKey: ["cores"] })
+        queryClient.invalidateQueries({ queryKey: ["cores"] });
       }
     },
     onError: (_err, _variables, context: any) => {
       if (context?.previousImpulses) queryClient.setQueryData(context.impulseKey, context.previousImpulses);
       if (context?.previousNodes) queryClient.setQueryData(["nodes"], context.previousNodes);
     },
+    // Удаляем onSettled с жесткой инвалидацией
   });
 }
+
 
 export function useUpdateQuantityMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    onMutate: async ({ nodeId, value, date }: { nodeId: string; value: number; date: Date }) => {
-      const dateStr = format(date, "yyyy-MM-dd");
-      const impulseKey = impulseKeys.date(date);
-
-      await queryClient.cancelQueries({ queryKey: impulseKey });
-
-      const previousImpulses = queryClient.getQueryData<any[]>(impulseKey);
-
-      // Оптимистично обновляем значение в кэше импульсов
-      queryClient.setQueryData(impulseKey, (old: any[] = []) => {
-        const existing = old.find((imp) => imp.node_id === nodeId);
-        if (existing) return old.map((imp) => (imp.node_id === nodeId ? { ...imp, value } : imp));
-        return [...old, { node_id: nodeId, value, completed_at: dateStr }];
-      });
-
-      return { previousImpulses, impulseKey };
-    },
-    mutationFn: async ({ nodeId, value, date }: { nodeId: string; value: number; date: Date }) => {
-      const dateStr = format(date, "yyyy-MM-dd");
-
-      let online = navigator.onLine;
-      try {
-        const status = await Network.getStatus();
-        online = status.connected;
-      } catch {}
-
-      if (!online) {
-        // Enqueue task in sync store
-        useSyncStore.getState().enqueueTask({
-          type: "quantity",
-          nodeId,
-          value,
-          dateStr,
-        });
-        return { success: true, offline: true };
-      }
-
-      const success = await updateQuantityValue(nodeId, value, date);
-      if (!success) throw new Error("Supabase update failed");
-      return { success: true };
-    },
-    onSuccess: (res, variables) => {
-      if (res && "offline" in res && res.offline) {
-        toast.info("Сохранено офлайн", {
-          description: "Значение будет синхронизировано при подключении к сети.",
-          id: `offline-qty-${variables.nodeId}`,
-        });
-      } else {
-        queryClient.invalidateQueries({ queryKey: impulseKeys.date(variables.date) });
-      }
-    },
-    onError: (_err, _variables, context: any) => {
-      if (context?.previousImpulses) {
-        queryClient.setQueryData(context.impulseKey, context.previousImpulses);
-      }
+    mutationFn: ({ nodeId, value, date }: { nodeId: string; value: number; date: Date }) =>
+      updateQuantityValue(nodeId, value, date),
+    onSuccess: (_, { date }) => {
+      queryClient.invalidateQueries({ queryKey: impulseKeys.date(date) });
     },
   });
 }

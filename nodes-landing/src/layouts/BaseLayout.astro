@@ -1,18 +1,18 @@
 ---
-import en from '../i18n/en.json';
-import ru from '../i18n/ru.json';
+import en from "../i18n/en.json";
+import ru from "../i18n/ru.json";
 const translations: Record<string, any> = { en, ru };
 
 interface Props {
-  lang?: 'en' | 'ru';
+  lang?: "en" | "ru";
 }
 
-const { lang = 'en' } = Astro.props;
+const { lang = "en" } = Astro.props;
 const t = translations[lang];
-const altLang = lang === 'en' ? 'ru' : 'en';
-const altPath = lang === 'en' ? '/ru' : '/';
+const altLang = lang === "en" ? "ru" : "en";
+const altPath = lang === "en" ? "/ru" : "/";
 
-import '../styles/global.css';
+import "../styles/global.css";
 ---
 
 <!doctype html>
@@ -28,6 +28,10 @@ import '../styles/global.css';
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script
+      src="https://js-de.sentry-cdn.com/a5caa9f895be6c20a7926ad5a7a8bbc1.min.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body class="min-h-screen antialiased relative">
     <div class="fixed inset-0 z-0 pointer-events-none">
@@ -35,29 +39,49 @@ import '../styles/global.css';
       <div class="orb orb-2"></div>
       <div class="orb orb-3"></div>
     </div>
-    <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border transition-all duration-300">
-      <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between transition-all duration-300">
-        <a href={lang === 'en' ? '/' : '/ru'} class="text-xl font-bold tracking-tight text-foreground">
+    <nav
+      id="main-nav"
+      class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border transition-all duration-300"
+    >
+      <div
+        class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between transition-all duration-300"
+      >
+        <a
+          href={lang === "en" ? "/" : "/ru"}
+          class="text-xl font-bold tracking-tight text-foreground"
+        >
           NODES
         </a>
         <div class="flex items-center gap-6">
-          <a href="#features" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a
+            href="#features"
+            class="https://www.nodes-tracker.ru"
+            hover:text-foreground
+            transition-colors"
+          >
             {t.nav.features}
           </a>
-          <a href="#pricing" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a
+            href="#pricing"
+            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
             {t.nav.pricing}
           </a>
-          <a href={altPath} data-lang-switch={altLang} class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a
+            href={altPath}
+            data-lang-switch={altLang}
+            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
             {t.languageSwitcher[altLang]}
           </a>
           <a
-            href="https://nodes-coral.vercel.app/login"
+            href="https://www.nodes-tracker.ru/login"
             class="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             {t.nav.signIn}
           </a>
           <a
-            href="https://nodes-coral.vercel.app/signup"
+            href="https://www.nodes-tracker.ru/signup"
             class="btn-shimmer inline-flex items-center justify-center rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-all duration-300 hover:scale-105 active:scale-[0.98] shadow-md shadow-primary/20 hover:shadow-primary/30"
           >
             {t.nav.getStarted}
@@ -71,41 +95,50 @@ import '../styles/global.css';
     </main>
 
     <script>
-      const nav = document.getElementById('main-nav');
+      const nav = document.getElementById("main-nav");
       let lastScroll = 0;
 
-      window.addEventListener('scroll', () => {
-        const scrollY = window.scrollY;
-        if (nav) {
-          if (scrollY > 50) {
-            nav.classList.add('nav-scrolled');
-          } else {
-            nav.classList.remove('nav-scrolled');
+      window.addEventListener(
+        "scroll",
+        () => {
+          const scrollY = window.scrollY;
+          if (nav) {
+            if (scrollY > 50) {
+              nav.classList.add("nav-scrolled");
+            } else {
+              nav.classList.remove("nav-scrolled");
+            }
           }
-        }
-        lastScroll = scrollY;
-      }, { passive: true });
+          lastScroll = scrollY;
+        },
+        { passive: true },
+      );
 
-      const revealElements = document.querySelectorAll('.reveal, .reveal-fade, .reveal-scale, .quote-reveal');
+      const revealElements = document.querySelectorAll(
+        ".reveal, .reveal-fade, .reveal-scale, .quote-reveal",
+      );
 
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -40px 0px',
-      });
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: "0px 0px -40px 0px",
+        },
+      );
 
       revealElements.forEach((el) => observer.observe(el));
 
-      document.querySelectorAll('[data-lang-switch]').forEach(function (el) {
-        el.addEventListener('click', function () {
-          var lang = (el as HTMLElement).getAttribute('data-lang-switch');
-          if (lang) localStorage.setItem('nodes-lang', lang);
+      document.querySelectorAll("[data-lang-switch]").forEach(function (el) {
+        el.addEventListener("click", function () {
+          var lang = (el as HTMLElement).getAttribute("data-lang-switch");
+          if (lang) localStorage.setItem("nodes-lang", lang);
         });
       });
     </script>

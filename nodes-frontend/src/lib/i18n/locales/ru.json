@@ -143,7 +143,9 @@
         "start": "Старт",
         "pause": "Пауза",
         "stop": "Стоп",
-        "reset": "Сбросить"
+        "reset": "Сбросить",
+        "alreadyRecorded": "Уже записано: {{current}}",
+        "notRecorded": "Сегодня еще не фиксировалось"
       }
     },
     "stabilityLevels": {

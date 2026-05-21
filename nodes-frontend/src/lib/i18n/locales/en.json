@@ -143,7 +143,9 @@
         "start": "Start",
         "pause": "Pause",
         "stop": "Stop",
-        "reset": "Reset"
+        "reset": "Reset",
+        "alreadyRecorded": "Already recorded: {{current}}",
+        "notRecorded": "Not recorded today yet"
       }
     },
     "stabilityLevels": {

@@ -248,6 +248,50 @@ CREATE POLICY "Users can manage own daily_focus"
   ON public.daily_focus FOR ALL
   USING (auth.uid() = user_id);
 
+-- ------------------------------------------------------------
+-- RECOMMENDATION_CONNECTORS (многие-ко-многим: Recommendation ↔ Connector)
+-- ------------------------------------------------------------
+CREATE TABLE public.recommendation_connectors (
+  id              uuid NOT NULL DEFAULT gen_random_uuid(),
+  recommendation_id uuid NOT NULL,
+  connector_id    uuid NOT NULL,
+  created_at      timestamp with time zone DEFAULT now(),
+  CONSTRAINT recommendation_connectors_pkey PRIMARY KEY (id),
+  CONSTRAINT rec_conn_recommendation_fkey FOREIGN KEY (recommendation_id) REFERENCES public.recommendations(id) ON DELETE CASCADE,
+  CONSTRAINT rec_conn_connector_fkey FOREIGN KEY (connector_id) REFERENCES public.connectors(id) ON DELETE CASCADE,
+  CONSTRAINT unique_rec_connector UNIQUE (recommendation_id, connector_id)
+);
+
+ALTER TABLE public.recommendation_connectors ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own recommendation_connectors"
+  ON public.recommendation_connectors FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.recommendations
+      WHERE id = recommendation_id
+      AND user_id = auth.uid()
+    )
+  );
+
+-- ------------------------------------------------------------
+-- GENERATION_LOGS (логи действий для лимитов)
+-- ------------------------------------------------------------
+CREATE TABLE public.generation_logs (
+  id          uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id     uuid NOT NULL,
+  action_type text NOT NULL DEFAULT 'recommendation_generation',
+  created_at  timestamp with time zone DEFAULT now(),
+  CONSTRAINT generation_logs_pkey PRIMARY KEY (id),
+  CONSTRAINT generation_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE CASCADE
+);
+
+ALTER TABLE public.generation_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own logs"
+  ON public.generation_logs FOR SELECT
+  USING (auth.uid() = user_id);
+
 -- ============================================================
 -- ПРИМЕЧАНИЕ: Django-таблицы
 -- ============================================================

@@ -31,7 +31,7 @@ export default function NodesListPage() {
   const { user } = useAuth();
   const { data: profile } = useProfileQuery(user?.id);
   const { t } = useTranslation();
-  
+
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
 
@@ -43,7 +43,7 @@ export default function NodesListPage() {
     if (user?.id) {
       const lastRecalc = localStorage.getItem(`last_stability_recalc_${user.id}`);
       const now = Date.now();
-      
+
       // Пересчитываем только если прошло более 5 минут с последнего раза
       if (!lastRecalc || now - parseInt(lastRecalc) > 1000 * 60 * 5) {
         calculateStability().then(res => {
@@ -74,7 +74,7 @@ export default function NodesListPage() {
       onboardingOpenFn();
     }
   }, [isNodesLoading, nodes, profile, user?.id, onboardingOpenFn]);
-  
+
   // Get node IDs for the impulses query
   const allNodeIds = useMemo(() => Object.keys(nodes), [nodes]);
   const { data: impulses = [], isLoading: isImpulsesLoading } = useImpulsesQuery(allNodeIds, selectedDate, user?.id);
@@ -121,7 +121,7 @@ export default function NodesListPage() {
     // Оптимистичный UI мгновенно обновит галочку и ПОЛОСКУ.
     // Не ждем ответа, запускаем в фоне.
     recordPulse.mutate({ nodeId, value, date: selectedDate });
-    
+
     console.log(`[FRONTEND] Action triggered instantly for ${nodeId}`);
   }, [nodes, selectedDate, recordPulse]);
 
@@ -149,7 +149,7 @@ export default function NodesListPage() {
 
   const greetingText = useMemo(() => {
     if (profile?.show_greeting === false) return null;
-    
+
     const name = profile?.display_name || t("dashboard.operator", "Аноним");
     const customGreeting = profile?.custom_greeting;
 
@@ -164,22 +164,22 @@ export default function NodesListPage() {
   // Автоматическое добавление дефолтных узлов для новых дней
   useEffect(() => {
     if (isLoading || isPastDate || focusNodeIds.length > 0 || !user?.id) return;
-    
+
     // Проверяем, есть ли вообще дефолтные узлы
     const defaultNodes = Object.values(nodes).filter(n => n.is_focus_default);
     if (defaultNodes.length === 0) return;
 
     const dateKey = format(selectedDate, "yyyy-MM-dd");
     const lsKey = `focus_init_${user.id}_${dateKey}`;
-    
+
     // Если для этой даты фокус еще не инициализировался (ни в этой сессии, ни в localStorage)
     if (!initializedDays.current.has(dateKey) && !localStorage.getItem(lsKey)) {
       initializedDays.current.add(dateKey);
       localStorage.setItem(lsKey, "true");
-      
+
       const defaultIds = defaultNodes.map(n => n.id);
       console.log(`[FRONTEND] Auto-populating ${defaultIds.length} default focus nodes for ${dateKey}`);
-      
+
       // Вызываем мутацию для сохранения
       setDailyFocus.mutate({ nodeIds: defaultIds, date: selectedDate, userId: user.id });
     }

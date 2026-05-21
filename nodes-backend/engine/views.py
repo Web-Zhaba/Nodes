@@ -12,7 +12,10 @@ from datetime import timedelta
 from django.utils import timezone
 from rest_framework.decorators import api_view
 from django.core.cache import cache
-from .models import Impulse, Node
+from .models import Impulse, Node, Recommendation, GenerationLog
+from .serializers import RecommendationSerializer
+from .recommendations import ContentRecommender
+from rest_framework import generics
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +77,8 @@ class ImpulseActionView(APIView):
         node_id = str(serializer.validated_data['node_id'])
         value = float(serializer.validated_data['value'])
         target_date = serializer.validated_data['date']
+
+        logger.info(f"Impulse request: user={user_id}, node={node_id}, val={value}, date={target_date}")
 
         try:
             # === ОДИН SQL-запрос. Вся логика внутри PostgreSQL. ===
@@ -248,3 +253,105 @@ def get_analytics_history(request):
     except Exception as e:
         import traceback
         return Response({"status": "error", "message": str(e), "traceback": traceback.format_exc()}, status=500)
+
+class RecommendationListView(generics.ListAPIView):
+    serializer_class = RecommendationSerializer
+
+    def list(self, request, *args, **kwargs):
+        user = self.request.user
+        cache_key = f"user_recs_list_{user.id}"
+        
+        # Пытаемся взять готовый отрендеренный результат
+        cached_response = cache.get(cache_key)
+        if cached_response:
+            return Response(cached_response)
+            
+        response = super().list(request, *args, **kwargs)
+        
+        # Кэшируем результат на 2 минуты для мгновенных повторных просмотров
+        if response.status_code == 200:
+            cache.set(cache_key, response.data, 120)
+            
+        return response
+
+    def get_queryset(self):
+        user = self.request.user
+        # Триггерим генерацию если рекомендаций нет
+        if not Recommendation.objects.filter(user=user, is_discarded=False).exists():
+            today = timezone.now().date()
+            used_today = GenerationLog.objects.filter(
+                user=user, 
+                action_type='recommendation_generation',
+                created_at__date=today
+            ).count()
+            
+            if used_today < 3:
+                try:
+                    recommender = ContentRecommender(user)
+                    recommender.generate_recommendations()
+                    GenerationLog.objects.create(user=user, action_type='recommendation_generation')
+                except Exception as e:
+                    logger.error(f"Failed to generate recommendations for user {user.id}: {e}")
+        
+        return Recommendation.objects.filter(
+            user=user,
+            is_discarded=False
+        ).prefetch_related('connectors', 'node').order_by('-score', '-created_at')
+
+class RecommendationUpdateView(generics.UpdateAPIView):
+    serializer_class = RecommendationSerializer
+    
+    def get_queryset(self):
+        return Recommendation.objects.filter(user=self.request.user)
+
+class RecommendationStatusView(APIView):
+    def get(self, request):
+        user = request.user
+        today = timezone.now().date()
+        used_today = GenerationLog.objects.filter(
+            user=user, 
+            action_type='recommendation_generation',
+            created_at__date=today
+        ).count()
+        
+        limit = 3  # TODO: Fetch from profile/subscription in future
+        
+        return Response({
+            "limit": limit,
+            "used": used_today,
+            "remaining": max(0, limit - used_today),
+            "can_generate": used_today < limit
+        }, status=200)
+
+class RecommendationGenerateView(APIView):
+    def post(self, request):
+        user = request.user
+        today = timezone.now().date()
+        
+        # Check limits
+        used_today = GenerationLog.objects.filter(
+            user=user, 
+            action_type='recommendation_generation',
+            created_at__date=today
+        ).count()
+        
+        if used_today >= 3:
+            return Response({
+                "status": "error", 
+                "message": "Daily recommendation limit reached (3 per day)"
+            }, status=429)
+
+        # Удаляем старые, не сохраненные и не просмотренные рекомендации, чтобы освободить место
+        Recommendation.objects.filter(user=user, is_saved=False, is_viewed=False).delete()
+        
+        try:
+            recommender = ContentRecommender(user)
+            recommender.generate_recommendations()
+            
+            # Log successful generation
+            GenerationLog.objects.create(user=user, action_type='recommendation_generation')
+            
+            return Response({"status": "success", "message": "Recommendations regenerated"}, status=200)
+        except Exception as e:
+            logger.error(f"Failed manual generation for user {user.id}: {e}")
+            return Response({"status": "error", "message": str(e)}, status=500)

@@ -4,6 +4,7 @@ import uuid
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(null=True, blank=True)
+    show_recommendations = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -150,3 +151,65 @@ class CoreConnector(models.Model):
     class Meta:
         managed = False
         db_table = 'core_connectors'
+
+class Recommendation(models.Model):
+    CONTENT_TYPE_CHOICES = (
+        ('video', 'Video'),
+        ('book', 'Book'),
+        ('course', 'Course'),
+        ('article', 'Article'),
+    )
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='recommendations')
+    node = models.ForeignKey(Node, on_delete=models.CASCADE, null=True, blank=True, related_name='recommendations')
+    connector = models.ForeignKey(Connector, on_delete=models.SET_NULL, null=True, blank=True, related_name='recommendations')
+    
+    content_type = models.CharField(max_length=20, choices=CONTENT_TYPE_CHOICES)
+    title = models.TextField()
+    description = models.TextField(null=True, blank=True)
+    url = models.URLField(max_length=500)
+    thumbnail_url = models.URLField(max_length=500, null=True, blank=True)
+    source = models.CharField(max_length=50)
+    
+    score = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
+    affiliate_url = models.URLField(max_length=500, null=True, blank=True)
+    
+    is_viewed = models.BooleanField(default=False)
+    is_saved = models.BooleanField(default=False)
+    is_discarded = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    connectors = models.ManyToManyField(
+        Connector, 
+        through='RecommendationConnector', 
+        related_name='recommendations_m2m'
+    )
+
+    class Meta:
+        managed = False
+        db_table = 'recommendations'
+
+    def __str__(self):
+        return f"{self.title} ({self.source})"
+
+class RecommendationConnector(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    recommendation = models.ForeignKey(Recommendation, on_delete=models.CASCADE, related_name='recommendation_connectors')
+    connector = models.ForeignKey(Connector, on_delete=models.CASCADE, related_name='recommendation_connectors')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'recommendation_connectors'
+
+class GenerationLog(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='generation_logs')
+    action_type = models.TextField(default='recommendation_generation')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'generation_logs'
