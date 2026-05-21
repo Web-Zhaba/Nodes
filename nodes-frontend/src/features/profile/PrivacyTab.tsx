@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import type { Node, Core } from "@/types";
 import { useTranslation } from "react-i18next";
+import { config } from "@/config";
 
 // =====================================================
 // PrivacyTab — управление публичностью профиля и узлов
@@ -140,9 +141,10 @@ export function PrivacyTab() {
     setValue("coresPrivacy", { ...coresPrivacy, [coreId]: !current }, { shouldDirty: true });
   };
 
-  const profileUrl = `${window.location.origin}/share/u/${publicSlug}`;
+  const profileUrl = `${config.siteUrl}/share/u/${publicSlug}`;
 
   const copyProfileLink = () => {
+
     navigator.clipboard.writeText(profileUrl);
     setCopiedProfile(true);
     setTimeout(() => setCopiedProfile(false), 2000);
@@ -151,7 +153,7 @@ export function PrivacyTab() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
       {/* Public Profile Toggle */}
-      <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-6">
+      <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-6 w-full overflow-hidden">
         <div>
           <h2 className="text-xl font-bold flex items-center gap-2">
             <Globe className="w-5 h-5 text-primary" />
@@ -228,15 +230,15 @@ export function PrivacyTab() {
                       </div>
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row sm:items-baseline gap-0 sm:gap-1 overflow-hidden">
+                    <div className="flex flex-col sm:flex-row sm:items-baseline gap-0 sm:gap-1 overflow-hidden min-w-0">
                       <span className="text-[10px] sm:text-xs font-mono text-muted-foreground/50 truncate shrink-0">
-                        nodes.life/share/u/
+                        nodes-tracker.ru/share/u/
                       </span>
                       <input
                         {...register("publicSlug")}
                         placeholder={t("profile.privacy.slugPlaceholder", "nickname")}
                         className={cn(
-                          "bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-lg font-mono tracking-tight text-foreground w-full",
+                          "bg-transparent border-none p-0 focus:outline-none focus:ring-0 text-lg font-mono tracking-tight text-foreground w-full min-w-0 break-all",
                           slugError && "text-destructive"
                         )}
                       />
@@ -276,7 +278,7 @@ export function PrivacyTab() {
       </div>
 
       {/* Core privacy controls */}
-      <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-6">
+      <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-6 w-full overflow-hidden">
         <div>
           <h2 className="text-xl font-bold flex items-center gap-2">
             <Layers className="w-5 h-5 text-primary" />
@@ -324,7 +326,7 @@ export function PrivacyTab() {
       </div>
 
       {/* Node privacy controls */}
-      <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-6">
+      <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl space-y-6 w-full overflow-hidden">
         <div>
           <h2 className="text-xl font-bold flex items-center gap-2">
             <Zap className="w-5 h-5 text-primary" />

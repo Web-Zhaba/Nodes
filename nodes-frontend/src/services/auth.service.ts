@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
+import { useThemeStore } from "@/store/useThemeStore";
+import { config } from "@/config";
 
 export const authService = {
   /**
@@ -16,6 +18,8 @@ export const authService = {
    * Выход из аккаунта
    */
   async signOut(): Promise<{ error: any }> {
+    // Clear theme cache before logout
+    useThemeStore.getState().clearCache();
     return await supabase.auth.signOut();
   },
 
@@ -91,7 +95,7 @@ export const authService = {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${config.siteUrl}/auth/callback`,
       },
     });
     return { error };

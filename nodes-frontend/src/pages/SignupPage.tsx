@@ -15,9 +15,8 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Github } from 'lucide-react';
-import { Chrome } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
+import { Github, Chrome, Loader2 } from 'lucide-react';
+import { config } from '@/config'
 
 import { Checkbox } from '@/components/ui/checkbox'
 
@@ -57,7 +56,7 @@ export default function SignupPage() {
       const { error } = await authService.signUp(
         data.email, 
         data.password, 
-        `${window.location.origin}/auth/callback`
+        `${config.siteUrl}/auth/callback`
       )
 
       if (error) {
