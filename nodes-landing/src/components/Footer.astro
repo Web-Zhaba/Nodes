@@ -39,6 +39,15 @@ const altPath = lang === 'en' ? '/ru' : '/';
       </div>
 
       <div>
+        <h4 class="font-semibold mb-3">{t.footer.contacts?.title || "Контакты"}</h4>
+        <ul class="space-y-2 text-sm text-muted-foreground">
+          <li>{t.footer.contacts?.email}</li>
+          <li>{t.footer.contacts?.phone}</li>
+          <li class="pt-2 text-xs opacity-70">{t.footer.contacts?.requisites}</li>
+        </ul>
+      </div>
+
+      <div>
         <h4 class="font-semibold mb-3">Language</h4>
         <a href={altPath} data-lang-switch={altLang} class="text-sm text-muted-foreground hover:text-foreground transition-colors">
           {t.languageSwitcher[altLang]}

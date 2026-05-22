@@ -89,7 +89,7 @@
     "plans": [
       {
         "name": "Free",
-        "price": "$0",
+        "price": "0 ₽",
         "period": "forever",
         "description": "Everything you need to start building your second brain.",
         "features": [
@@ -104,7 +104,7 @@
       },
       {
         "name": "Pro",
-        "price": "$5",
+        "price": "199 ₽",
         "period": "/month",
         "description": "For those who want deeper insights and integrations.",
         "features": [
@@ -178,11 +178,25 @@
           {
             "title": "4. Disclaimer",
             "content": "The materials in Nodes are provided on an 'as is' basis. We make no warranties, expressed or implied, and hereby disclaim and negate all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights."
+          },
+          {
+            "title": "5. Payment and Service Provision",
+            "content": "Access to the digital good (Pro subscription) is granted automatically in the user account immediately after successful payment. Payments are processed in Russian Rubles (RUB)."
+          },
+          {
+            "title": "6. Contacts and Requisites",
+            "content": "Support: support@nodes-tracker.ru. Phone: +7 (999) 000-00-00. Self-employed: Ivanov Ivan Ivanovich, INN: 000000000000."
           }
         ]
       }
     },
-    "copyright": "© 2026 NODES. All rights reserved."
+    "copyright": "© 2026 NODES. All rights reserved.",
+    "contacts": {
+      "title": "Contacts",
+      "email": "support@nodes-tracker.ru",
+      "phone": "+7 (999) 000-00-00",
+      "requisites": "INN: 000000000000 (Self-employed Ivanov I.I.)"
+    }
   },
   "languageSwitcher": {
     "en": "English",
