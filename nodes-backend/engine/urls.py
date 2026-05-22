@@ -10,4 +10,8 @@ urlpatterns = [
     path('recommendations/generate/', views.RecommendationGenerateView.as_view(), name='recommendation-generate'),
 
     path('recommendations/<uuid:pk>/', views.RecommendationUpdateView.as_view(), name='recommendation_detail'),
+    
+    # Payments
+    path('payments/create/', views.CreatePaymentView.as_view(), name='create_payment'),
+    path('payments/webhook/', views.YookassaWebhookView.as_view(), name='yookassa_webhook'),
 ]

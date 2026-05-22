@@ -12,6 +12,7 @@ import { Check } from 'lucide-react';
 import { toast } from "sonner";
 import type { NodeType } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
+import { useNodeLimit } from "@/features/subscription/hooks/useNodeLimit";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ export function CreateNodeForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { canCreate, limit } = useNodeLimit();
   
   const createMutation = useCreateNodeMutation();
   const { data: connectors = {} } = useConnectorsQuery(user?.id);
@@ -79,6 +81,13 @@ export function CreateNodeForm() {
 
   // Обработка отправки формы
   const onSubmit = async (data: CreateNodeFormData) => {
+    if (!canCreate) {
+      toast.error(t("subscription.limit.nodes"), {
+        description: t("subscription.limit.nodesDesc", { limit })
+      });
+      return;
+    }
+
     try {
       // Создаём узел с коннекторами
       const newNode = await createMutation.mutateAsync({

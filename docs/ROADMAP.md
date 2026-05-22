@@ -123,12 +123,15 @@
 - [ ] **App Store Assets:** Подготовка финальных скриншотов и релизных манифестов.
 
 ## 📅 Фаза 8: Monetization & Expansion (Neural Expansion)
-- [ ] **Infrastructure:** Интеграция Stripe/LemonSqueezy через Supabase Edge Functions.
-- [ ] **Subscription Logic:** Система проверки лимитов (Neural Capacity) и управления статусом Pro.
+- [ ] **Infrastructure:** Интеграция юкассы.
+- [x] **Subscription Logic:** Система проверки лимитов (Neural Capacity) и управления статусом Pro.
 - [ ] **Time Machine:** Визуализация истории графа. Анимация развития сети за выбранный период (Obsidian-style).
 - [ ] **Synapse API:** Доступ к персональному API-ключу для внешней автоматизации (Zapier/Make/Webhooks).
-- [ ] **Theme Slots:** Система управления пресетами тем (1 Free / Unlimited Pro).
-- [ ] **Crystal Marketplace:** Реализация покупки и менеджмента дополнительных Crystal Slots.
+- [x] **Theme Slots:** Создать 5-7 готовых пресетов тем (Cyberpunk Purple, Ocean Dark, Forest Green, Crimson Night...)
+  Free: только стандартная тема
+  Pro: все пресеты + кастомные слоты
+- [x] **История аналитики > 7 дней** Free: только последние 30 дней данных. Pro: полная история (90 дней, 1 год)
+- [x] **Экспорт данных (CSV/JSON)** Free: нет экспорта. Pro: экспорт всей истории импульсов, stability scores, нод в CSV/JSON
 
 ---
 ## 📅 Фаза 4: Управление делами (Inbox) (ОТЛОЖЕНО ДО ЛУЧШИХ ВРЕМЕН)

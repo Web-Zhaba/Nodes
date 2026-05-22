@@ -142,6 +142,11 @@ export interface Profile {
   bio?: string;
   show_recommendations: boolean;
 
+  // Subscription (migration 005)
+  is_pro: boolean;
+  pro_expires_at?: string | null;
+  subscription_plan: 'free' | 'pro';
+
   created_at: string;
   updated_at: string;
 }

@@ -1,19 +1,21 @@
-import { Button } from "@/components/ui/button";
-import { Sun } from 'lucide-react';
-import { Moon } from 'lucide-react';
-import { RotateCcw } from 'lucide-react';
-import { toast } from "sonner";
-import { useTranslation } from "react-i18next";
-import { useFormContext } from "react-hook-form";
+import { Button } from "@/components/ui/button"
+import { Sun, Moon, RotateCcw } from 'lucide-react'
+import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
+import { useFormContext } from "react-hook-form"
+import { ProGate, useSubscription } from "@/features/subscription"
+import { useAuth } from "@/hooks/useAuth"
 
 const THEME_PRESETS = [
   {
     name: "Default (Cyber-Zen)",
+    isPro: false,
     light: {},
     dark: {}
   },
   {
     name: "Terminal",
+    isPro: true,
     light: {
       "--primary": "#16a34a", 
       "--background": "#f0fdf4", 
@@ -41,6 +43,7 @@ const THEME_PRESETS = [
   },
   {
     name: "Neumorphism",
+    isPro: true,
     light: {
       "--primary": "#4f46e5",
       "--background": "#e0e5ec", 
@@ -66,6 +69,7 @@ const THEME_PRESETS = [
   },
   {
     name: "Synthwave",
+    isPro: true,
     light: { 
       "--primary": "#db2777", 
       "--background": "#fdf2f8", 
@@ -91,6 +95,7 @@ const THEME_PRESETS = [
   },
   {
     name: "Paper",
+    isPro: true,
     light: { 
       "--primary": "#44403c", 
       "--background": "#f5f5f4", 
@@ -115,6 +120,8 @@ const THEME_PRESETS = [
 export function AppearanceTab() {
   const { t } = useTranslation()
   const { setValue, watch } = useFormContext()
+  const { user } = useAuth()
+  const { isPro } = useSubscription(user?.id)
   
   // Watch themeConfig from form - this is our source of truth
   const formThemeConfig = watch("themeConfig")
@@ -215,12 +222,14 @@ export function AppearanceTab() {
               const presetPrimary = (preset as any)[mode]["--primary"]
               const currentPrimary = (formThemeConfig.colors as any)[mode]["--primary"]
               const isSelected = presetPrimary === currentPrimary
-              
-              return (
+              const isLocked = preset.isPro && !isPro
+
+              const button = (
                 <Button
                   key={preset.name}
                   variant={isSelected ? "default" : "outline"}
                   onClick={() => {
+                    if (isLocked) return
                     applyFormPalette(preset.light, preset.dark)
                     toast.info(t("profile.appearance.presetSelected", `Палитра «${preset.name}» выбрана — нажмите Сохранить для применения`))
                   }}
@@ -229,6 +238,14 @@ export function AppearanceTab() {
                   {preset.name}
                 </Button>
               )
+
+              return isLocked
+                ? (
+                  <ProGate key={preset.name} feature="themes" overlay={false}>
+                    {button}
+                  </ProGate>
+                )
+                : button
             })}
         </div>
         </section>

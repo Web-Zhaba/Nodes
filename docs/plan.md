@@ -442,7 +442,7 @@ CI/CD: GitHub Actions (бесплатно)
 - [ ] Создан репозиторий `nodes-tracker`
 - [ ] Добавлен .gitignore (Node.js + React)
 - [ ] Создан README.md
-- [ ] Добавлен LICENSE (MIT)
+- [ ] Добавлен LICENSE (Proprietary)
 
 ### Проект
 - [ ] `npm create vite@latest nodes-frontend -- --template react-ts`

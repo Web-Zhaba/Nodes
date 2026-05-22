@@ -5,6 +5,13 @@ class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(null=True, blank=True)
     show_recommendations = models.BooleanField(default=True)
+    
+    # Monetization fields
+    is_pro = models.BooleanField(default=False)
+    pro_expires_at = models.DateTimeField(null=True, blank=True)
+    subscription_plan = models.TextField(default='free')
+    yookassa_payment_id = models.TextField(null=True, blank=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -18,6 +25,16 @@ class Profile(models.Model):
         DRF's IsAuthenticated permission checks `request.user.is_authenticated`.
         Since Profile is not a standard Django user, we explicitly return True.
         """
+        return True
+
+    @property
+    def is_active_pro(self):
+        """Проверяет, активна ли Pro-подписка прямо сейчас."""
+        from django.utils import timezone
+        if not self.is_pro:
+            return False
+        if self.pro_expires_at and self.pro_expires_at < timezone.now():
+            return False
         return True
 
     def __str__(self):

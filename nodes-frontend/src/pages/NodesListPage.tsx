@@ -1,24 +1,22 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { Plus } from 'lucide-react';
-import { Target } from 'lucide-react';
-import { Activity } from 'lucide-react';
-import { Coffee } from 'lucide-react';
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { NodeCard } from "@/features/nodes/components/NodeCard";
-import { NodeCardSkeleton } from "@/features/nodes/components/NodeCardSkeleton";
-import { useAuth } from "@/hooks/useAuth";
-import { WeekCalendar } from "@/features/dashboard/components/WeekCalendar";
-import { DailyFocusSelector } from "@/features/dashboard/components/DailyFocusSelector";
-import { useNodesQuery } from "@/features/nodes/hooks/useNodesQuery";
-import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQuery";
-import { useDailyFocusQuery, useSetDailyFocusMutation } from "@/features/nodes/hooks/useDailyFocusQuery";
-import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery";
-import { startOfDay, format } from "date-fns";
-import { calculateStability } from "@/lib/api/stability";
-import { useTranslation } from "react-i18next";
-import type { Impulse } from "@/types";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react"
+import { useNavigate } from "react-router-dom"
+import { Plus, Target, Activity, Coffee, Lock } from 'lucide-react'
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { NodeCard } from "@/features/nodes/components/NodeCard"
+import { NodeCardSkeleton } from "@/features/nodes/components/NodeCardSkeleton"
+import { useAuth } from "@/hooks/useAuth"
+import { WeekCalendar } from "@/features/dashboard/components/WeekCalendar"
+import { DailyFocusSelector } from "@/features/dashboard/components/DailyFocusSelector"
+import { useNodesQuery } from "@/features/nodes/hooks/useNodesQuery"
+import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQuery"
+import { useDailyFocusQuery, useSetDailyFocusMutation } from "@/features/nodes/hooks/useDailyFocusQuery"
+import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery"
+import { startOfDay, format } from "date-fns"
+import { calculateStability } from "@/lib/api/stability"
+import { useTranslation } from "react-i18next"
+import type { Impulse } from "@/types"
+import { useNodeLimit, UpgradeModal } from "@/features/subscription"
 
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
 import { useOnboardingStore } from "@/features/onboarding/useOnboardingStore";
@@ -27,13 +25,16 @@ import { useOnboardingStore } from "@/features/onboarding/useOnboardingStore";
  * Главная страница "Сегодня" (Focus Mode)
  */
 export default function NodesListPage() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const { data: profile } = useProfileQuery(user?.id);
-  const { t } = useTranslation();
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const { data: profile } = useProfileQuery(user?.id)
+  const { t } = useTranslation()
 
-  const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
-  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()))
+  const [isSelectorOpen, setIsSelectorOpen] = useState(false)
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false)
+
+  const { canCreate: canCreateNode, isAtLimit, current: nodeCount, limit: nodeLimit } = useNodeLimit()
 
   // Профилировщик для замеров
   const perfRef = useRef<{ clickStart: number }>({ clickStart: 0 });
@@ -236,12 +237,23 @@ export default function NodesListPage() {
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
-              onClick={() => navigate("/nodes/new")}
-              className="flex-1 sm:flex-none gap-2 shadow-sm border-white/10 h-10 sm:h-11 rounded-xl"
+              onClick={() => {
+                if (!canCreateNode) {
+                  setUpgradeModalOpen(true)
+                  return
+                }
+                navigate("/nodes/new")
+              }}
+              className={`flex-1 sm:flex-none gap-2 shadow-sm border-white/10 h-10 sm:h-11 rounded-xl transition-all ${
+                isAtLimit ? 'opacity-70 border-primary/30' : ''
+              }`}
             >
-              <Plus className="w-4 h-4" />
+              {isAtLimit ? <Lock className="w-4 h-4 text-primary" /> : <Plus className="w-4 h-4" />}
               <span className="hidden xs:inline">{t("dashboard.buttons.createNode", "Узел")}</span>
               <span className="xs:hidden">{t("dashboard.buttons.create", "Создать")}</span>
+              {isAtLimit && (
+                <span className="text-xs font-mono text-primary ml-1">{nodeCount}/{nodeLimit}</span>
+              )}
             </Button>
             <Button
               onClick={() => setIsSelectorOpen(true)}
@@ -321,6 +333,12 @@ export default function NodesListPage() {
           })}
         </div>
       )}
+
+      <UpgradeModal
+        open={upgradeModalOpen}
+        onOpenChange={setUpgradeModalOpen}
+        triggerFeature="nodes_limit"
+      />
     </div>
-  );
+  )
 }

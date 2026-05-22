@@ -134,7 +134,13 @@ def get_analytics_history(request):
         user = request.user
         days = min(int(request.query_params.get('days', 365)), 730)
         
-        # 0. Проверка кэша
+        # --- 0. Проверка лимитов по подписке ---
+        # Free-пользователи могут видеть только последние 30 дней
+        if not user.is_active_pro:
+            days = min(days, 30)
+            logger.info(f"[LIMIT] Analytics limited to 30 days for free user {user.id}")
+
+        # --- 1. Проверка кэша ---
         cache_key = f"analytics_history_{user.id}_{days}"
         cached_data = cache.get(cache_key)
         if cached_data:
@@ -355,3 +361,107 @@ class RecommendationGenerateView(APIView):
         except Exception as e:
             logger.error(f"Failed manual generation for user {user.id}: {e}")
             return Response({"status": "error", "message": str(e)}, status=500)
+
+# --- YooKassa Integration ---
+
+from yookassa import Configuration, Payment
+from django.conf import settings
+import os
+
+# Конфигурация ЮKassa (ShopID и SecretKey должны быть в .env)
+Configuration.configure(
+    os.getenv('YOOKASSA_SHOP_ID'), 
+    os.getenv('YOOKASSA_SECRET_KEY')
+)
+
+# Пакеты подписки (соответствуют фронтенду)
+PACKAGES = {
+    '1m': {'months': 1,  'price': 199},
+    '3m': {'months': 3,  'price': 537},
+    '6m': {'months': 6,  'price': 1015},
+    '1y': {'months': 12, 'price': 1910},
+}
+
+class CreatePaymentView(APIView):
+    """Создает платеж в ЮKassa и возвращает ссылку для оплаты."""
+    def post(self, request):
+        user = request.user
+        package_id = request.data.get('package_id')
+        
+        if package_id not in PACKAGES:
+            return Response({"status": "error", "message": "Invalid package"}, status=400)
+            
+        package = PACKAGES[package_id]
+        
+        try:
+            # Создаем платеж в ЮKassa
+            payment = Payment.create({
+                "amount": {
+                    "value": str(package['price']),
+                    "currency": "RUB"
+                },
+                "confirmation": {
+                    "type": "redirect",
+                    "return_url": os.getenv('SITE_URL', 'https://nodes.app') + "/profile"
+                },
+                "capture": True,
+                "description": f"Nodes Pro - {package_id} (user: {user.email})",
+                "metadata": {
+                    "user_id": str(user.id),
+                    "package_id": package_id,
+                    "months": package['months']
+                }
+            })
+            
+            # Сохраняем ID платежа для трекинга
+            user.yookassa_payment_id = payment.id
+            user.save()
+            
+            return Response({
+                "status": "success",
+                "confirmation_url": payment.confirmation.confirmation_url
+            })
+            
+        except Exception as e:
+            logger.error(f"Yookassa payment creation failed: {e}")
+            return Response({"status": "error", "message": str(e)}, status=500)
+
+class YookassaWebhookView(APIView):
+    """Принимает уведомления от ЮKassa об успешной оплате."""
+    permission_classes = [] # Вебхук вызывается без авторизации Bearer
+    authentication_classes = []
+
+    def post(self, request):
+        event_json = request.data
+        
+        # Мы обрабатываем только успешные платежи
+        if event_json.get('event') == 'payment.succeeded':
+            payment_obj = event_json.get('object')
+            metadata = payment_obj.get('metadata')
+            
+            user_id = metadata.get('user_id')
+            months = int(metadata.get('months', 1))
+            
+            try:
+                profile = Profile.objects.get(id=user_id)
+                
+                # Рассчитываем новую дату истечения
+                now = timezone.now()
+                # Если Pro уже есть — продлеваем, если нет — считаем от сегодня
+                current_expiry = profile.pro_expires_at if profile.is_active_pro else now
+                
+                # Добавляем месяцы (грубое приближение через 30 дней)
+                new_expiry = current_expiry + timedelta(days=30 * months)
+                
+                profile.is_pro = True
+                profile.pro_expires_at = new_expiry
+                profile.subscription_plan = 'pro'
+                profile.save()
+                
+                logger.info(f"[PAYMENT] Successfully activated Pro for user {profile.email} until {new_expiry}")
+                return Response({"status": "ok"})
+                
+            except Profile.DoesNotExist:
+                logger.error(f"[PAYMENT] User {user_id} not found for payment {payment_obj.get('id')}")
+                
+        return Response({"status": "ignored"})

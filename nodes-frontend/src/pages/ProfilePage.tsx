@@ -19,6 +19,7 @@ import { AppearanceTab } from "@/features/profile/AppearanceTab";
 import { SecurityTab } from "@/features/profile/SecurityTab";
 import { IntegrationsTab } from "@/features/profile/IntegrationsTab";
 import { PrivacyTab } from "@/features/profile/PrivacyTab";
+import { SubscriptionTab } from "@/features/profile/SubscriptionTab";
 import { ProfileSaveButton } from "@/features/profile/components/ProfileSaveButton";
 import { useThemeStore } from "@/store/useThemeStore";
 
@@ -208,6 +209,7 @@ export default function ProfilePage() {
 
   const TABS = useMemo(() => [
     { id: "general", label: t("profile.tabs.general", "General"), icon: User },
+    { id: "subscription", label: t("profile.tabs.subscription", "Subscription"), icon: Zap },
     { id: "appearance", label: t("profile.tabs.appearance", "Appearance"), icon: Palette },
     { id: "security", label: t("profile.tabs.security", "Security"), icon: Shield },
     { id: "integrations", label: t("profile.tabs.integrations", "Integrations"), icon: Zap },
@@ -274,6 +276,7 @@ export default function ProfilePage() {
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
                 {activeTab === "general" && <GeneralTab />}
+                {activeTab === "subscription" && <SubscriptionTab />}
                 {activeTab === "appearance" && <AppearanceTab />}
                 {activeTab === "security" && <SecurityTab />}
                 {activeTab === "integrations" && <IntegrationsTab />}

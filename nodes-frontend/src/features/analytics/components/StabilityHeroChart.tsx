@@ -5,6 +5,10 @@ import { useProcessedAnalytics } from '@/features/analytics/hooks/useProcessedAn
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import { useSubscription } from '@/features/subscription/hooks/useSubscription';
+import { useAuth } from '@/hooks/useAuth';
+import { Lock } from 'lucide-react';
+import { UpgradeModal } from '@/features/subscription/components/UpgradeModal';
 
 // Палитра цветов для узлов, если у них нет своего цвета
 const FALLBACK_COLORS = [
@@ -14,14 +18,18 @@ const FALLBACK_COLORS = [
 
 export function StabilityHeroChart() {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { isPro } = useSubscription(user?.id);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const { focusEntity, setFocus, clearFocus, nodes, isLoading, selectedDays, setSelectedDays } = useAnalyticsStore();
 
   const PERIODS = [
-    { label: t('analytics.periods.7d'), days: 7 },
-    { label: t('analytics.periods.30d'), days: 30 },
-    { label: t('analytics.periods.90d'), days: 90 },
-    { label: t('analytics.periods.year'), days: 365 },
+    { label: t('analytics.periods.7d'), days: 7, pro: false },
+    { label: t('analytics.periods.30d'), days: 30, pro: false },
+    { label: t('analytics.periods.90d'), days: 90, pro: true },
+    { label: t('analytics.periods.year'), days: 365, pro: true },
   ];
+
   const { chartData } = useProcessedAnalytics();
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
@@ -72,24 +80,41 @@ export function StabilityHeroChart() {
         </h3>
 
         <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-lg border border-border/20 self-start sm:self-center">
-          {PERIODS.map((p) => (
-            <Button
-              key={p.days}
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "h-7 px-3 text-xs rounded-md transition-all",
-                selectedDays === p.days 
-                  ? "bg-background text-foreground shadow-sm font-medium" 
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-              onClick={() => setSelectedDays(p.days)}
-            >
-              {p.label}
-            </Button>
-          ))}
+          {PERIODS.map((p) => {
+            const isLocked = p.pro && !isPro;
+            return (
+              <Button
+                key={p.days}
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "h-7 px-3 text-xs rounded-md transition-all gap-1.5",
+                  selectedDays === p.days 
+                    ? "bg-background text-foreground shadow-sm font-medium" 
+                    : "text-muted-foreground hover:text-foreground",
+                  isLocked && "opacity-60"
+                )}
+                onClick={() => {
+                  if (isLocked) {
+                    setIsUpgradeModalOpen(true);
+                  } else {
+                    setSelectedDays(p.days);
+                  }
+                }}
+              >
+                {p.label}
+                {isLocked && <Lock className="w-3 h-3" />}
+              </Button>
+            );
+          })}
         </div>
       </div>
+
+      <UpgradeModal 
+        open={isUpgradeModalOpen} 
+        onOpenChange={setIsUpgradeModalOpen} 
+        triggerFeature="analytics_history" 
+      />
 
       {/* Legend with Hover/Click */}
       {nodes.length > 0 && (
@@ -135,7 +160,6 @@ export function StabilityHeroChart() {
             <LineChart 
               data={chartData} 
               margin={{ top: 5, right: 10, left: -10, bottom: 5 }}
-              // Удаляем onClick отсюда, так как родительский div перехватывает клик по пустому пространству
             >
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
               <XAxis dataKey="date" stroke="rgba(255,255,255,0.4)" fontSize={12} tickLine={false} axisLine={false} />
@@ -169,7 +193,6 @@ export function StabilityHeroChart() {
                       strokeWidth: 0,
                       fill: color,
                       onClick: () => {
-                        // Recharts event handling
                         setFocus({ type: 'node', id: node.id });
                       }
                     }}

@@ -4,12 +4,11 @@ import { useProfileQuery } from "./hooks/useProfileQuery";
 import { useUpdateProfileMutation } from "./hooks/useProfileQuery";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { LogOut } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
-import { RotateCcw } from 'lucide-react';
+import { LogOut, Loader2, RotateCcw, Download } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "react-hook-form";
 import { useOnboardingStore } from "@/features/onboarding/useOnboardingStore";
+import { ProGate, exportUserData } from "@/features/subscription";
 
 // Под-компоненты секций
 import { IdentitySection } from "./sections/IdentitySection";
@@ -73,6 +72,40 @@ export function GeneralTab() {
 
         <div className="border-t border-border/40 pt-8">
           <RecommendationsSection form={form} isLoading={isSubmitting} />
+        </div>
+
+        {/* Export Data Section — Pro only */}
+        <div className="border-t border-border/40 pt-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-bold">{t("profile.general.exportData")}</p>
+              <p className="text-xs text-muted-foreground">
+                {t("profile.general.exportDataDesc")}
+              </p>
+            </div>
+            <ProGate feature="export" overlay={false}>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-xl flex-1 sm:flex-none gap-2"
+                  onClick={() => exportUserData('json').catch(() => toast.error(t("profile.general.exportError")))}
+                >
+                  <Download className="w-4 h-4" />
+                  JSON
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-xl flex-1 sm:flex-none gap-2"
+                  onClick={() => exportUserData('csv').catch(() => toast.error(t("profile.general.exportError")))}
+                >
+                  <Download className="w-4 h-4" />
+                  CSV
+                </Button>
+              </div>
+            </ProGate>
+          </div>
         </div>
 
         <div className="border-t border-border/40 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">

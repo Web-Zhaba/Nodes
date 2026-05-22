@@ -98,7 +98,7 @@ npm run lint     # ESLint проверка
 
 ## 📄 Лицензия
 
-MIT
+Proprietary
 
 ---
 

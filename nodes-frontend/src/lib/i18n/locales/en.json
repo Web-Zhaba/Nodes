@@ -250,16 +250,47 @@
         "descriptionPlaceholder": "Short node description...",
         "isFocusDefault": "Default Focus Node",
         "isFocusDefaultDesc": "This node will be automatically suggested when planning a new day."
+      },
+      "preview": {
+        "title": "Preview",
+        "stability": "Stability",
+        "mass": "Mass",
+        "target": "Target",
+        "stabilityAuto": "Stability is calculated automatically",
+        "connectorsLogic": "Connectors link nodes semantically",
+        "massLogic": "Mass affects the speed of stability accumulation"
       }
+    }
+  },
+  "subscription": {
+    "limit": {
+      "nodes": "Node limit reached",
+      "nodesDesc": "In the free version, only {{limit}} nodes are available. Upgrade to Pro to remove restrictions.",
+      "cores": "Core limit reached",
+      "coresDesc": "In the free version, only {{limit}} cores are available. Upgrade to Pro to remove restrictions."
     },
-    "preview": {
-      "title": "Preview",
-      "stability": "Stability",
-      "mass": "Mass",
-      "target": "Target",
-      "stabilityAuto": "Stability is calculated automatically",
-      "connectorsLogic": "Connectors link nodes semantically",
-      "massLogic": "Mass affects the speed of stability accumulation"
+    "upgrade": {
+      "title": "Upgrade to Pro",
+      "description": "Unlock the full potential of your neural network",
+      "button": "Buy Pro",
+      "processing": "Processing...",
+      "footer": "Secure payment via YooKassa · One-time payment · Instant access",
+      "trigger": {
+        "themes": "Custom themes are Pro",
+        "analytics_history": "Full history is Pro",
+        "export": "Data export is Pro"
+      },
+      "errors": {
+        "login": "Please log in to your account",
+        "init": "Failed to initialize payment"
+      },
+      "packages": {
+        "1m": "1 month",
+        "3m": "3 months",
+        "6m": "6 months",
+        "1y": "1 year",
+        "save": "save {{percent}}%"
+      }
     }
   },
   "recommendations": {
@@ -280,8 +311,24 @@
     "title": "Profile",
     "settingsLabel": "System Settings",
     "controlCenterLabel": "Control Center",
+    "pro": {
+      "planName": "Pro Plan",
+      "price": "199 ₽ / month",
+      "active": "Subscription active",
+      "expiresAt": "Until {{date}}",
+      "upgrade": "Upgrade to Pro",
+      "extend": "Extend Subscription",
+      "features": {
+        "nodes": "Node Limit: 10 → Unlimited",
+        "cores": "Core Limit: 3 → Unlimited",
+        "analytics": "Analytics: 30 days → 365 days",
+        "export": "Data Export (JSON/CSV)",
+        "themes": "Exclusive UI Themes"
+      }
+    },
     "tabs": {
       "general": "General",
+      "subscription": "Subscription",
       "appearance": "Appearance",
       "privacy": "Privacy",
       "security": "Security",
@@ -433,7 +480,10 @@
       "saveSuccess": "Settings saved successfully",
       "saveError": "Failed to save settings",
       "logoutSuccess": "Session ended",
-      "logoutError": "Error signing out"
+      "logoutError": "Error signing out",
+      "exportData": "Export Data",
+      "exportDataDesc": "Download all nodes, impulses, and history",
+      "exportError": "Export error"
     },
     "identity": {
       "anonymousNode": "Anonymous"

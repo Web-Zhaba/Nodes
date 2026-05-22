@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
+import { useCoreLimit } from "@/features/subscription/hooks/useCoreLimit";
 import { useCreateCoreMutation } from "../hooks/useCoresQuery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ interface CreateCoreFormProps {
 export function CreateCoreForm({ onSuccess, onCancel }: CreateCoreFormProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { canCreate, limit } = useCoreLimit();
   const createMutation = useCreateCoreMutation();
   
   const [name, setName] = useState("");
@@ -27,6 +29,13 @@ export function CreateCoreForm({ onSuccess, onCancel }: CreateCoreFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !user) return;
+
+    if (!canCreate) {
+      toast.error(t("subscription.limit.cores"), {
+        description: t("subscription.limit.coresDesc", { limit })
+      });
+      return;
+    }
 
     try {
       const newCore = await createMutation.mutateAsync({ 
