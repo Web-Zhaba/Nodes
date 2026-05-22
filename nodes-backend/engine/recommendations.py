@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Web-Zhaba. All rights reserved.
+# This file is part of Nodes and is proprietary software.
+
 import logging
 import concurrent.futures
 import random

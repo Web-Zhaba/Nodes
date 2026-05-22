@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Web-Zhaba. All rights reserved.
+# This file is part of Nodes and is proprietary software.
+
 from django.utils import timezone
 from django.db.models import Prefetch
 from datetime import timedelta
