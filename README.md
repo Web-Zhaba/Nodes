@@ -3,8 +3,12 @@
 > **Второй мозг** для твоих действий. Визуализируй привычки как нейронную сеть, где каждое действие влияет на другие.
 
 [![Status](https://img.shields.io/badge/status-alpha-yellow)](https://github.com/Web-Zhaba/Nodes)
-[![Stack](https://img.shields.io/badge/stack-React%20%7C%20Supabase%20%7C%20Edge%20Functions-blue)](https://github.com/Web-Zhaba/Nodes)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
+
+---
+
+## ⚠️ Внимание: Проприетарное ПО
+Данный проект является коммерческим продуктом (Micro-SaaS). Исходный код опубликован исключительно для ознакомления и прозрачности. **Использование, копирование или развертывание кода вне официального сайта ЗАПРЕЩЕНО.**
 
 ---
 
@@ -75,36 +79,10 @@
 
 ---
 
-## 🚀 Быстрый старт
+## 🚀 Использование
 
-### Требования
-
-- Node.js 20+
-- npm или pnpm
-
-### Установка
-
-```bash
-# Клонировать репозиторий
-git clone https://github.com/Web-Zhaba/Nodes.git
-cd Nodes/nodes-frontend
-
-# Установить зависимости
-npm install
-
-# Настроить окружение (файл уже создан)
-cp .env.local.example .env.local
-
-# Запустить dev-сервер
-npm run dev
-```
-
-Приложение откроется на `http://localhost:5173`
-
-### Деплой
-
-**Frontend:** Vercel (автоматически из GitHub)
-**Backend:** Supabase (уже развёрнут)
+Nodes доступен только на официальном сайте:
+**[nodes-coral.vercel.app](https://nodes-coral.vercel.app)**
 
 ---
 
@@ -221,28 +199,16 @@ npm run test:ui
 
 ---
 
-## 🤝 Вклад
+## 🤝 Контакты и поддержка
 
-Проект в стадии активной разработки. Если хочешь помочь:
-
-1. Fork репозиторий
-2. Создай ветку (`git checkout -b feature/amazing-feature`)
-3. Закоммить изменения (`git commit -m 'Add amazing feature'`)
-4. Запуш (`git push origin feature/amazing-feature`)
-5. Открой Pull Request
+Если вы нашли баг или у вас есть вопросы по работе сервиса, пожалуйста, используйте GitHub Issues или свяжитесь с нами через официальный сайт. Pull Requests не принимаются в связи с проприетарным статусом проекта.
 
 ---
 
 ## 📄 Лицензия
 
-MIT — см. [LICENSE](LICENSE) файл.
-
----
-
-## 📬 Контакты
-
-- **GitHub:** https://github.com/Web-Zhaba/Nodes
-- **Issues:** https://github.com/Web-Zhaba/Nodes/issues
+Proprietary (Все права защищены) — см. [LICENSE](LICENSE) файл.
+Использование кода в коммерческих или личных целях без явного разрешения владельца запрещено.
 
 ---
 
