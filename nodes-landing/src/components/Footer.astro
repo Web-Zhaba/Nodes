@@ -41,9 +41,9 @@ const altPath = lang === 'en' ? '/ru' : '/';
       <div>
         <h4 class="font-semibold mb-3">{t.footer.contacts?.title || "Контакты"}</h4>
         <ul class="space-y-2 text-sm text-muted-foreground">
-          <li>{t.footer.contacts?.email}</li>
-          <li>{t.footer.contacts?.phone}</li>
-          <li class="pt-2 text-xs opacity-70">{t.footer.contacts?.requisites}</li>
+          {t.footer.contacts?.email && <li>{t.footer.contacts?.email}</li>}
+          {t.footer.contacts?.phone && <li>{t.footer.contacts?.phone}</li>}
+          {t.footer.contacts?.requisites && <li class="pt-2 text-xs opacity-70">{t.footer.contacts?.requisites}</li>}
         </ul>
       </div>
 

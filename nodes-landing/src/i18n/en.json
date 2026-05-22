@@ -138,54 +138,70 @@
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",
       "privacyContent": {
-        "title": "Privacy Policy",
+        "title": "Personal Data Processing Policy",
         "lastUpdated": "Last updated",
         "sections": [
           {
-            "title": "1. Information Collection",
-            "content": "We collect information you provide directly to us when using Nodes, such as when you create an account, create nodes, or communicate with us."
+            "title": "1. General Provisions",
+            "content": "This Personal Data Processing Policy (hereinafter — the Policy) defines the procedure for processing and ensuring the security of personal data of users of the NODES service (hereinafter — the Service), carried out by the self-employed Kryakunov Daniil Romanovich (hereinafter — the Operator)."
           },
           {
-            "title": "2. Use of Information",
-            "content": "We use the information we collect to provide, maintain, and improve our services, as well as to develop new features and protect our users."
+            "title": "2. Purposes of Data Collection",
+            "content": "The Operator processes the User's personal data solely for the purposes of providing access to the Service's functionality, User identification, ensuring feedback, analyzing Service usage, and improving its quality."
           },
           {
-            "title": "3. Data Security",
-            "content": "We implement appropriate technical and organizational measures to protect the security of your personal information against unauthorized access, alteration, disclosure, or destruction."
+            "title": "3. Legal Basis for Processing",
+            "content": "Personal data processing is carried out based on the User's consent, expressed by accepting the terms of this Policy and the User Agreement upon registration with the Service."
           },
           {
-            "title": "4. Contact Us",
-            "content": "If you have any questions about this Privacy Policy, please contact us."
+            "title": "4. Scope of Processed Data",
+            "content": "Personal data processed by the Service includes: email address, data about created content (nodes, cores), as well as technical information collected automatically (IP addresses, cookies)."
+          },
+          {
+            "title": "5. Processing and Storage Procedure",
+            "content": "The Operator ensures the confidentiality of personal data and takes necessary legal, organizational, and technical measures for its protection. Data storage is carried out on servers located within the Russian Federation."
+          },
+          {
+            "title": "6. User Rights",
+            "content": "The User has the right to receive information regarding the processing of their personal data, as well as the right to clarify, block, or destroy it if the data is incomplete, outdated, or inaccurate."
+          },
+          {
+            "title": "7. Final Provisions",
+            "content": "The Operator has the right to make changes to this Policy unilaterally. The new version of the Policy takes effect from the moment it is posted on the Service. Contact address for inquiries: support@nodes-tracker.ru."
           }
         ]
       },
       "termsContent": {
-        "title": "Terms of Service",
+        "title": "User Agreement",
         "lastUpdated": "Last updated",
         "sections": [
           {
-            "title": "1. Acceptance of Terms",
-            "content": "By accessing or using Nodes, you agree to be bound by these Terms of Service and all applicable laws and regulations."
+            "title": "1. General Provisions",
+            "content": "This User Agreement (hereinafter — the Agreement) is a legally binding document between self-employed Kryakunov Daniil Romanovich (hereinafter — the Grantor) and the Internet user (hereinafter — the User), arising in connection with the use of the NODES service."
           },
           {
-            "title": "2. Use License",
-            "content": "We grant you a personal, non-exclusive, non-transferable license to use the Nodes platform for your personal or internal business purposes in accordance with these Terms."
+            "title": "2. Subject of the Agreement",
+            "content": "The Grantor provides the User with access to the Service's functional capabilities for personal record-keeping, habit tracking, and data visualization under a non-exclusive license."
           },
           {
-            "title": "3. User Content",
-            "content": "You retain all rights to the content you create and store in Nodes. You are responsible for ensuring your content complies with applicable laws."
+            "title": "3. Registration and Security",
+            "content": "The User bears full responsibility for the security of their credentials and for all actions performed under their account in the Service."
           },
           {
-            "title": "4. Disclaimer",
-            "content": "The materials in Nodes are provided on an 'as is' basis. We make no warranties, expressed or implied, and hereby disclaim and negate all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights."
+            "title": "4. Intellectual Property",
+            "content": "Software code, design, and other elements of the Service are objects of intellectual property of the Grantor. Use of Service elements without the Grantor's consent is prohibited."
           },
           {
-            "title": "5. Payment and Service Provision",
-            "content": "Access to the digital good (Pro subscription) is granted automatically in the user account immediately after successful payment. Payments are processed in Russian Rubles (RUB)."
+            "title": "5. Payment and Subscription Terms",
+            "content": "Paid services (Pro subscription) are provided on a prepaid basis. Access to digital functionality is granted automatically after successful payment. Refunds are regulated by the current legislation of the Russian Federation."
           },
           {
-            "title": "6. Contacts and Requisites",
-            "content": "Support: support@nodes-tracker.ru. Phone: +7 (999) 000-00-00. Self-employed: Ivanov Ivan Ivanovich, INN: 000000000000."
+            "title": "6. Limitation of Liability",
+            "content": "The Service is provided on an 'as is' basis. The Grantor does not guarantee uninterrupted operation and is not liable for direct or indirect damages arising in connection with the use of the Service."
+          },
+          {
+            "title": "7. Requisites and Contacts",
+            "content": "Executor: self-employed Kryakunov Daniil Romanovich. INN: 350201302146. Support: support@nodes-tracker.ru."
           }
         ]
       }
@@ -194,8 +210,7 @@
     "contacts": {
       "title": "Contacts",
       "email": "support@nodes-tracker.ru",
-      "phone": "+7 (999) 000-00-00",
-      "requisites": "INN: 000000000000 (Self-employed Ivanov I.I.)"
+      "requisites": "INN: 350201302146 (Kryakunov D.R.)"
     }
   },
   "languageSwitcher": {
