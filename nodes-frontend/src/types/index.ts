@@ -169,7 +169,7 @@ export interface Impulse {
 export interface Recommendation {
   id: string;
   connectors?: Connector[];
-  content_type: "video" | "book" | "course" | "article";
+  content_type: "video" | "book" | "course" | "article" | "product";
   title: string;
   description?: string;
   url: string;
