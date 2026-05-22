@@ -171,7 +171,7 @@
     "controls": {
       "binary": {
         "marked": "Mark removed",
-        "markedDescription": "Completion for today cancelled",
+        "markedDescription": "Completion for today canceled",
         "completed": "Node completed!",
         "completedDescription": "+ to stability of \"{{name}}\"",
         "buttonCompleted": "Completed today",
@@ -181,7 +181,7 @@
         "notDone": "Not completed today yet"
       },
       "quantity": {
-        "progress": "Quantity Progress",
+        "progress": "Quantity progress",
         "overdrive": "OVERDRIVE",
         "goalReached": "Goal reached!",
         "overdriveReached": "Overdrive!",
@@ -190,13 +190,13 @@
         "overwrite": "Overwrite",
         "overwriteOverdrive": "Overwrite Overdrive!",
         "saveOverdrive": "Save Overdrive!",
-        "saveSuccess": "Save Success!",
-        "saveProgress": "Save Progress",
+        "saveSuccess": "Save success!",
+        "saveProgress": "Save progress",
         "alreadyRecorded": "Already recorded: {{current}} / {{target}}",
         "notRecorded": "Not recorded today yet"
       },
       "duration": {
-        "progress": "Time Progress",
+        "progress": "Time progress",
         "timerStarted": "Timer started",
         "timerTarget": "Target: {{minutes}} min",
         "tooLittleTime": "Too little time",
@@ -274,16 +274,16 @@
         "descriptionPlaceholder": "Short node description...",
         "isFocusDefault": "Default Focus Node",
         "isFocusDefaultDesc": "This node will be automatically suggested when planning a new day."
-      },
-      "preview": {
-        "title": "Preview",
-        "stability": "Stability",
-        "mass": "Mass",
-        "target": "Target",
-        "stabilityAuto": "Stability is calculated automatically",
-        "connectorsLogic": "Connectors link nodes semantically",
-        "massLogic": "Mass affects the speed of stability accumulation"
       }
+    },
+    "preview": {
+      "title": "Preview",
+      "stability": "Stability",
+      "mass": "Mass",
+      "target": "Target",
+      "stabilityAuto": "Stability is calculated automatically",
+      "connectorsLogic": "Connectors link nodes semantically",
+      "massLogic": "Mass affects the speed of stability accumulation"
     }
   },
   "subscription": {
@@ -298,7 +298,7 @@
       "description": "Unlock the full potential of your neural network",
       "button": "Buy Pro",
       "processing": "Processing...",
-      "footer": "Secure payment via YooKassa · One-time payment · Instant access",
+      "footer": "Payment via YooKassa · No auto-billing · Instant access",
       "trigger": {
         "themes": "Custom themes are Pro",
         "analytics_history": "Full history is Pro",
@@ -313,16 +313,16 @@
         "3m": "3 months",
         "6m": "6 months",
         "1y": "1 year",
-        "save": "save {{percent}}%"
+        "save": "{{percent}}% off"
       }
     }
   },
   "recommendations": {
     "title": "Recommendations",
-    "subtitle": "Content selected based on your habits",
+    "subtitle": "Content tailored to your habits",
     "empty": {
       "title": "No recommendations yet",
-      "description": "Complete more nodes to help the system understand your interests!"
+      "description": "Complete more nodes to let the system understand your interests!"
     },
     "error": "Failed to load recommendations",
     "actions": {
@@ -341,13 +341,13 @@
       "active": "Subscription active",
       "expiresAt": "Until {{date}}",
       "upgrade": "Upgrade to Pro",
-      "extend": "Extend Subscription",
+      "extend": "Extend subscription",
       "features": {
-        "nodes": "Node Limit: 10 → Unlimited",
-        "cores": "Core Limit: 3 → Unlimited",
+        "nodes": "Node limit: 10 → Unlimited",
+        "cores": "Core limit: 3 → Unlimited",
         "analytics": "Analytics: 30 days → 365 days",
-        "export": "Data Export (JSON/CSV)",
-        "themes": "Exclusive UI Themes"
+        "export": "Data export (JSON/CSV)",
+        "themes": "Exclusive design themes"
       }
     },
     "tabs": {
@@ -359,8 +359,8 @@
       "integrations": "Integrations"
     },
     "regional": {
-      "resetTime": "Reset Time",
-      "resetTimeDesc": "When the system considers a new day has started.",
+      "resetTime": "Daily Reset Time",
+      "resetTimeDesc": "When the system considers the next day has started.",
       "firstDayOfWeek": "First Day of Week",
       "language": "Interface Language",
       "langRu": "Russian",
@@ -370,7 +370,7 @@
       "title": "Security",
       "subtitle": "Digital footprint management.",
       "resetPassword": "Reset Password",
-      "resetPasswordDesc": "Send reset link to your email",
+      "resetPasswordDesc": "Send reset link to email",
       "resetButton": "Reset",
       "resetEmailSent": "Reset link sent to your email",
       "resetEmailError": "Error sending email",
@@ -385,35 +385,35 @@
       "unlinkError": "Unlink error: {{error}}",
       "sessionManagement": "Session Management",
       "sessionManagementDesc": "Devices with access to your account",
-      "signOutOthers": "Sign Out Others",
-      "signOutOthersSuccess": "Signed out on all other devices",
-      "signOutOthersError": "Error signing out other sessions",
-      "currentSession": "Current Session",
-      "mobileDevice": "Mobile Device",
+      "signOutOthers": "Sign out from other devices",
+      "signOutOthersSuccess": "Signed out from all other devices",
+      "signOutOthersError": "Error signing out from other sessions",
+      "currentSession": "Current session",
+      "mobileDevice": "Mobile device",
       "computer": "Computer",
-      "unknownDevice": "Unknown Device",
-      "webClient": "Web Client (This device)",
+      "unknownDevice": "Unknown device",
+      "webClient": "Web client (This device)",
       "updatedAt": "Updated: {{date}}",
       "active": "Active"
     },
     "appearance": {
       "title": "Appearance",
-      "subtitle": "Customize the visual resonance of the interface.",
+      "subtitle": "Configure visual resonance of the interface.",
       "themeMode": "{{mode}} Mode",
       "light": "Light",
       "dark": "Dark",
-      "themeApplied": "{{mode}} mode enabled",
-      "presets": "Theme Presets",
+      "themeApplied": "{{mode}} theme enabled",
+      "presets": "Preset Palettes",
       "presetApplied": "Palette applied: {{name}}",
       "fineTuning": "Fine Tuning",
-      "personalization": "Variables personalization ({{mode}} theme)",
-      "resetSuccess": "Reset to defaults",
+      "personalization": "Variable Personalization ({{mode}} theme)",
+      "resetSuccess": "Reset to default",
       "font": "Font",
-      "radius": "Radius",
-      "effects": "Effects (Scanlines)",
-      "resetColor": "Reset color",
+      "radius": "Corner Radius",
+      "effects": "Special Effects (Scanlines)",
+      "resetColor": "Reset Color",
       "reset": "Reset",
-      "selectColor": "Select color",
+      "selectColor": "Select Color",
       "default": "Default",
       "fonts": {
         "jakarta": "Default (Plus Jakarta)",
@@ -428,47 +428,47 @@
         "round": "Round (24px)"
       },
       "tokens": {
-        "primary": "Primary Color",
-        "background": "Background",
+        "primary": "Accent Color",
+        "background": "Page Background",
         "card": "Card Background",
-        "foreground": "Text Color",
-        "muted": "Muted Color",
-        "border": "Border Color",
+        "foreground": "Text",
+        "muted": "Muted",
+        "border": "Borders",
         "secondary": "Secondary",
-        "accent": "Accent Color"
+        "accent": "Minor Accent"
       }
     },
     "integrations": {
       "title": "Integrations",
-      "subtitle": "Connecting the Second Brain to the outside world.",
+      "subtitle": "Connecting your Second Brain to the world.",
       "gcalTitle": "Google Calendar",
-      "gcalDesc": "Bidirectional synchronization of Pulses and events.",
-      "telegramDesc": "Quick pulse logging and notifications via messenger.",
-      "emailTitle": "Email Newsletters",
+      "gcalDesc": "Two-way sync for Impulses and events.",
+      "telegramDesc": "Quick impulse logging and notifications via messenger.",
+      "emailTitle": "Email Newsletter",
       "emailDesc": "Weekly stability reports and email reminders.",
       "webPushTitle": "Browser Notifications",
-      "webPushDesc": "Instant notifications when it's time for a pulse.",
-      "healthDesc": "Automatic pulses based on physical activity.",
-      "apiDesc": "For developers: programmatic control of your nodes.",
+      "webPushDesc": "Instant alerts to trigger impulses.",
+      "healthDesc": "Automatic impulses based on physical activity.",
+      "apiDesc": "For developers: programmatic node management.",
       "connect": "Connect",
       "planned": "Planned",
-      "soon": "Coming Soon",
+      "soon": "Soon",
       "suggestTitle": "Have an idea for integration?",
-      "suggestDesc": "We are constantly expanding connectivity. Let us know what you'd like to see.",
+      "suggestDesc": "We are constantly expanding connectivity. Tell us what you'd like to see.",
       "suggestButton": "Suggest Idea"
     },
     "privacy": {
       "title": "Privacy",
-      "subtitle": "Manage your neural profile visibility.",
+      "subtitle": "Manage visibility of your neural profile.",
       "publicProfile": "Public Profile",
       "publicProfileDesc": "Open your neural graph to the world. A public link allows anyone to see your active nodes and their stability.",
-      "profileIsPublic": "Profile is Public",
-      "profileIsPrivate": "Profile is Private",
-      "publicLinkDesc": "Your graph is available via link",
+      "profileIsPublic": "Profile is public",
+      "profileIsPrivate": "Profile is private",
+      "publicLinkDesc": "Your graph is available via the link",
       "privateLinkDesc": "Only you see your nodes",
       "publicSlug": "Public Slug",
-      "slugPlaceholder": "my-username",
-      "slugHint": "Only lowercase letters, numbers, _ and - (3–30 characters)",
+      "slugPlaceholder": "your-nickname",
+      "slugHint": "Lowercase letters, numbers, _ and - (3–30 chars)",
       "slugOccupied": "This slug is already taken",
       "bio": "Profile Bio",
       "bioPlaceholder": "Brief description of your life architecture...",
@@ -477,11 +477,11 @@
       "saveSuccess": "Privacy settings saved",
       "saveError": "Failed to save settings",
       "coresPrivacy": "Cores Privacy",
-      "coresPrivacyDesc": "Public cores will be visible on the graph as centers of gravity.",
+      "coresPrivacyDesc": "Public cores will be visible on the graph as gravitational centers.",
       "noCores": "No cores created yet",
       "nodesPrivacy": "Nodes Privacy",
       "nodesPrivacyDesc": "Choose which nodes to display on the public graph.",
-      "noNodes": "No nodes yet",
+      "noNodes": "No nodes created yet",
       "toggleNodeError": "Failed to update node",
       "toggleCoreError": "Failed to update core"
     },
@@ -491,20 +491,20 @@
       "email": "Email Address",
       "emailVerified": "Verified",
       "emailNotVerified": "Not verified",
-      "verifyEmail": "Verify email",
+      "verifyEmail": "Verify Email",
       "systemSettings": "System Settings",
       "systemSettingsDesc": "Configuration of your node environment.",
-      "logout": "System Logout",
-      "logoutDesc": "End current management session",
-      "logoutButton": "Sign Out",
+      "logout": "Log Out",
+      "logoutDesc": "End the current management session",
+      "logoutButton": "Log out from account",
       "restartOnboarding": "Restart Onboarding",
-      "restartOnboardingDesc": "Run the getting-started wizard again",
+      "restartOnboardingDesc": "Run the setup wizard again",
       "restartOnboardingButton": "Restart",
       "saveChanges": "Save Changes",
       "saveSuccess": "Settings saved successfully",
-      "saveError": "Failed to save settings",
+      "saveError": "Failed to save changes",
       "logoutSuccess": "Session ended",
-      "logoutError": "Error signing out",
+      "logoutError": "Error logging out",
       "exportData": "Export Data",
       "exportDataDesc": "Download all nodes, impulses, and history",
       "exportError": "Export error"
@@ -513,43 +513,43 @@
       "anonymousNode": "Anonymous"
     },
     "greeting": {
-      "title": "Greeting on Dashboard",
+      "title": "Home Greeting",
       "show": "Show",
       "hide": "Hide",
       "textLabel": "Greeting Text",
       "defaultText": "Hello, {name}",
-      "hint": "Use {name} to automatically insert your name."
+      "hint": "Use {name} for automatic name insertion."
     }
   },
   "graph": {
-    "title": "Connection Graph",
+    "title": "Relationship Graph",
     "subtitle": "Neural Network",
-    "loading": "Architecture is loading...",
+    "loading": "Architecture loading...",
     "category": "Visualization",
     "sidebar": {
       "title": "Architecture",
       "commandCenter": "Command Center",
-      "noCores": "You don't have any Cores yet.",
-      "createFirstCore": "Create the first gravity center",
+      "noCores": "No Cores yet.",
+      "createFirstCore": "Create your first gravity center",
       "settings": "Settings",
       "node": "Node",
       "nodesCount": "Nodes in system:",
       "creating": "Creating",
-      "systemStats": "System Statistics",
+      "systemStats": "System Stats",
       "newNode": "New Node",
       "cores": "Cores",
       "entities": "Neural Entities",
       "coreSettings": "Core Settings",
       "coreDetails": "Core Details",
       "nodeDetails": "Node Details",
-      "openAnalytics": "Open Detailed Analytics",
-      "neuralInsights": "Neural Insights",
+      "openAnalytics": "Open detailed analytics",
+      "neuralInsights": "Neural Data",
       "graphControl": "Graph Control"
     },
     "cores": {
       "create": {
         "title": "Create New Core",
-        "description": "A Core is a gravity center that will attract nodes with selected tags.",
+        "description": "A Core is a gravitational center that will attract nodes with selected tags.",
         "submit": "Create Core",
         "submitting": "Creating...",
         "success": "Core created successfully!",
@@ -557,15 +557,15 @@
       },
       "edit": {
         "title": "Edit Core",
-        "description": "Change the main properties of the gravity center",
+        "description": "Change the core properties of the gravitational center",
         "submit": "Save Changes",
         "submitting": "Saving...",
         "success": "Core updated successfully!",
         "error": "Failed to update core"
       },
       "delete": {
-        "button": "Delete core",
-        "confirm": "Are you sure you want to delete core \"{{name}}\"? This will also delete all connections with nodes.",
+        "button": "Delete Core",
+        "confirm": "Are you sure you want to delete core \"{{name}}\"? This will also remove all node links.",
         "success": "Core deleted",
         "error": "Failed to delete core"
       },
@@ -576,17 +576,17 @@
         "icon": "Icon"
       },
       "manager": {
-        "title": "Connection Settings",
-        "description": "Select Connectors (tags) that this Core should unite. Nodes with these tags will automatically become part of its orbit.",
+        "title": "Relationship Settings",
+        "description": "Select Connectors (tags) that this Core should aggregate. Nodes with these tags will automatically become part of its orbit.",
         "orbitConnectors": "Orbit Connectors",
         "attractedNodes": "Attracted Nodes ({{count}})",
-        "noNodes": "No Nodes are attracted to this Core with current tags.",
-        "updateError": "Error updating connections"
+        "noNodes": "No Nodes attracted to this Core with current tags.",
+        "updateError": "Error updating relationships"
       }
     },
     "empty": {
-      "text": "Void. Create Cores to start the neural network of your life.",
-      "button": "Create first Core"
+      "text": "Void. Create Cores to launch your life's neural network.",
+      "button": "Create First Core"
     }
   },
   "analytics": {
@@ -594,13 +594,13 @@
     "stats": "Statistics",
     "metrics": "Metrics",
     "focus": "Focus:",
-    "allNodes": "All Nodes",
+    "allNodes": "All nodes",
     "stability": {
       "title": "Stability",
-      "focusNode": "Focus on Node",
+      "focusNode": "Focus on node",
       "core": "Core",
       "global": "Global",
-      "noData": "No data for the selected period. Start recording pulses!"
+      "noData": "No data for the selected period. Start recording impulses!"
     },
     "activity": {
       "title": "Activity"
@@ -613,12 +613,13 @@
       "lastDays": "Last {{count}} days"
     },
     "heatmap": {
-      "title": "Pulse History",
+      "title": "Impulse History",
       "less": "Less",
       "more": "More",
       "noActivity": "No activity",
-      "pulses": "{{count}} pulse",
-      "pulses_plural": "{{count}} pulses"
+      "pulses": "{{count}} impulse",
+      "pulses_few": "{{count}} impulses",
+      "pulses_many": "{{count}} impulses"
     },
     "systemStats": {
       "totalNodes": "Total Nodes",
@@ -632,8 +633,8 @@
       "stability": "Stability"
     },
     "emptyState": {
-      "selectNodeTitle": "Select a node for analysis",
-      "selectNodeDescription": "Click on any node in the list or on the graph to see detailed statistics of its development."
+      "selectNodeTitle": "Select node for analysis",
+      "selectNodeDescription": "Click on any node in the list or on the graph to see detailed statistics."
     }
   },
   "public": {
@@ -642,17 +643,17 @@
       "nodesCount": "{{count}} nodes",
       "join": "Join",
       "syncing": "Syncing neural state...",
-      "graphUnavailable": "Graph Unavailable",
-      "profilePrivate": "This profile is private or does not exist.",
-      "returnHome": "Return to Home"
+      "graphUnavailable": "Graph unavailable",
+      "profilePrivate": "This profile is private or doesn't exist.",
+      "returnHome": "Return Home"
     },
     "node": {
-      "nodeUnavailable": "Node Unavailable",
+      "nodeUnavailable": "Node unavailable",
       "nodePrivate": "This node is private or the link is invalid.",
       "returnHome": "To Home",
-      "nodeDetails": "Node Details",
+      "nodeDetails": "Node details",
       "publicEntity": "Public Neural Entity",
-      "createdAt": "Created on {{date}}",
+      "createdAt": "Created {{date}}",
       "stability": "Stability",
       "stats": {
         "completions": "Completions",
@@ -667,7 +668,7 @@
       "ownership": {
         "belongsTo": "Node belongs to {{name}}",
         "exploreFull": "Explore the full neural graph of this user.",
-        "viewFullGraph": "Full Graph",
+        "viewFullGraph": "View Full Graph",
         "createOwn": "Create Your Own"
       }
     }
@@ -677,7 +678,7 @@
     "skip": "Skip",
     "back": "Back",
     "next": "Next",
-    "finish": "Go to Dashboard",
+    "finish": "To Dashboard",
     "welcome": {
       "title": "Welcome to NODES",
       "subtitle": "Let's build your neural network. We'll guide you through the basics in 4 steps.",
@@ -686,29 +687,29 @@
     "createNode": {
       "title": "Create Your First Node",
       "subtitle": "A node is a habit, task, or anything you want to track.",
-      "nameLabel": "Node name",
-      "namePlaceholder": "e.g. Morning run",
-      "typeLabel": "Node type",
+      "nameLabel": "Node Name",
+      "namePlaceholder": "e.g. Morning Run",
+      "typeLabel": "Node Type",
       "typeBinary": "Yes / No",
-      "typeBinaryDesc": "Did you do it or not",
+      "typeBinaryDesc": "Did it or not",
       "typeQuantity": "Quantity",
-      "typeQuantityDesc": "How much / how many",
+      "typeQuantityDesc": "How much / how many times",
       "typeDuration": "Duration",
       "typeDurationDesc": "How long",
-      "targetLabel": "Target",
+      "targetLabel": "Goal",
       "targetPlaceholder": "e.g. 30"
     },
     "firstImpulse": {
-      "title": "Mark It Done!",
+      "title": "Mark Completion!",
       "subtitle": "Click the impulse button to record your first completion.",
-      "hint": "Tap the node above to mark it complete",
-      "completed": "Great job! Your first impulse is recorded.",
+      "hint": "Click the node above to mark it",
+      "completed": "Great! Your first impulse is recorded.",
       "skipImpulse": "Next"
     },
     "createCore": {
       "title": "Organize with a Core",
       "subtitle": "A core groups related nodes together — like a gravity center.",
-      "nameLabel": "Core name",
+      "nameLabel": "Core Name",
       "namePlaceholder": "e.g. Health",
       "colorLabel": "Color"
     },
