@@ -11,6 +11,7 @@ class GitHubProvider:
         self.token = os.getenv('GITHUB_TOKEN')
         self.base_url = "https://api.github.com/search/repositories"
         self.cache_timeout = 60 * 60 * 24 # 24 часа
+        self.is_rate_limited = False
 
     def _generate_cache_key(self, query):
         query_hash = hashlib.md5(query.encode('utf-8')).hexdigest()

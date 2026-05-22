@@ -53,7 +53,7 @@ class ContentRecommender:
             logger.error(f"Provider {provider.__class__.__name__} failed: {e}")
             return []
 
-    def generate_recommendations(self):
+    def generate_recommendations(self, use_limited_apis=True):
         """
         Основной цикл генерации: Узел -> Ядро + Теги -> Контент.
         """
@@ -75,6 +75,10 @@ class ContentRecommender:
             
             weight = float(node.total_weight or 0)
             for provider in self.providers:
+                # Проверка на лимитированные API
+                if not use_limited_apis and getattr(provider, 'is_rate_limited', False):
+                    continue
+
                 tasks.append({
                     'provider': provider,
                     'query': query,

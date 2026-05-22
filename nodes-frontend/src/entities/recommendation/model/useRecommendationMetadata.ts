@@ -8,6 +8,7 @@ export const useRecommendationMetadata = (content_type: Recommendation["content_
     book: Book,
     article: FileText,
     course: GraduationCap,
+    product: ShoppingCart,
   } as Record<string, LucideIcon>)[content_type] || FileText;
 
   // Специфические иконки и цвета для источников

@@ -10,6 +10,7 @@ class HabrProvider:
     def __init__(self):
         self.base_url = "https://habr.com/ru/rss/search/"
         self.cache_timeout = 60 * 60 * 24
+        self.is_rate_limited = False
 
     def fetch(self, query, max_results=15):
         cache_key = f"provider_habr_{hashlib.md5(query.encode('utf-8')).hexdigest()}"

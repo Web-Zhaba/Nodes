@@ -26,6 +26,11 @@ CREATE TABLE public.profiles (
   is_public         boolean DEFAULT false,
   public_slug       text UNIQUE,
   bio               text,
+  -- Monetization fields (migration 005)
+  is_pro            boolean DEFAULT false,
+  pro_expires_at    timestamp with time zone,
+  subscription_plan text DEFAULT 'free',
+  yookassa_payment_id text,
   created_at        timestamp with time zone DEFAULT now(),
   updated_at        timestamp with time zone DEFAULT now(),
   CONSTRAINT profiles_pkey PRIMARY KEY (id),

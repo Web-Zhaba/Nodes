@@ -12,6 +12,7 @@ class StepikProvider:
         self.client_secret = os.getenv('STEPIK_CLIENT_SECRET')
         self.base_url = "https://stepik.org/api"
         self.cache_timeout = 60 * 60 * 24
+        self.is_rate_limited = False
 
     def _get_token(self):
         token_cache_key = "stepik_access_token"

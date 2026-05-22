@@ -11,6 +11,7 @@ class YouTubeProvider:
         self.api_key = os.getenv('YOUTUBE_API_KEY')
         self.base_url = "https://www.googleapis.com/youtube/v3/search"
         self.cache_timeout = 60 * 60 * 24 # 24 часа
+        self.is_rate_limited = True
 
     def _generate_cache_key(self, query):
         query_hash = hashlib.md5(query.encode('utf-8')).hexdigest()

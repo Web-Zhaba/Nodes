@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { recommendationApi, RecommendationCard } from "@/entities/recommendation";
-import { Loader2, Sparkles, Filter, Bookmark, Play, BookOpen, Github, Code, RefreshCw, Settings } from "lucide-react";
+import { Loader2, Sparkles, Filter, Bookmark, Play, BookOpen, Github, Code, RefreshCw, Settings, ShoppingCart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import type { UpdateRecommendationDto } from "@/entities/recommendation/model/types";
@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
 
-type FilterType = "all" | "saved" | "video" | "book" | "course" | "github" | "article";
+type FilterType = "all" | "saved" | "video" | "book" | "course" | "github" | "article" | "product";
 
 export const RecommendationsFeed = () => {
   const { t } = useTranslation();
@@ -79,6 +79,7 @@ export const RecommendationsFeed = () => {
         if (filter === "github") return rec.source === "GitHub";
         if (filter === "article") return rec.source === "Habr";
         if (filter === "course") return rec.source === "Stepik" || rec.content_type === "course";
+        if (filter === "product") return rec.content_type === "product";
         return false;
       });
     });
@@ -177,6 +178,12 @@ export const RecommendationsFeed = () => {
             icon={<Code size={14} />}
             label="Habr"
           />
+          <FilterButton 
+            active={activeFilters.includes("product")} 
+            onClick={() => toggleFilter("product")}
+            icon={<ShoppingCart size={14} />}
+            label="Товары"
+          />
         </div>
 
         <button
@@ -188,13 +195,14 @@ export const RecommendationsFeed = () => {
           <span>
             {generateMutation.isPending || isRefetching 
               ? "Обновление..." 
-              : `Обновить ${status ? `(${status.remaining}/${status.limit})` : ""}`
+              : `Обновить ${status ? (status.remaining > 0 ? `(${status.remaining}/${status.limit})` : "(Безлимит)") : ""}`
             }
           </span>
           
-          {status && !status.can_generate && (
-            <div className="absolute -top-10 left-1/2 -translate-x-1/2 scale-0 rounded-lg bg-black/90 px-3 py-1.5 text-[10px] text-white transition-all group-hover:scale-100 whitespace-nowrap pointer-events-none z-50">
-              Лимит на сегодня исчерпан
+          {status && status.remaining === 0 && (
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 scale-0 rounded-lg bg-black/90 px-3 py-1.5 text-[10px] text-white transition-all group-hover:scale-100 whitespace-nowrap pointer-events-none z-50">
+              Лимит YouTube/Книг исчерпан. <br/>
+              Обновляются товары и статьи.
               <div className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-black/90" />
             </div>
           )}

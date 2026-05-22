@@ -326,7 +326,8 @@ class RecommendationStatusView(APIView):
             "limit": limit,
             "used": used_today,
             "remaining": max(0, limit - used_today),
-            "can_generate": used_today < limit
+            "can_generate": True, # Всегда можно обновить (безлимитные API)
+            "limited_available": used_today < limit
         }, status=200)
 
 class RecommendationGenerateView(APIView):
@@ -341,23 +342,32 @@ class RecommendationGenerateView(APIView):
             created_at__date=today
         ).count()
         
-        if used_today >= 3:
-            return Response({
-                "status": "error", 
-                "message": "Daily recommendation limit reached (3 per day)"
-            }, status=429)
+        limit = 3
+        use_limited = used_today < limit
 
-        # Удаляем старые, не сохраненные и не просмотренные рекомендации, чтобы освободить место
-        Recommendation.objects.filter(user=user, is_saved=False, is_viewed=False).delete()
+        # Удаляем старые, не сохраненные и не просмотренные рекомендации
+        query = Recommendation.objects.filter(user=user, is_saved=False, is_viewed=False)
+        
+        if not use_limited:
+            # Если лимит исчерпан, ОСТАВЛЯЕМ видео и книги из прошлых генераций
+            # и удаляем только все остальное (Habr, GitHub, Admitad), чтобы обновить их
+            query = query.exclude(source__in=['YouTube', 'Google Books'])
+            
+        query.delete()
         
         try:
             recommender = ContentRecommender(user)
-            recommender.generate_recommendations()
+            recommender.generate_recommendations(use_limited_apis=use_limited)
             
-            # Log successful generation
-            GenerationLog.objects.create(user=user, action_type='recommendation_generation')
+            # Логируем использование лимитированных API только если они реально использовались
+            if use_limited:
+                GenerationLog.objects.create(user=user, action_type='recommendation_generation')
             
-            return Response({"status": "success", "message": "Recommendations regenerated"}, status=200)
+            return Response({
+                "status": "success", 
+                "message": "Recommendations updated",
+                "limited_used": use_limited
+            }, status=200)
         except Exception as e:
             logger.error(f"Failed manual generation for user {user.id}: {e}")
             return Response({"status": "error", "message": str(e)}, status=500)

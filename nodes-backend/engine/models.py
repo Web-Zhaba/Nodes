@@ -175,6 +175,7 @@ class Recommendation(models.Model):
         ('book', 'Book'),
         ('course', 'Course'),
         ('article', 'Article'),
+        ('product', 'Product'),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
