@@ -93,10 +93,10 @@
         "period": "forever",
         "description": "Everything you need to start building your second brain.",
         "features": [
-          "Unlimited nodes & cores",
+          "Up to 10 nodes & 3 cores",
+          "30-day analytics",
           "Graph visualization",
           "Stability tracking",
-          "Analytics & heatmap",
           "Public profile sharing"
         ],
         "cta": "Get Started Free",
@@ -108,13 +108,13 @@
         "period": "/month",
         "description": "For those who want deeper insights and integrations.",
         "features": [
-          "Everything in Free",
-          "Advanced analytics",
-          "Priority support",
+          "Unlimited nodes & cores",
+          "365-day analytics",
           "Custom themes",
+          "Data export (JSON/CSV)",
           "Integrations (coming soon)"
         ],
-        "cta": "Coming Soon",
+        "cta": "Get Pro",
         "highlighted": true
       }
     ]
