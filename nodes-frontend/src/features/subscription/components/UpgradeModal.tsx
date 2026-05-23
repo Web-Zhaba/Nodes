@@ -58,8 +58,8 @@ export const UpgradeModal = ({ open, onOpenChange, triggerFeature = 'default' }:
         return
       }
 
-      const apiUrl = import.meta.env.VITE_API_URL || ''
-      const response = await fetch(`${apiUrl}/api/v1/payments/create/`, {
+      const apiUrl = import.meta.env.VITE_DJANGO_API_URL || ''
+      const response = await fetch(`${apiUrl}/payments/create/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
