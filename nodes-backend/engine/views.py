@@ -377,12 +377,41 @@ class RecommendationGenerateView(APIView):
 from yookassa import Configuration, Payment
 from django.conf import settings
 import os
+import uuid
+import ipaddress
 
 # Конфигурация ЮKassa (ShopID и SecretKey должны быть в .env)
 Configuration.configure(
     os.getenv('YOOKASSA_SHOP_ID'), 
     os.getenv('YOOKASSA_SECRET_KEY')
 )
+
+# Актуальные IP-адреса ЮKassa для проверки вебхуков
+# Документация: https://yookassa.ru/developers/payment-acceptance/getting-started/webhooks#ips
+YOOKASSA_IPS = [
+    '185.71.76.0/27',
+    '185.71.77.0/27',
+    '77.75.153.0/25',
+    '77.75.156.11',
+    '77.75.156.35',
+]
+
+def is_yookassa_ip(ip):
+    """Проверяет, что IP адрес отправителя принадлежит ЮKassa."""
+    if not ip:
+        return False
+    try:
+        client_ip = ipaddress.ip_address(ip)
+        for network in YOOKASSA_IPS:
+            if '/' in network:
+                if client_ip in ipaddress.ip_network(network):
+                    return True
+            else:
+                if client_ip == ipaddress.ip_address(network):
+                    return True
+    except ValueError:
+        return False
+    return False
 
 # Пакеты подписки (соответствуют фронтенду)
 PACKAGES = {
@@ -403,6 +432,10 @@ class CreatePaymentView(APIView):
             
         package = PACKAGES[package_id]
         
+        # Генерируем ключ идемпотентности для предотвращения дублей
+        # Документация: https://yookassa.ru/developers/payment-acceptance/getting-started/quick-start#step-2
+        idempotency_key = str(uuid.uuid4())
+        
         try:
             # Создаем платеж в ЮKassa
             payment = Payment.create({
@@ -421,7 +454,7 @@ class CreatePaymentView(APIView):
                     "package_id": package_id,
                     "months": package['months']
                 }
-            })
+            }, idempotency_key)
             
             # Сохраняем ID платежа для трекинга
             user.yookassa_payment_id = payment.id
@@ -442,13 +475,40 @@ class YookassaWebhookView(APIView):
     authentication_classes = []
 
     def post(self, request):
+        # Конфигурируем SDK для проверки статуса через API
+        Configuration.configure(
+            os.getenv('YOOKASSA_SHOP_ID'), 
+            os.getenv('YOOKASSA_SECRET_KEY')
+        )
+        
+        # 1. Проверка IP отправителя (Безопасность)
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+
+        if not is_yookassa_ip(ip) and not settings.DEBUG:
+            logger.warning(f"[PAYMENT] Unauthorized webhook attempt from IP: {ip}")
+            return Response({"status": "error", "message": "Forbidden"}, status=403)
+
         event_json = request.data
         
         # Мы обрабатываем только успешные платежи
         if event_json.get('event') == 'payment.succeeded':
             payment_obj = event_json.get('object')
-            metadata = payment_obj.get('metadata')
             
+            # 2. Дополнительная проверка статуса через API ЮKassa (Double-check)
+            try:
+                payment_info = Payment.find(payment_obj.get('id'))
+                if payment_info.status != 'succeeded':
+                    logger.warning(f"[PAYMENT] Webhook claimed success but status is {payment_info.status}")
+                    return Response({"status": "ignored"})
+            except Exception as e:
+                logger.error(f"[PAYMENT] Failed to verify payment via API: {e}")
+                return Response({"status": "error"}, status=500)
+
+            metadata = payment_obj.get('metadata')
             user_id = metadata.get('user_id')
             months = int(metadata.get('months', 1))
             

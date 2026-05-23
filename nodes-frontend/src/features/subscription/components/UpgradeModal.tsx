@@ -59,7 +59,7 @@ export const UpgradeModal = ({ open, onOpenChange, triggerFeature = 'default' }:
       }
 
       const apiUrl = import.meta.env.VITE_API_URL || ''
-      const response = await fetch(`${apiUrl}/api/payments/create/`, {
+      const response = await fetch(`${apiUrl}/api/v1/payments/create/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
