@@ -86,6 +86,7 @@
     "badge": "Pricing",
     "title": "Simple, Honest Pricing",
     "subtitle": "Choose the plan that fits your goals. Start for free and upgrade to Pro when you're ready to scale.",
+    "popularBadge": "Popular",
     "plans": [
       {
         "id": "free",
@@ -99,8 +100,8 @@
           "Public profile",
           "Basic recommendations"
         ],
-        "button": "Start for Free",
-        "popular": false
+        "cta": "Start for Free",
+        "highlighted": false
       },
       {
         "id": "pro",
@@ -115,8 +116,8 @@
           "Data export (JSON/CSV)",
           "Priority recommendations"
         ],
-        "button": "Get Pro",
-        "popular": true
+        "cta": "Get Pro",
+        "highlighted": true
       }
     ]
   },
