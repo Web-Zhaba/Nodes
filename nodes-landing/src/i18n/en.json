@@ -85,36 +85,38 @@
   "pricing": {
     "badge": "Pricing",
     "title": "Simple, Honest Pricing",
-    "subtitle": "Start free. Upgrade when you need more power.",
+    "subtitle": "Choose the plan that fits your goals. Start for free and upgrade to Pro when you're ready to scale.",
     "plans": [
       {
+        "id": "free",
         "name": "Free",
-        "price": "0 ₽",
+        "price": "0",
         "period": "forever",
-        "description": "Everything you need to start building your second brain.",
+        "description": "Perfect for getting started and personal use",
         "features": [
           "Up to 10 nodes & 3 cores",
           "30-day analytics",
-          "Graph visualization",
-          "Stability tracking",
-          "Public profile sharing"
+          "Public profile",
+          "Basic recommendations"
         ],
-        "cta": "Get Started Free",
-        "highlighted": false
+        "button": "Start for Free",
+        "popular": false
       },
       {
+        "id": "pro",
         "name": "Pro",
-        "price": "199 ₽",
-        "period": "/month",
-        "description": "For those who want deeper insights and integrations.",
+        "price": "1.99",
+        "period": "per month",
+        "description": "For those serious about their results",
         "features": [
           "Unlimited nodes & cores",
           "365-day analytics",
-          "Custom themes",
-          "Data export (JSON/CSV)"
+          "Custom UI themes",
+          "Data export (JSON/CSV)",
+          "Priority recommendations"
         ],
-        "cta": "Get Pro",
-        "highlighted": true
+        "button": "Get Pro",
+        "popular": true
       }
     ]
   },
