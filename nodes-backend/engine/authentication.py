@@ -47,11 +47,18 @@ def _get_signing_key(token: str):
     Находит правильный публичный ключ по 'kid' из заголовка токена.
     Поддерживает ES256 (асимметричный) и HS256 (симметричный).
     """
-    header = jwt.get_unverified_header(token)
+    try:
+        header = jwt.get_unverified_header(token)
+    except Exception:
+        raise exceptions.AuthenticationFailed('Некорректный формат токена.')
+        
     alg = header.get('alg', 'HS256')
 
+    # Приоритет HS256: если токен симметричный, используем наш локальный секрет напрямую
     if alg == 'HS256':
-        # Для HS256 используем симметричный секрет из .env
+        if not settings.SUPABASE_JWT_SECRET:
+            logger.error("SUPABASE_JWT_SECRET is not set in Django settings!")
+            raise exceptions.AuthenticationFailed('Ошибка конфигурации сервера (JWT Secret).')
         return settings.SUPABASE_JWT_SECRET, ['HS256']
 
     # Для ES256/RS256 — ищем публичный ключ в JWKS по kid
@@ -60,11 +67,16 @@ def _get_signing_key(token: str):
 
     for key_data in jwks.get('keys', []):
         if key_data.get('kid') == kid:
-            public_key = jwt.algorithms.ECAlgorithm.from_jwk(key_data)
-            return public_key, [alg]
+            try:
+                public_key = jwt.algorithms.ECAlgorithm.from_jwk(key_data)
+                return public_key, [alg]
+            except Exception as e:
+                logger.error(f"Failed to parse JWK: {e}")
+                continue
 
+    # Если мы дошли сюда и это не HS256, значит ключа нет
     raise exceptions.AuthenticationFailed(
-        f'Публичный ключ с kid={kid} не найден в JWKS Supabase.'
+        f'Публичный ключ с kid={kid} не найден в JWKS Supabase. Убедитесь, что вы залогинены на правильном сервере.'
     )
 
 
