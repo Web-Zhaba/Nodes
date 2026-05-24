@@ -1,0 +1,47 @@
+services:
+  db:
+    image: supabase/postgres:15.1.1.78
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - coolify
+
+  auth:
+    image: supabase/gotrue:v2.132.3
+    environment:
+      GOTRUE_DB_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
+      GOTRUE_SITE_URL: https://nodes-tracker.ru
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      GOTRUE_EXTERNAL_GOOGLE_ENABLED: "true"
+      # Остальные настройки (Google Client ID и др.) добавьте в Environment Variables в Coolify
+    networks:
+      - coolify
+
+  rest:
+    image: postgrest/postgrest:v11.2.2
+    environment:
+      PGRST_DB_URI: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+    networks:
+      - coolify
+
+  kong:
+    image: kong:2.8.1
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
+    # Внимание: для работы Kong в Coolify через Docker Compose может потребоваться 
+    # создание этого файла или использование альтернативного способа конфигурации
+    # Volumes в Coolify работают специфично, лучше настроить Kong через их UI если возможно
+    networks:
+      - coolify
+
+networks:
+  coolify:
+    external: true
