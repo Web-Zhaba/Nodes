@@ -38,9 +38,8 @@ services:
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
-    # Внимание: для работы Kong в Coolify через Docker Compose может потребоваться 
-    # создание этого файла или использование альтернативного способа конфигурации
-    # Volumes в Coolify работают специфично, лучше настроить Kong через их UI если возможно
+    volumes:
+      - /root/supabase-configs/kong.yml:/var/lib/kong/kong.yml
     networks:
       - coolify
 
