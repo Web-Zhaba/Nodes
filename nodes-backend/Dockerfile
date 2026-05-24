@@ -16,7 +16,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Собираем статику (для админки)
-RUN python manage.py collectstatic --noinput
+# Мы задаем фейковые переменные только на время сборки, чтобы Django не ругался
+RUN SECRET_KEY=build-time-secret DATABASE_URL=postgres://user:pass@localhost:5432/db python manage.py collectstatic --noinput
 
 # Запуск через Gunicorn
 # Мы слушаем порт 8000
