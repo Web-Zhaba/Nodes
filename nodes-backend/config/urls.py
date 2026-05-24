@@ -18,6 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('nodes-mgmt-console/', admin.site.urls),
     path('api/v1/', include('engine.urls')),
 ]
