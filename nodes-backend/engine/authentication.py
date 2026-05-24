@@ -49,6 +49,7 @@ def _get_signing_key(token: str):
     """
     try:
         header = jwt.get_unverified_header(token)
+        logger.info(f"Incoming JWT Header: {header}")
     except Exception:
         raise exceptions.AuthenticationFailed('Некорректный формат токена.')
         
