@@ -22,6 +22,8 @@ services:
       API_EXTERNAL_URL: https://db.nodes-tracker.ru/auth/v1
       GOTRUE_JWT_SECRET: ${JWT_SECRET}
       GOTRUE_EXTERNAL_GOOGLE_ENABLED: "true"
+      GOTRUE_DB_PREPARED_STATEMENTS: "false"
+      DB_PREPARED_STATEMENTS: "false"
       # DB Settings
       GOTRUE_DB_MAX_POOL_SIZE: 20
     networks:
