@@ -17,9 +17,11 @@ services:
     environment:
       GOTRUE_DB_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
       GOTRUE_SITE_URL: https://nodes-tracker.ru
+      GOTRUE_API_EXTERNAL_URL: https://db.nodes-tracker.ru/auth/v1
       GOTRUE_JWT_SECRET: ${JWT_SECRET}
       GOTRUE_EXTERNAL_GOOGLE_ENABLED: "true"
-      # Остальные настройки (Google Client ID и др.) добавьте в Environment Variables в Coolify
+      # DB Settings
+      GOTRUE_DB_MAX_POOL_SIZE: 20
     networks:
       - coolify
 
