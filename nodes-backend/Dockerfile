@@ -20,5 +20,5 @@ COPY . .
 RUN SECRET_KEY=build-time-secret DATABASE_URL=postgres://user:pass@localhost:5432/db python manage.py collectstatic --noinput
 
 # Запуск через Gunicorn
-# Мы слушаем порт 8000
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "config.wsgi:application"]
+# Мы слушаем порт 8000, увеличиваем таймаут до 300 секунд для тяжелых расчетов
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "300", "config.wsgi:application"]
