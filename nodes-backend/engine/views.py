@@ -12,7 +12,7 @@ from datetime import timedelta
 from django.utils import timezone
 from rest_framework.decorators import api_view
 from django.core.cache import cache
-from .models import Impulse, Node, Recommendation, GenerationLog
+from .models import Impulse, Node, Recommendation, GenerationLog, Profile
 from .serializers import RecommendationSerializer
 from .recommendations import ContentRecommender
 from rest_framework import generics
