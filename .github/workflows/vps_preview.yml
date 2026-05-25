@@ -67,7 +67,7 @@ jobs:
             cat <<EOF > .env
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-            SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }}
+            SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET || secrets.JWT_SECRET }}
             DEBUG=True
             SITE_URL=https://app-preview.nodes-tracker.ru
             VITE_API_URL=https://preview.nodes-tracker.ru
