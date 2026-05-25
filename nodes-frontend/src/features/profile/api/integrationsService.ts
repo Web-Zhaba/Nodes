@@ -25,7 +25,7 @@ export const integrationsService = {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) throw new Error("Unauthorized")
 
-    const response = await fetch(`${API_BASE_URL}/api/keys/`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/keys/`, {
       headers: {
         'Authorization': `Bearer ${session.access_token}`
       }
@@ -46,7 +46,7 @@ export const integrationsService = {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) throw new Error("Unauthorized")
 
-    const response = await fetch(`${API_BASE_URL}/api/keys/`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/keys/`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${session.access_token}`,
