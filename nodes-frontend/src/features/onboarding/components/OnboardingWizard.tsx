@@ -49,9 +49,10 @@ export function OnboardingWizard() {
           </div>
           <div className="h-1 bg-secondary rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-primary rounded-full"
+              className="h-full bg-primary"
               initial={false}
-              animate={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }}
+              style={{ originX: 0, width: "100%" }}
+              animate={{ scaleX: (step + 1) / TOTAL_STEPS }}
               transition={{ duration: 0.3 }}
             />
           </div>

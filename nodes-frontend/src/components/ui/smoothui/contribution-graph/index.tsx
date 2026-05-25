@@ -465,8 +465,9 @@ export function ContributionGraph({
                     </div>
                     <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                       <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${hoveredDay.stability}%` }}
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: hoveredDay.stability / 100 }}
+                        style={{ originX: 0, width: "100%" }}
                         className="h-full bg-primary shadow-[0_0_8px_var(--primary)]"
                       />
                     </div>

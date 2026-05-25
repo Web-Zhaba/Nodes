@@ -87,6 +87,17 @@ export default defineConfig({
             },
           },
           {
+            urlPattern: /\.(?:woff|woff2|ttf|otf)$/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "fonts-cache",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              },
+            },
+          },
+          {
             urlPattern: /\/locales\/.*\.json$/i,
             handler: "StaleWhileRevalidate",
             options: {

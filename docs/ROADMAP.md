@@ -123,7 +123,7 @@
 - [ ] **App Store Assets:** Подготовка финальных скриншотов и релизных манифестов.
 
 ## 📅 Фаза 8: Monetization & Expansion (Neural Expansion)
-- [ ] **Infrastructure:** Интеграция юкассы.
+- [x] **Infrastructure:** Интеграция юкассы.
 - [x] **Subscription Logic:** Система проверки лимитов (Neural Capacity) и управления статусом Pro.
 - [ ] **Time Machine:** Визуализация истории графа. Анимация развития сети за выбранный период (Obsidian-style).
 - [ ] **Synapse API:** Доступ к персональному API-ключу для внешней автоматизации (Zapier/Make/Webhooks).
