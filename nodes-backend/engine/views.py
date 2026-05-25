@@ -500,7 +500,7 @@ class YookassaWebhookView(APIView):
             
             # 2. Дополнительная проверка статуса через API ЮKassa (Double-check)
             try:
-                payment_info = Payment.find(payment_obj.get('id'))
+                payment_info = Payment.find_one(payment_obj.get('id'))
                 if payment_info.status != 'succeeded':
                     logger.warning(f"[PAYMENT] Webhook claimed success but status is {payment_info.status}")
                     return Response({"status": "ignored"})
