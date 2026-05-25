@@ -4,16 +4,26 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Sparkles, Check, Zap, Palette, BarChart3, Download, Clock, Star } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { UpgradeModal } from '@/features/subscription/components/UpgradeModal'
 import { format } from 'date-fns'
 import { ru, enUS } from 'date-fns/locale'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function SubscriptionTab() {
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
+  const queryClient = useQueryClient()
   const { isPro, expiresAt, isLoading } = useSubscription(user?.id)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Принудительно инвалидируем кэш при заходе на вкладку, 
+  // чтобы пользователь сразу увидел результат оплаты
+  useEffect(() => {
+    if (user?.id) {
+      queryClient.invalidateQueries({ queryKey: ['subscription', user.id] })
+    }
+  }, [user?.id, queryClient])
 
   const dateLocale = i18n.language === 'ru' ? ru : enUS
   const formattedDate = expiresAt 
