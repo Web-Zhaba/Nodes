@@ -29,8 +29,7 @@ class ContentRecommender:
 
     def get_top_interests(self, limit=3):
         """
-        Собирает топ активных узлов (а не тегов). 
-        Это дает более точный контекст для поиска.
+        Собирает топ активных узлов.
         """
         top_nodes = Node.objects.filter(user=self.user) \
             .annotate(
@@ -64,7 +63,7 @@ class ContentRecommender:
 
         tasks = []
         for node in active_nodes:
-            # Собираем богатый контекст: Название + Ядро + Все теги
+            # Собираем контекст: Название + Ядро + Все теги
             connectors = [nc.connector for nc in node.node_connectors.all()]
             tag_names = [c.name for c in connectors]
             core_name = node.core.name if node.core else ""
