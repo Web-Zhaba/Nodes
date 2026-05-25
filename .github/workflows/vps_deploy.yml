@@ -21,12 +21,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set lower case owner name
+        run: |
+          echo "OWNER_LC=${OWNER,,}" >> ${GITHUB_ENV}
+        env:
+          OWNER: "${{ github.repository_owner }}"
+
       - name: Build and push Backend image
         uses: docker/build-push-action@v5
         with:
           context: ./nodes-backend
           push: true
-          tags: ghcr.io/${{ github.repository }}/nodes-backend:latest
+          tags: ghcr.io/${{ env.OWNER_LC }}/nodes-backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
