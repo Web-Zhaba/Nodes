@@ -22,7 +22,7 @@ export function AppFooter({ className }: AppFooterProps) {
       <div className="container mx-auto max-w-7xl px-6 flex items-center justify-between text-muted-foreground opacity-70 hover:opacity-100 transition-opacity">
         <div className="text-[10px] sm:text-xs font-medium tracking-widest uppercase flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-          {t("common.footer.systemOnline", "NODES — Система активна")}
+          {t("common.footer.systemOnline", { logo: t("common.logo") })}
         </div>
         <div className="flex items-center gap-5">
           <Link

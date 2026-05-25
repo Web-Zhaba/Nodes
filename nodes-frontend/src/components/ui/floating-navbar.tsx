@@ -40,7 +40,7 @@ export function FloatingNavbar() {
           to="/"
           className="flex items-center justify-center h-10 md:h-12 px-4 bg-background/40 backdrop-blur-xl border border-border/40 rounded-xl hover:bg-white/5 transition-colors shadow-sm shrink-0"
         >
-          <span className="font-bold text-lg md:text-xl tracking-widest text-foreground">NODES</span>
+          <span className="font-bold text-lg md:text-xl tracking-widest text-foreground uppercase">{t("common.logo")}</span>
         </Link>
 
         {/* Center Island: Primary Navigation */}

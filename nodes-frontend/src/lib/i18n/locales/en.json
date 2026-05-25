@@ -112,6 +112,7 @@
     }
   },
   "common": {
+    "logo": "NODES",
     "loading": "Loading...",
     "error": "Error",
     "errorSaving": "Failed to save",
@@ -144,7 +145,7 @@
       "dec": "Dec"
     },
     "footer": {
-      "systemOnline": "NODES — System Online"
+      "systemOnline": "{{logo}} — System Online"
     }
   },
   "nav": {
