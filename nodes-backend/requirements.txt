@@ -14,3 +14,5 @@ sqlparse==0.5.5
 tzdata==2025.3
 gunicorn==23.0.0
 yookassa==3.10.1
+whitenoise==6.9.0
+
