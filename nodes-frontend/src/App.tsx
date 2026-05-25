@@ -5,8 +5,6 @@ import { useAuth } from "@/hooks/useAuth";
 import Layout from "@/widgets/Layout";
 import ProtectedRoute from "@/widgets/ProtectedRoute";
 import { useTranslation } from "react-i18next";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
@@ -180,8 +178,6 @@ function App() {
       <BrowserRouter>
         <AppRouter />
       </BrowserRouter>
-      <Analytics />
-        <SpeedInsights />
       </ErrorBoundary>
     </PersistQueryClientProvider>
   );

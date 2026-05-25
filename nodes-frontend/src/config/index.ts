@@ -6,3 +6,10 @@ export const config = {
   },
   siteUrl: import.meta.env.VITE_SITE_URL || window.location.origin,
 }
+
+if (!config.supabase.url || !config.supabase.anonKey) {
+  console.error('Supabase configuration missing:', {
+    url: !!config.supabase.url,
+    anonKey: !!config.supabase.anonKey
+  });
+}
