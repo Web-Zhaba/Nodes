@@ -49,6 +49,7 @@ jobs:
             VITE_SUPABASE_URL=${{ secrets.SUPABASE_URL }}
             VITE_SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
             VITE_API_URL=https://preview.nodes-tracker.ru
+            VITE_DJANGO_API_URL=https://preview.nodes-tracker.ru/api/v1
             VITE_SITE_URL=https://app-preview.nodes-tracker.ru
           cache-from: type=gha
           cache-to: type=gha,mode=max
