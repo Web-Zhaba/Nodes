@@ -19,7 +19,7 @@ ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
 ENV VITE_API_URL=$VITE_API_URL
 ENV VITE_SITE_URL=$VITE_SITE_URL
 
-RUN npm run build
+RUN npm run build:fast
 
 # Production stage
 FROM nginx:stable-alpine
