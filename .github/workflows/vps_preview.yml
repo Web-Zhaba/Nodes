@@ -71,6 +71,7 @@ jobs:
             DEBUG=True
             SITE_URL=https://app-preview.nodes-tracker.ru
             VITE_API_URL=https://preview.nodes-tracker.ru
+            CORS_ALLOWED_ORIGINS=https://app-preview.nodes-tracker.ru,https://nodes-tracker.ru,http://localhost:5173
             EOF
             
             cat <<EOF > docker-compose.yml
