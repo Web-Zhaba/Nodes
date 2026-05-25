@@ -1,3 +1,4 @@
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -13,23 +14,51 @@ from django.utils import timezone
 from rest_framework.decorators import api_view
 from django.core.cache import cache
 from .models import Impulse, Node, Recommendation, GenerationLog, Profile
-from .serializers import RecommendationSerializer
-from .recommendations import ContentRecommender
-from rest_framework import generics
+from .authentication import SubscriptionKeyAuthentication, hash_key
+from .serializers import RecommendationSerializer, ApiKeySerializer, NodeSerializer
+import secrets
 
-logger = logging.getLogger(__name__)
+class ApiKeyView(generics.ListCreateAPIView):
+    """
+    Управление API ключами. 
+    POST создает новый ключ и возвращает его ОДИН РАЗ в открытом виде.
+    """
+    serializer_class = ApiKeySerializer
 
+    def get_queryset(self):
+        return ApiKey.objects.filter(user=self.request.user).order_by('-created_at')
 
-class StabilityRequestSerializer(serializers.Serializer):
-    """Валидация входных данных для пересчёта стабильности."""
-    node_id = serializers.UUIDField(required=False, allow_null=True, default=None)
+    def perform_create(self, serializer):
+        # Генерируем случайный ключ
+        raw_key = f"nodes_{secrets.token_urlsafe(32)}"
+        # Хэшируем для хранения
+        serializer.save(user=self.request.user, key_hash=hash_key(raw_key))
+        # Сохраняем в объекте для ответа (в БД не пойдет в открытом виде)
+        self.raw_key = raw_key
 
+    def create(self, request, *args, **kwargs):
+        if not request.user.is_active_pro:
+            return Response({"error": "API keys are only available for Pro users"}, status=403)
+            
+        response = super().create(request, *args, **kwargs)
+        response.data['api_key'] = self.raw_key # Добавляем ключ в ответ
+        return response
+
+class NodeListView(generics.ListAPIView):
+    """Список всех узлов пользователя через API."""
+    serializer_class = NodeSerializer
+    authentication_classes = [SubscriptionKeyAuthentication] # Только по API-ключу
+
+    def get_queryset(self):
+        return Node.objects.filter(user=self.request.user).order_by('name')
 
 class RecalculateStabilityView(APIView):
     """
     Эндпоинт для полного пересчета стабильности (при загрузке страницы).
     Синхронно обновляет все узлы и связанные ядра через ORM.
     """
+    authentication_classes = [SubscriptionKeyAuthentication] # Разрешаем API-ключ
+
     def post(self, request):
         start_time = time.perf_counter()
         serializer = StabilityRequestSerializer(data=request.data)
@@ -60,14 +89,14 @@ class ImpulseActionSerializer(serializers.Serializer):
     date = serializers.DateField()
 
 
+from rest_framework.authentication import SessionAuthentication
+
 class ImpulseActionView(APIView):
     """
     1 HTTP-запрос от фронтенда → 1 SQL-вызов к Postgres → всё готово.
-    
-    Вся логика (impulse save + stability calc + core update) выполняется 
-    внутри PostgreSQL-функции process_pulse(), что сводит сетевые roundtrips
-    к абсолютному минимуму.
     """
+    authentication_classes = [SessionAuthentication, SubscriptionKeyAuthentication]
+
     def post(self, request):
         start_time = time.perf_counter()
         serializer = ImpulseActionSerializer(data=request.data)

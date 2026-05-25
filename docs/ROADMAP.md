@@ -101,7 +101,7 @@
 ## ✅ Фаза 6: Автономность и Устойчивость (Offline-First) — Foundation (50%)
 - [x] **Connectivity UI:** Индикатор offline-баннера при потере соединения (`@capacitor/network` + React state).
 - [x] **PWA Foundation:** Установка `vite-plugin-pwa` и настройка манифеста.
-- [ ] **Resource Caching:** Service Worker стратегии для кэширования шрифтов, иконок и логики.
+- [x] **Resource Caching:** Service Worker стратегии для кэширования шрифтов, иконок и логики.
 - [ ] **Data Persistence:** Интеграция `persistQueryClient` для сохранения кэша React Query в LocalStorage/IndexedDB.
 - [ ] **Offline Mutations:** Система «Оптимистичных обновлений» для создания импульсов без сети.
 - [ ] **Sync Engine:** Очередь фоновой синхронизации (Zustand + Background Sync API) для отправки данных при появлении сети.
