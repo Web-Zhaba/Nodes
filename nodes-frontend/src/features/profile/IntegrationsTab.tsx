@@ -11,7 +11,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/features/subscription/hooks/useSubscription";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { integrationsService } from "./api/integrationsService";
-import type { ApiKey } from "./api/integrationsService";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 

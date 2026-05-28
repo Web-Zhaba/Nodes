@@ -34,16 +34,25 @@ export const useThemeStore = create<ThemeState>()(
       },
       isInitialized: false,
       setMode: (mode) => {
-        set((state) => ({
-          isInitialized: true,
-          config: { ...state.config, mode }
-        }))
+        set((state) => {
+          const currentConfig = state.config || { mode: "dark", colors: { light: {}, dark: {} } }
+          return {
+            isInitialized: true,
+            config: {
+              ...currentConfig,
+              mode,
+              colors: currentConfig.colors || { light: {}, dark: {} }
+            }
+          }
+        })
         get().applyTheme()
       },
       setColor: (token, value, mode) => {
         set((state) => {
-          const targetMode = mode || state.config.mode
-          const newColors = { ...state.config.colors[targetMode] }
+          const currentConfig = state.config || { mode: "dark", colors: { light: {}, dark: {} } }
+          const targetMode = mode || currentConfig.mode || "dark"
+          const colors = currentConfig.colors || { light: {}, dark: {} }
+          const newColors = { ...(colors[targetMode] || {}) }
 
           if (value === null) {
             delete newColors[token]
@@ -54,9 +63,10 @@ export const useThemeStore = create<ThemeState>()(
           return {
             isInitialized: true,
             config: {
-              ...state.config,
+              ...currentConfig,
+              mode: currentConfig.mode || "dark",
               colors: {
-                ...state.config.colors,
+                ...colors,
                 [targetMode]: newColors,
               },
             },
@@ -65,19 +75,31 @@ export const useThemeStore = create<ThemeState>()(
         get().applyTheme()
       },
       applyPalette: (lightColors, darkColors) => {
-        set((state) => ({
-          isInitialized: true,
-          config: {
-            ...state.config,
-            colors: { light: lightColors, dark: darkColors }
+        set((state) => {
+          const currentConfig = state.config || { mode: "dark", colors: { light: {}, dark: {} } }
+          return {
+            isInitialized: true,
+            config: {
+              ...currentConfig,
+              colors: {
+                light: lightColors || {},
+                dark: darkColors || {}
+              }
+            }
           }
-        }))
+        })
         get().applyTheme()
       },
       resetToDefaults: () => {
-        set((state) => ({
-          config: { ...state.config, colors: { light: {}, dark: {} } }
-        }))
+        set((state) => {
+          const currentConfig = state.config || { mode: "dark", colors: { light: {}, dark: {} } }
+          return {
+            config: {
+              ...currentConfig,
+              colors: { light: {}, dark: {} }
+            }
+          }
+        })
         get().applyTheme()
       },
       clearCache: () => {
@@ -91,11 +113,16 @@ export const useThemeStore = create<ThemeState>()(
         get().applyTheme()
       },
       applyTheme: () => {
-        const { config } = get()
+        const config = get().config || {
+          mode: "dark",
+          colors: { light: {}, dark: {} },
+        }
         const root = document.documentElement
+        const mode = config.mode || "dark"
+        const colors = config.colors || { light: {}, dark: {} }
 
         // Apply dark/light class
-        if (config.mode === "dark") {
+        if (mode === "dark") {
           root.classList.add("dark")
         } else {
           root.classList.remove("dark")
@@ -113,12 +140,14 @@ export const useThemeStore = create<ThemeState>()(
         knownTokens.forEach(t => root.style.removeProperty(t))
 
         // Apply custom colors as inline CSS variables
-        const currentColors = config.colors[config.mode] || {}
+        const currentColors = colors[mode] || {}
 
         Object.entries(currentColors).forEach(([token, value]) => {
-          root.style.setProperty(token, value)
-          if (token === "--primary" && !currentColors["--ring"]) {
-             root.style.setProperty("--ring", value)
+          if (token && value !== undefined && value !== null) {
+            root.style.setProperty(token, value)
+            if (token === "--primary" && !currentColors["--ring"]) {
+               root.style.setProperty("--ring", value)
+            }
           }
         })
       },
@@ -135,10 +164,18 @@ export const useThemeStore = create<ThemeState>()(
         }
 
         const cloudConfig = data.theme_config as Partial<ThemeConfig>
-        if (cloudConfig.colors) {
+        if (cloudConfig && typeof cloudConfig === "object") {
+           const currentConfig = get().config || { mode: "dark", colors: { light: {}, dark: {} } }
+           const mergedConfig = {
+             mode: cloudConfig.mode || currentConfig.mode || "dark",
+             colors: {
+               light: { ...(currentConfig.colors?.light || {}), ...(cloudConfig.colors?.light || {}) },
+               dark: { ...(currentConfig.colors?.dark || {}), ...(cloudConfig.colors?.dark || {}) },
+             }
+           }
            set({
              isInitialized: true,
-             config: { ...get().config, ...cloudConfig } as ThemeConfig
+             config: mergedConfig
            })
            get().applyTheme()
         } else {
@@ -146,7 +183,18 @@ export const useThemeStore = create<ThemeState>()(
         }
       },
       updateConfig: (newConfig) => {
-        set({ config: newConfig, isInitialized: true })
+        const baseConfig = {
+          mode: "dark" as ThemeMode,
+          colors: { light: {}, dark: {} },
+        }
+        const mergedConfig = {
+          mode: newConfig?.mode || baseConfig.mode,
+          colors: {
+            light: { ...baseConfig.colors.light, ...newConfig?.colors?.light },
+            dark: { ...baseConfig.colors.dark, ...newConfig?.colors?.dark },
+          }
+        }
+        set({ config: mergedConfig, isInitialized: true })
         get().applyTheme()
       }
     }),
@@ -154,7 +202,21 @@ export const useThemeStore = create<ThemeState>()(
       name: "nodes-theme",
       partialize: (state) => ({ config: state.config }),
       onRehydrateStorage: () => (state) => {
-        if (state) state.applyTheme()
+        if (state) {
+          // Safeguard the state config before applying
+          const baseConfig = {
+            mode: "dark" as ThemeMode,
+            colors: { light: {}, dark: {} },
+          }
+          state.config = {
+            mode: state.config?.mode || baseConfig.mode,
+            colors: {
+              light: { ...baseConfig.colors.light, ...state.config?.colors?.light },
+              dark: { ...baseConfig.colors.dark, ...state.config?.colors?.dark },
+            }
+          }
+          state.applyTheme()
+        }
       },
     }
   )

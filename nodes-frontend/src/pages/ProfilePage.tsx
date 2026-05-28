@@ -102,9 +102,13 @@ export default function ProfilePage() {
   useEffect(() => {
     if (combinedData) {
       const { profile, nodes, cores } = combinedData;
-      const themeConfig = profile.theme_config || {
-        mode: "light",
-        colors: { light: {}, dark: {} }
+      const rawThemeConfig = profile.theme_config || {};
+      const themeConfig = {
+        mode: rawThemeConfig.mode || "dark",
+        colors: {
+          light: rawThemeConfig.colors?.light || {},
+          dark: rawThemeConfig.colors?.dark || {}
+        }
       };
 
       const nodesPrivacy: Record<string, boolean> = {};
