@@ -124,8 +124,21 @@ export function AppearanceTab() {
   const { isPro } = useSubscription(user?.id)
   
   // Watch themeConfig from form - this is our source of truth
-  const formThemeConfig = watch("themeConfig")
-  const isDark = formThemeConfig?.mode === "dark"
+  const rawFormThemeConfig = watch("themeConfig")
+  const formThemeConfig: {
+    mode: "light" | "dark"
+    colors: {
+      light: Record<string, string>
+      dark: Record<string, string>
+    }
+  } = {
+    mode: (rawFormThemeConfig?.mode || "dark") as "light" | "dark",
+    colors: {
+      light: rawFormThemeConfig?.colors?.light || {},
+      dark: rawFormThemeConfig?.colors?.dark || {}
+    }
+  }
+  const isDark = formThemeConfig.mode === "dark"
 
   const FONT_OPTIONS = [
     { label: t("profile.appearance.fonts.jakarta", "По умолчанию (Plus Jakarta)"), value: "Plus Jakarta Sans, sans-serif" },
