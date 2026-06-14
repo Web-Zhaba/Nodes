@@ -92,6 +92,7 @@ export function SecurityTab() {
             <p className="text-[10px] sm:text-xs text-muted-foreground">{t("profile.security.resetPasswordDesc", "Отправить ссылку для сброса на почту")}</p>
           </div>
           <Button 
+            type="button"
             variant="secondary" 
             className="rounded-lg sm:rounded-xl w-full sm:w-auto text-xs sm:text-sm h-9 sm:h-10"
             onClick={handleResetPasswordEmail}
@@ -130,6 +131,7 @@ export function SecurityTab() {
                   
                   {isLinked ? (
                     <Button
+                      type="button"
                       variant="ghost"
                       size="sm"
                       className="h-7 sm:h-8 px-2 text-[9px] sm:text-[10px] text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
@@ -149,6 +151,7 @@ export function SecurityTab() {
                     </Button>
                   ) : (
                     <Button
+                      type="button"
                       variant="outline"
                       size="sm"
                       className="h-7 sm:h-8 px-2 text-[9px] sm:text-[10px] rounded-lg border-border/40"
@@ -171,6 +174,7 @@ export function SecurityTab() {
               <p className="text-[10px] sm:text-xs text-muted-foreground">{t("profile.security.sessionManagementDesc", "Устройства, имеющие доступ к аккаунту")}</p>
             </div>
             <Button 
+              type="button"
               variant="destructive" 
               size="sm" 
               className="rounded-lg sm:rounded-xl w-full sm:w-auto text-xs sm:text-sm h-9 sm:h-10"
