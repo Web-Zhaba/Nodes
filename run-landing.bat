@@ -34,7 +34,7 @@ if not exist "nodes-landing\node_modules" (
 :: 3. Запуск
 echo.
 echo [*] Launching Astro Landing Page...
-echo     URL: http://localhost:4321
+echo     URL: http://127.0.0.1:4321
 start "Nodes Landing" cmd /k "cd nodes-landing && title Nodes Landing && npm run dev"
 
 echo.
