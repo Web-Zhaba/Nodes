@@ -82,6 +82,7 @@ export function SubscriptionTab() {
               </div>
             )}
             <Button 
+              type="button"
               onClick={() => setIsModalOpen(true)}
               className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-6"
             >
@@ -118,6 +119,7 @@ export function SubscriptionTab() {
 
         {!isPro && (
           <Button 
+            type="button"
             variant="outline"
             onClick={() => setIsModalOpen(true)}
             className="w-full h-12 rounded-xl border-primary/20 hover:bg-primary/5 hover:border-primary/40 text-primary font-bold transition-all"

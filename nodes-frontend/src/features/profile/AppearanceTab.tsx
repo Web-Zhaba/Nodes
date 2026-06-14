@@ -213,7 +213,7 @@ export function AppearanceTab() {
             <p className="text-sm text-muted-foreground">{t("profile.appearance.subtitle", "Настройте визуальный резонанс интерфейса.")}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={toggleTheme} className="rounded-xl shrink-0 h-10 w-10 shadow-sm" title={isDark ? "Переключить на светлый" : "Переключить на тёмный"}>
+            <Button type="button" variant="outline" size="icon" onClick={toggleTheme} className="rounded-xl shrink-0 h-10 w-10 shadow-sm" title={isDark ? "Переключить на светлый" : "Переключить на тёмный"}>
               {isDark ? <Moon className="w-4 h-4 text-indigo-400" /> : <Sun className="w-4 h-4 text-orange-400" />}
             </Button>
             <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest hidden sm:inline">
@@ -240,6 +240,7 @@ export function AppearanceTab() {
               const button = (
                 <Button
                   key={preset.name}
+                  type="button"
                   variant={isSelected ? "default" : "outline"}
                   onClick={() => {
                     if (isLocked) return
@@ -269,7 +270,7 @@ export function AppearanceTab() {
             <h3 className="font-bold">{t("profile.appearance.fineTuning", "Тонкая настройка")}</h3>
             <p className="text-xs text-muted-foreground">{t("profile.appearance.personalization", { mode: isDark ? t("profile.appearance.dark") : t("profile.appearance.light") })}</p>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => { 
+          <Button type="button" variant="ghost" size="icon" onClick={() => { 
             resetFormToDefaults() 
             toast.info(t("profile.appearance.colorsReset", "Цвета сброшены — нажмите Сохранить для применения")) 
           }}>

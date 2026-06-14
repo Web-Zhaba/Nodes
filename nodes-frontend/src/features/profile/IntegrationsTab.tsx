@@ -58,6 +58,7 @@ function IntegrationCard({
           </span>
         ) : (
           <Button 
+            type="button"
             variant="ghost" 
             size="icon" 
             className="rounded-full h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -80,6 +81,7 @@ function IntegrationCard({
 
       <div className="mt-auto pt-2">
         <Button 
+          type="button"
           variant={isPlanned ? "secondary" : "outline"} 
           className="w-full rounded-xl text-xs h-9 font-medium border-border/40 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
           disabled={isPlanned}
@@ -136,6 +138,7 @@ export function IntegrationsTab() {
           </div>
           {showApiKeys && (
             <Button 
+              type="button"
               variant="ghost" 
               onClick={() => setShowApiKeys(false)}
               className="text-xs rounded-xl"
@@ -221,7 +224,7 @@ export function IntegrationsTab() {
                       {t("profile.integrations.api.proDesc", "Генерация API ключей доступна пользователям с активной подпиской Nodes Pro.")}
                     </p>
                   </div>
-                  <Button variant="default" className="rounded-2xl px-8 font-bold">
+                  <Button type="button" variant="default" className="rounded-2xl px-8 font-bold">
                     {t("profile.subscription.upgrade", "Перейти на Pro")}
                   </Button>
                 </div>
@@ -233,6 +236,7 @@ export function IntegrationsTab() {
                       {t("profile.integrations.api.keysList", "Ваши API ключи")}
                     </h3>
                     <Button 
+                      type="button"
                       onClick={() => createKeyMutation.mutate(t("profile.integrations.api.defaultName", "Мой ключ"))}
                       disabled={createKeyMutation.isPending}
                       className="rounded-xl h-9 text-xs gap-2"
@@ -264,6 +268,7 @@ export function IntegrationsTab() {
                           {newKeySecret}
                         </code>
                         <Button 
+                          type="button"
                           size="icon" 
                           variant="ghost" 
                           className="h-8 w-8 rounded-lg"
@@ -273,6 +278,7 @@ export function IntegrationsTab() {
                         </Button>
                       </div>
                       <Button 
+                        type="button"
                         variant="ghost" 
                         size="sm" 
                         className="text-[10px] h-6 px-2 ml-auto block"
@@ -310,7 +316,7 @@ export function IntegrationsTab() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive transition-colors">
+                            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive transition-colors">
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -336,7 +342,7 @@ export function IntegrationsTab() {
               {t("profile.integrations.suggestDesc", "Мы постоянно расширяем возможности связи. Напишите нам, что бы вы хотели видеть.")}
             </p>
           </div>
-          <Button variant="link" className="text-primary text-xs font-bold uppercase tracking-widest">
+          <Button type="button" variant="link" className="text-primary text-xs font-bold uppercase tracking-widest">
             {t("profile.integrations.suggestButton", "Предложить идею")}
           </Button>
         </div>

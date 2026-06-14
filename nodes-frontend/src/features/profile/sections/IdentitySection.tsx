@@ -35,6 +35,7 @@ export function IdentitySection({ form, isLoading, email }: IdentitySectionProps
                 disabled={isLoading}
               />
               <Button 
+                type="button"
                 size="icon" 
                 variant="ghost" 
                 className="shrink-0 text-green-500 hover:text-green-400 hover:bg-green-500/10"
@@ -49,6 +50,7 @@ export function IdentitySection({ form, isLoading, email }: IdentitySectionProps
                 {form.watch("displayName") || t("profile.identity.anonymousNode", "Анонимный узел")}
               </h3>
               <Button 
+                type="button"
                 variant="ghost" 
                 size="icon" 
                 className="w-8 h-8 rounded-lg text-muted-foreground hover:text-primary transition-colors shrink-0"
