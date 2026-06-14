@@ -118,6 +118,15 @@ export default defineConfig({
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },
   },
+  server: {
+    host: "127.0.0.1",
+    watch: {
+      ignored: ["**/android/**", "**/ios/**"]
+    }
+  },
+  optimizeDeps: {
+    entries: ["index.html"]
+  },
   build: {
     // Skip compressed-size logging in build output — saves time
     reportCompressedSize: false,

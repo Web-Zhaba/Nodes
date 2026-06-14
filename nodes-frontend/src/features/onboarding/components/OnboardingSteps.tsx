@@ -17,7 +17,29 @@ import { useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery"
 import { NodePreview } from "@/features/nodes/components/NodePreview";
 import { NodeCard } from "@/features/nodes/components/NodeCard";
 import { useOnboardingStore } from "../useOnboardingStore";
+import { useUpdateProfileMutation } from "@/features/profile/hooks/useProfileQuery";
 import type { NodeType } from "@/types";
+
+const useOnboarding = () => {
+  const store = useOnboardingStore()
+  const { user } = useAuth()
+  const updateProfile = useUpdateProfileMutation()
+
+  const handleClose = () => {
+    if (user?.id) {
+      updateProfile.mutate({
+        userId: user.id,
+        updates: { onboarding_completed: true },
+      })
+    }
+    store.close()
+  }
+
+  return {
+    ...store,
+    close: handleClose,
+  }
+}
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -31,7 +53,7 @@ const TYPE_ICONS: Record<NodeType, typeof Binary> = {
 
 export function WelcomeStep() {
   const { t } = useTranslation();
-  const { nextStep, close } = useOnboardingStore();
+  const { nextStep, close } = useOnboarding();
 
   return (
     <div className="flex flex-col items-center justify-center text-center py-4">
@@ -85,7 +107,7 @@ function Circle({ className }: { className?: string }) {
 
 export function CreateNodeStep() {
   const { t } = useTranslation();
-  const { nextStep, close, setCreatedNodeId } = useOnboardingStore();
+  const { nextStep, close, setCreatedNodeId } = useOnboarding();
   const { user } = useAuth();
   const [name, setName] = useState("");
   const [nodeType, setNodeType] = useState<NodeType>("binary");
@@ -221,7 +243,7 @@ export function CreateNodeStep() {
 
 export function FirstImpulseStep() {
   const { t } = useTranslation();
-  const { nextStep, close, createdNodeId } = useOnboardingStore();
+  const { nextStep, close, createdNodeId } = useOnboarding();
   const { user } = useAuth();
   const { data: nodes = {} } = useNodesQuery(user?.id);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -305,7 +327,7 @@ export function FirstImpulseStep() {
 
 export function CreateCoreStep() {
   const { t } = useTranslation();
-  const { nextStep, close, setCreatedCoreId, createdNodeId } = useOnboardingStore();
+  const { nextStep, close, setCreatedCoreId, createdNodeId } = useOnboarding();
   const { user } = useAuth();
   const [name, setName] = useState("");
   const [color, setColor] = useState("#8b5cf6");
@@ -422,7 +444,7 @@ export function CreateCoreStep() {
 
 export function SeeGraphStep({ onComplete }: { onComplete: () => void }) {
   const { t } = useTranslation();
-  const { close } = useOnboardingStore();
+  const { close } = useOnboarding();
   const navigate = useNavigate();
 
   const handleFinish = () => {

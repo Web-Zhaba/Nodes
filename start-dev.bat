@@ -34,7 +34,7 @@ start "Nodes Backend" cmd /k "cd nodes-backend && title Nodes Backend && venv\Sc
 timeout /t 2 /nobreak > nul
 
 echo [2/3] Launching Vite Frontend (Neural Interface)...
-echo       URL: http://localhost:5173
+echo       URL: http://127.0.0.1:5173
 start "Nodes Frontend" cmd /k "cd nodes-frontend && title Nodes Frontend && npm run dev"
 
 timeout /t 1 /nobreak > nul

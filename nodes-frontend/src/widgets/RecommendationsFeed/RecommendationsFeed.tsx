@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
+import { useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery";
 
 type FilterType = "all" | "saved" | "video" | "book" | "course" | "github" | "article" | "product";
 
@@ -20,6 +21,22 @@ export const RecommendationsFeed = () => {
   const { data: profile } = useProfileQuery(user?.id);
   const queryClient = useQueryClient();
   const [activeFilters, setActiveFilters] = useState<FilterType[]>(["all"]);
+  const recordPulseMutation = useRecordPulseMutation();
+
+  const handleRecordPulse = (nodeId: string, nodeName: string) => {
+    recordPulseMutation.mutate({
+      nodeId,
+      value: 1,
+      date: new Date()
+    }, {
+      onSuccess: () => {
+        toast.success(t("recommendations.pulse.success", `Записан импульс выполнения для узла: ${nodeName}`));
+      },
+      onError: () => {
+        toast.error(t("recommendations.pulse.error", "Не удалось записать импульс"));
+      }
+    });
+  };
 
   const toggleFilter = (filter: FilterType) => {
     setActiveFilters(prev => {
@@ -226,8 +243,14 @@ export const RecommendationsFeed = () => {
               <div className="flex items-center gap-3">
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10" />
                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 flex items-center gap-2">
-                  <span className="opacity-50">{t("recommendations.sections.basedOnNode", "Для вашего узла")}:</span>
-                  <span className="text-indigo-400">{groupName}</span>
+                  {groupName === "General" ? (
+                    <span className="text-indigo-400">{t("recommendations.sections.general", "Общие рекомендации")}</span>
+                  ) : (
+                    <>
+                      <span className="opacity-50">{t("recommendations.sections.basedOnNode", "Для вашего узла")}:</span>
+                      <span className="text-indigo-400">{groupName}</span>
+                    </>
+                  )}
                 </h2>
                 <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10" />
               </div>
@@ -240,6 +263,7 @@ export const RecommendationsFeed = () => {
                       recommendation={rec}
                       onSave={(id) => updateMutation.mutate({ id, data: { is_saved: !rec.is_saved } })}
                       onDiscard={(id) => updateMutation.mutate({ id, data: { is_discarded: true } })}
+                      onRecordPulse={handleRecordPulse}
                     />
                   ))}
                 </AnimatePresence>

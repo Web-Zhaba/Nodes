@@ -11,6 +11,10 @@ urlpatterns = [
 
     path('recommendations/<uuid:pk>/', views.RecommendationUpdateView.as_view(), name='recommendation_detail'),
     
+    # API Management
+    path('keys/', views.ApiKeyView.as_view(), name='api-keys'),
+    path('nodes/list/', views.NodeListView.as_view(), name='api-nodes-list'),
+
     # Payments
     path('payments/create/', views.CreatePaymentView.as_view(), name='create_payment'),
     path('payments/webhook/', views.YookassaWebhookView.as_view(), name='yookassa_webhook'),

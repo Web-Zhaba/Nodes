@@ -231,3 +231,19 @@ class GenerationLog(models.Model):
     class Meta:
         managed = False
         db_table = 'generation_logs'
+
+class ApiKey(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='api_keys')
+    key_hash = models.TextField(unique=True)
+    name = models.TextField(default='Default Key')
+    is_active = models.BooleanField(default=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'api_keys'
+
+    def __str__(self):
+        return f"{self.name} ({self.user.email})"

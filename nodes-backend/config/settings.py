@@ -104,7 +104,8 @@ CACHES = {
 
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() == 'true'
-_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', 'https://nodes-tracker.ru,https://www.nodes-tracker.ru,http://localhost:5173')
+_default_origins = 'https://nodes-tracker.ru,https://www.nodes-tracker.ru,http://localhost:5173,https://app-preview.nodes-tracker.ru'
+_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', _default_origins)
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_origins.split(',') if origin.strip()]
 
 CORS_ALLOW_CREDENTIALS = True

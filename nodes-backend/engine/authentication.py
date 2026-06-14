@@ -1,26 +1,21 @@
 import jwt
 import requests
 import logging
+import hashlib
 from django.conf import settings
 from rest_framework import authentication, exceptions
-from .models import Profile
+from rest_framework.authentication import BaseAuthentication
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
+from django.utils import timezone
+from django.core.cache import cache as django_cache
+from .models import Profile, ApiKey
 
 logger = logging.getLogger(__name__)
 
-# --- Кэш публичных ключей Supabase (с TTL для автоматического обновления) ---
-import time as _time
-
-_jwks_cache: dict = {}
-_jwks_cache_time: float = 0
-_JWKS_CACHE_TTL: int = 3600  # Обновлять ключи раз в час
-
-from django.core.cache import cache as django_cache
+# --- Supabase JWT Authentication ---
 
 def _get_jwks() -> dict:
-    """
-    Получает JSON Web Key Set (JWKS) от Supabase.
-    Использует Django Cache (LocMem) для сохранения между запросами в Vercel.
-    """
+    """Получает JSON Web Key Set (JWKS) от Supabase."""
     cache_key = "supabase_jwks_data"
     cached = django_cache.get(cache_key)
     if cached:
@@ -33,36 +28,27 @@ def _get_jwks() -> dict:
         response = requests.get(jwks_url, timeout=5)
         response.raise_for_status()
         data = response.json()
-        # Кэшируем на 1 час
         django_cache.set(cache_key, data, 3600)
-        logger.info("Successfully loaded/refreshed Supabase JWKS (stored in Django cache).")
         return data
     except requests.RequestException as e:
         logger.error(f"Failed to fetch Supabase JWKS: {e}")
         return {}
 
-
 def _get_signing_key(token: str):
-    """
-    Находит правильный публичный ключ по 'kid' из заголовка токена.
-    Поддерживает ES256 (асимметричный) и HS256 (симметричный).
-    """
+    """Находит правильный ключ для проверки подписи JWT."""
     try:
         header = jwt.get_unverified_header(token)
-        logger.info(f"Incoming JWT Header: {header}")
     except Exception:
         raise exceptions.AuthenticationFailed('Некорректный формат токена.')
-        
+
     alg = header.get('alg', 'HS256')
 
-    # Приоритет HS256: если токен симметричный, используем наш локальный секрет напрямую
     if alg == 'HS256':
         if not settings.SUPABASE_JWT_SECRET:
-            logger.error("SUPABASE_JWT_SECRET is not set in Django settings!")
-            raise exceptions.AuthenticationFailed('Ошибка конфигурации сервера (JWT Secret).')
+            logger.error("SUPABASE_JWT_SECRET is not set!")
+            raise exceptions.AuthenticationFailed('Ошибка конфигурации сервера.')
         return settings.SUPABASE_JWT_SECRET, ['HS256']
 
-    # Для ES256/RS256 — ищем публичный ключ в JWKS по kid
     kid = header.get('kid')
     jwks = _get_jwks()
 
@@ -75,17 +61,10 @@ def _get_signing_key(token: str):
                 logger.error(f"Failed to parse JWK: {e}")
                 continue
 
-    # Если мы дошли сюда и это не HS256, значит ключа нет
-    raise exceptions.AuthenticationFailed(
-        f'Публичный ключ с kid={kid} не найден в JWKS Supabase. Убедитесь, что вы залогинены на правильном сервере.'
-    )
-
+    raise exceptions.AuthenticationFailed(f'Публичный ключ с kid={kid} не найден.')
 
 class SupabaseJWTAuthentication(authentication.BaseAuthentication):
-    """
-    Кастомная DRF-аутентификация через Supabase JWT.
-    Автоматически поддерживает HS256 и ES256.
-    """
+    """Авторизация через Supabase JWT (Bearer токен)."""
     def authenticate_header(self, request):
         return 'Bearer'
 
@@ -99,9 +78,7 @@ class SupabaseJWTAuthentication(authentication.BaseAuthentication):
             if prefix.lower() != 'bearer':
                 return None
         except ValueError:
-            raise exceptions.AuthenticationFailed(
-                'Неверный формат заголовка Authorization.'
-            )
+            raise exceptions.AuthenticationFailed('Неверный формат заголовка Authorization.')
 
         try:
             signing_key, algorithms = _get_signing_key(token)
@@ -126,5 +103,36 @@ class SupabaseJWTAuthentication(authentication.BaseAuthentication):
         except Profile.DoesNotExist:
             raise exceptions.AuthenticationFailed('Профиль пользователя не найден.')
 
-        logger.debug(f"Authenticated user: {user_id}")
         return (profile, token)
+
+# --- Subscription API Key Authentication ---
+
+def hash_key(key: str) -> str:
+    """Хэширует API-ключ для хранения и сравнения."""
+    return hashlib.sha256(key.encode()).hexdigest()
+
+class SubscriptionKeyAuthentication(BaseAuthentication):
+    """
+    Авторизация через заголовок X-API-Key.
+    Доступ разрешен только пользователям с активной Pro-подпиской.
+    """
+    def authenticate(self, request):
+        api_key = request.headers.get('X-API-Key')
+        if not api_key:
+            return None
+
+        key_hash = hash_key(api_key)
+        try:
+            key_entry = ApiKey.objects.get(key_hash=key_hash, is_active=True)
+        except ApiKey.DoesNotExist:
+            raise AuthenticationFailed('Неверный или неактивный API ключ')
+
+        user = key_entry.user
+        
+        if not user.is_active_pro:
+            raise PermissionDenied('Доступ к API требует активной Pro-подписки')
+
+        key_entry.last_used_at = timezone.now()
+        key_entry.save(update_fields=['last_used_at'])
+
+        return (user, None)
