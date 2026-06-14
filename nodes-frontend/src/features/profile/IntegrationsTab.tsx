@@ -108,7 +108,6 @@ export function IntegrationsTab() {
     queryFn: () => integrationsService.getApiKeys(),
     enabled: isPro && showApiKeys
   });
-
   const createKeyMutation = useMutation({
     mutationFn: (name: string) => integrationsService.createApiKey(name),
     onSuccess: (data) => {
@@ -121,13 +120,23 @@ export function IntegrationsTab() {
     }
   });
 
+  const deleteKeyMutation = useMutation({
+    mutationFn: (id: string) => integrationsService.deleteApiKey(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["api-keys"] });
+      toast.success(t("profile.integrations.api.deleted_success", "API ключ успешно удален"));
+    },
+    onError: (error: any) => {
+      toast.error(error.message);
+    }
+  });
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
     toast.success(t("common.copied", "Скопировано"));
   };
-
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-6 sm:p-8 shadow-xl">
@@ -316,7 +325,18 @@ export function IntegrationsTab() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive transition-colors">
+                            <Button 
+                              type="button" 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive transition-colors"
+                              onClick={() => {
+                                if (window.confirm(t("profile.integrations.api.deleteConfirm", "Вы уверены, что хотите удалить этот API ключ?"))) {
+                                  deleteKeyMutation.mutate(key.id);
+                                }
+                              }}
+                              disabled={deleteKeyMutation.isPending}
+                            >
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
