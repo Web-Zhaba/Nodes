@@ -349,7 +349,7 @@ class RecommendationStatusView(APIView):
             created_at__date=today
         ).count()
         
-        limit = 3  # TODO: Fetch from profile/subscription in future
+        limit = 3
         
         return Response({
             "limit": limit,
@@ -373,19 +373,11 @@ class RecommendationGenerateView(APIView):
         
         limit = 3
         use_limited = used_today < limit
-
-        # Удаляем старые, не сохраненные и не просмотренные рекомендации
-        query = Recommendation.objects.filter(user=user, is_saved=False, is_viewed=False)
-        
-        if not use_limited:
-            # Если лимит исчерпан, ОСТАВЛЯЕМ видео и книги из прошлых генераций
-            # и удаляем только все остальное (Habr, GitHub, Admitad), чтобы обновить их
-            query = query.exclude(source__in=['YouTube', 'Google Books'])
-            
-        query.delete()
         
         try:
             recommender = ContentRecommender(user)
+            # generate_recommendations теперь сама безопасно и транзакционно удаляет
+            # старые рекомендации непосредственно перед созданием новых.
             recommender.generate_recommendations(use_limited_apis=use_limited)
             
             # Логируем использование лимитированных API только если они реально использовались

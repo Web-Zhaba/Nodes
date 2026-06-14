@@ -9,6 +9,7 @@ interface RecommendationCardProps {
   recommendation: Recommendation;
   onSave?: (id: string) => void;
   onDiscard?: (id: string) => void;
+  onRecordPulse?: (nodeId: string, nodeName: string) => void;
   className?: string;
 }
 
@@ -16,12 +17,22 @@ export const RecommendationCard = ({
   recommendation, 
   onSave, 
   onDiscard: _onDiscard, 
+  onRecordPulse,
   className 
 }: RecommendationCardProps) => {
   const { t } = useTranslation();
-  const { title, description, content_type, url, thumbnail_url, source, connectors } = recommendation;
+  const { title, description, content_type, url, thumbnail_url, source, connectors, node } = recommendation;
   const { Icon, sourceMeta } = useRecommendationMetadata(content_type, source);
   const SourceIcon = sourceMeta.icon;
+
+  const handlePlayClick = () => {
+    // Открываем URL рекомендации в новой вкладке
+    window.open(url, "_blank", "noopener,noreferrer");
+    // Если рекомендация привязана к узлу, записываем импульс
+    if (node) {
+      onRecordPulse?.(node.id, node.name);
+    }
+  };
 
   return (
     <motion.div
@@ -30,7 +41,7 @@ export const RecommendationCard = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-[24px] border border-white/10 bg-[#0A0A0B] transition-all hover:border-white/20 hover:shadow-2xl hover:shadow-indigo-500/10",
+        "group relative flex flex-col overflow-hidden rounded-[24px] border border-white/5 bg-[#0D0D0E]/60 backdrop-blur-md transition-all duration-300 hover:border-indigo-500/30 hover:bg-[#121215]/80 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1",
         className
       )}
     >
@@ -96,6 +107,7 @@ export const RecommendationCard = ({
           
           <button
             onClick={() => onSave?.(recommendation.id)}
+            title={recommendation.is_saved ? t("recommendations.actions.unsave", "Убрать из избранного") : t("recommendations.actions.save", "В избранное")}
             className={cn(
               "flex h-10 w-10 items-center justify-center rounded-2xl border transition-all active:scale-90",
               recommendation.is_saved 
@@ -106,13 +118,16 @@ export const RecommendationCard = ({
             <Bookmark size={18} fill={recommendation.is_saved ? "currentColor" : "none"} />
           </button>
 
-          {/* Кнопка "В работу" (Задел под прогресс) */}
-          <button
-            title="Начать изучение"
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 transition-all hover:scale-110 active:scale-90"
-          >
-            <Play size={18} fill="currentColor" />
-          </button>
+          {/* Кнопка "В работу" (Записывает импульс и открывает ссылку) */}
+          {node && (
+            <button
+              onClick={handlePlayClick}
+              title={t("recommendations.actions.startStudy", { name: node.name }, `Начать изучение и записать импульс для "${node.name}"`)}
+              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 transition-all hover:scale-110 active:scale-90"
+            >
+              <Play size={18} fill="currentColor" />
+            </button>
+          )}
         </div>
       </div>
     </motion.div>

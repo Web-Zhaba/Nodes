@@ -34,7 +34,7 @@ CREATE TABLE public.profiles (
   created_at        timestamp with time zone DEFAULT now(),
   updated_at        timestamp with time zone DEFAULT now(),
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
-  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
+  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
 );
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
