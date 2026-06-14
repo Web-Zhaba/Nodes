@@ -12,7 +12,7 @@ export interface ApiKeyWithSecret extends ApiKey {
   api_key: string
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const DJANGO_API_URL = import.meta.env.VITE_DJANGO_API_URL || 'http://127.0.0.1:8000/api/v1'
 
 /**
  * Сервис для управления API-ключами.
@@ -25,7 +25,7 @@ export const integrationsService = {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) throw new Error("Unauthorized")
 
-    const response = await fetch(`${API_BASE_URL}/api/v1/keys/`, {
+    const response = await fetch(`${DJANGO_API_URL}/keys/`, {
       headers: {
         'Authorization': `Bearer ${session.access_token}`
       }
@@ -46,7 +46,7 @@ export const integrationsService = {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) throw new Error("Unauthorized")
 
-    const response = await fetch(`${API_BASE_URL}/api/v1/keys/`, {
+    const response = await fetch(`${DJANGO_API_URL}/keys/`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${session.access_token}`,
