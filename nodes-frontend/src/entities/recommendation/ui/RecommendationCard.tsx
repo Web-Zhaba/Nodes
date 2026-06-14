@@ -122,7 +122,7 @@ export const RecommendationCard = ({
           {node && (
             <button
               onClick={handlePlayClick}
-              title={t("recommendations.actions.startStudy", { name: node.name }, `Начать изучение и записать импульс для "${node.name}"`)}
+              title={t("recommendations.actions.startStudy", `Начать изучение и записать импульс для "${node.name}"`, { name: node.name })}
               className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 transition-all hover:scale-110 active:scale-90"
             >
               <Play size={18} fill="currentColor" />
