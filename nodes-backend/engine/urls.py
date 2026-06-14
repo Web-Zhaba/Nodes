@@ -13,6 +13,7 @@ urlpatterns = [
     
     # API Management
     path('keys/', views.ApiKeyView.as_view(), name='api-keys'),
+    path('keys/<uuid:pk>/', views.ApiKeyDetailView.as_view(), name='api-key-detail'),
     path('nodes/list/', views.NodeListView.as_view(), name='api-nodes-list'),
 
     # Payments

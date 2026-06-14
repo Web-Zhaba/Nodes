@@ -70,7 +70,16 @@ export const integrationsService = {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) throw new Error("Unauthorized")
 
-    // На бэкенде пока нет DELETE, но для фронтенда добавим задел
-    console.warn("Delete API key not implemented on backend yet", id);
+    const response = await fetch(`${DJANGO_API_URL}/keys/${id}/`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`
+      }
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to delete API key")
+    }
   }
 }

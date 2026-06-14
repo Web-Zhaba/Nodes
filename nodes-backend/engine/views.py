@@ -13,7 +13,7 @@ from datetime import timedelta
 from django.utils import timezone
 from rest_framework.decorators import api_view
 from django.core.cache import cache
-from .models import Impulse, Node, Recommendation, GenerationLog, Profile
+from .models import Impulse, Node, Recommendation, GenerationLog, Profile, ApiKey
 from .authentication import SubscriptionKeyAuthentication, hash_key
 from .serializers import RecommendationSerializer, ApiKeySerializer, NodeSerializer
 import secrets
@@ -43,6 +43,15 @@ class ApiKeyView(generics.ListCreateAPIView):
         response = super().create(request, *args, **kwargs)
         response.data['api_key'] = self.raw_key # Добавляем ключ в ответ
         return response
+
+class ApiKeyDetailView(generics.DestroyAPIView):
+    """
+    Удаление (аннулирование) API-ключа.
+    """
+    serializer_class = ApiKeySerializer
+
+    def get_queryset(self):
+        return ApiKey.objects.filter(user=self.request.user)
 
 class NodeListView(generics.ListAPIView):
     """Список всех узлов пользователя через API."""
