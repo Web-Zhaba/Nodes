@@ -150,7 +150,7 @@ def update_user_network_stability(user_profile, node_or_id=None):
             logger.info(f"[PERF DETAILED] Node Fetch: {(t1-t0)*1000:.2f}ms, Calc Stability: {(t2-t1)*1000:.2f}ms, Node Save: {(t3-t2)*1000:.2f}ms, Cores Bulk Update: {(t4-t3)*1000:.2f}ms")
             
         except Node.DoesNotExist:
-            logger.warning(f"Node {node_id} not found for user {user_profile.id}")
+            logger.warning(f"Node {node_or_id} not found for user {user_profile.id}")
             return
 
     else:

@@ -14,9 +14,11 @@ from django.utils import timezone
 from rest_framework.decorators import api_view
 from django.core.cache import cache
 from .models import Impulse, Node, Recommendation, GenerationLog, Profile, ApiKey
-from .authentication import SubscriptionKeyAuthentication, hash_key
+from .authentication import SupabaseJWTAuthentication, SubscriptionKeyAuthentication, hash_key
 from .serializers import RecommendationSerializer, ApiKeySerializer, NodeSerializer
 import secrets
+
+logger = logging.getLogger(__name__)
 
 class ApiKeyView(generics.ListCreateAPIView):
     """
@@ -61,12 +63,16 @@ class NodeListView(generics.ListAPIView):
     def get_queryset(self):
         return Node.objects.filter(user=self.request.user).order_by('name')
 
+class StabilityRequestSerializer(serializers.Serializer):
+    node_id = serializers.UUIDField(required=False, allow_null=True, default=None)
+
+
 class RecalculateStabilityView(APIView):
     """
     Эндпоинт для полного пересчета стабильности (при загрузке страницы).
     Синхронно обновляет все узлы и связанные ядра через ORM.
     """
-    authentication_classes = [SubscriptionKeyAuthentication] # Разрешаем API-ключ
+    authentication_classes = [SupabaseJWTAuthentication, SubscriptionKeyAuthentication] # Разрешаем API-ключ и JWT
 
     def post(self, request):
         start_time = time.perf_counter()
@@ -104,7 +110,7 @@ class ImpulseActionView(APIView):
     """
     1 HTTP-запрос от фронтенда → 1 SQL-вызов к Postgres → всё готово.
     """
-    authentication_classes = [SessionAuthentication, SubscriptionKeyAuthentication]
+    authentication_classes = [SessionAuthentication, SupabaseJWTAuthentication, SubscriptionKeyAuthentication]
 
     def post(self, request):
         start_time = time.perf_counter()
