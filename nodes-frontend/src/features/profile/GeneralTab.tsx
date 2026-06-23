@@ -1,49 +1,39 @@
+/**
+ * Copyright (c) 2026 Web-Zhaba. All rights reserved.
+ * Refactored to Local-First Offline General Settings Tab
+ */
+
 import { useAuth } from "@/hooks/useAuth";
-import { authService } from "@/services/auth.service";
 import { useProfileQuery } from "./hooks/useProfileQuery";
 import { useUpdateProfileMutation } from "./hooks/useProfileQuery";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { LogOut, Loader2, RotateCcw, Download } from 'lucide-react';
+import { Loader2, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "react-hook-form";
 import { useOnboardingStore } from "@/features/onboarding/useOnboardingStore";
-import { ProGate, exportUserData } from "@/features/subscription";
 
-// Под-компоненты секций
+// Sections
 import { IdentitySection } from "./sections/IdentitySection";
 import { RegionalSection } from "./sections/RegionalSection";
 import { GreetingSection } from "./sections/GreetingSection";
-import { RecommendationsSection } from "./sections/RecommendationsSection";
-
-import { useQueryClient } from "@tanstack/react-query";
 
 export function GeneralTab() {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   const { isLoading: isProfileLoading } = useProfileQuery(user?.id);
   const { t } = useTranslation();
   const form = useFormContext();
   const updateProfile = useUpdateProfileMutation();
   const openOnboarding = useOnboardingStore((s) => s.open);
 
-  const { formState: { isSubmitting } } = form;
+  const {
+    formState: { isSubmitting },
+  } = form;
 
   const handleRestartOnboarding = () => {
     if (user?.id) {
       updateProfile.mutate({ userId: user.id, updates: { onboarding_completed: false } });
     }
     openOnboarding();
-  };
-
-  const handleLogout = async () => {
-    try {
-      await authService.signOut();
-      queryClient.clear(); // Полная очистка кэша React Query
-      toast.success(t("profile.general.logoutSuccess", "Session ended"));
-    } catch (_) {
-      toast.error(t("profile.general.logoutError", "Error signing out"));
-    }
   };
 
   if (isProfileLoading) {
@@ -56,62 +46,28 @@ export function GeneralTab() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <IdentitySection form={form} isLoading={isSubmitting} email={user?.email || ""} />
+      <IdentitySection form={form} isLoading={isSubmitting} />
 
       <div className="bg-background/40 backdrop-blur-xl border border-border/40 rounded-[2rem] p-4 sm:p-8 shadow-xl space-y-8">
         <div>
           <h2 className="text-xl font-bold">{t("profile.general.systemSettings", "System Settings")}</h2>
-          <p className="text-sm text-muted-foreground">{t("profile.general.systemSettingsDesc", "Configuration of your node environment.")}</p>
+          <p className="text-sm text-muted-foreground">
+            {t("profile.general.systemSettingsDesc", "Configuration of your node environment.")}
+          </p>
         </div>
 
         <RegionalSection form={form} isLoading={isSubmitting} />
-        
+
         <div className="border-t border-border/40 pt-8">
           <GreetingSection form={form} isLoading={isSubmitting} />
-        </div>
-
-        <div className="border-t border-border/40 pt-8">
-          <RecommendationsSection form={form} isLoading={isSubmitting} />
-        </div>
-
-        {/* Export Data Section — Pro only */}
-        <div className="border-t border-border/40 pt-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-bold">{t("profile.general.exportData")}</p>
-              <p className="text-xs text-muted-foreground">
-                {t("profile.general.exportDataDesc")}
-              </p>
-            </div>
-            <ProGate feature="export" overlay={false}>
-              <div className="flex gap-2 w-full sm:w-auto">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="rounded-xl flex-1 sm:flex-none gap-2"
-                  onClick={() => exportUserData('json').catch(() => toast.error(t("profile.general.exportError")))}
-                >
-                  <Download className="w-4 h-4" />
-                  JSON
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="rounded-xl flex-1 sm:flex-none gap-2"
-                  onClick={() => exportUserData('csv').catch(() => toast.error(t("profile.general.exportError")))}
-                >
-                  <Download className="w-4 h-4" />
-                  CSV
-                </Button>
-              </div>
-            </ProGate>
-          </div>
         </div>
 
         <div className="border-t border-border/40 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
             <p className="text-sm font-bold">{t("profile.general.restartOnboarding", "Restart Onboarding")}</p>
-            <p className="text-xs text-muted-foreground">{t("profile.general.restartOnboardingDesc", "Run the getting-started wizard again")}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("profile.general.restartOnboardingDesc", "Run the getting-started wizard again")}
+            </p>
           </div>
           <Button
             type="button"
@@ -121,23 +77,6 @@ export function GeneralTab() {
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             {t("profile.general.restartOnboardingButton", "Restart")}
-          </Button>
-        </div>
-
-        {/* Logout Section inside the main card but at the bottom */}
-        <div className="border-t border-border/40 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-center sm:text-left">
-            <p className="text-sm font-bold text-destructive">{t("profile.general.logout", "Logout")}</p>
-            <p className="text-xs text-muted-foreground">{t("profile.general.logoutDesc", "End current management session")}</p>
-          </div>
-          <Button 
-            type="button"
-            variant="destructive" 
-            className="rounded-xl w-full sm:w-auto bg-destructive/10 hover:bg-destructive text-destructive hover:text-destructive-foreground border-destructive/20 transition-all duration-300"
-            onClick={handleLogout}
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            {t("profile.general.logoutButton", "Logout from account")}
           </Button>
         </div>
       </div>

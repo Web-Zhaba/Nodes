@@ -4,6 +4,7 @@ import { Plus, Target, Activity, Coffee, Lock } from 'lucide-react'
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { NodeCard } from "@/features/nodes/components/NodeCard"
+import { NodeWorkspaceSheet } from "@/features/nodes/components/NodeWorkspaceSheet"
 import { NodeCardSkeleton } from "@/features/nodes/components/NodeCardSkeleton"
 import { useAuth } from "@/hooks/useAuth"
 import { WeekCalendar } from "@/features/dashboard/components/WeekCalendar"
@@ -33,6 +34,13 @@ export default function NodesListPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()))
   const [isSelectorOpen, setIsSelectorOpen] = useState(false)
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false)
+  const [activeWorkspaceNodeId, setActiveWorkspaceNodeId] = useState<string | null>(null)
+  const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false)
+
+  const handleOpenWorkspace = useCallback((nodeId: string) => {
+    setActiveWorkspaceNodeId(nodeId)
+    setIsWorkspaceOpen(true)
+  }, [])
 
   const { canCreate: canCreateNode, isAtLimit, current: nodeCount, limit: nodeLimit } = useNodeLimit()
 
@@ -328,6 +336,7 @@ export default function NodesListPage() {
                 connectors={Object.values(connectors)}
                 onImpulse={(value) => handleImpulse(node.id, value)}
                 onUpdateQuantity={(value) => handleUpdateQuantity(node.id, value)}
+                onOpenNotes={handleOpenWorkspace}
               />
             );
           })}
@@ -338,6 +347,12 @@ export default function NodesListPage() {
         open={upgradeModalOpen}
         onOpenChange={setUpgradeModalOpen}
         triggerFeature="nodes_limit"
+      />
+
+      <NodeWorkspaceSheet
+        nodeId={activeWorkspaceNodeId}
+        isOpen={isWorkspaceOpen}
+        onClose={() => setIsWorkspaceOpen(false)}
       />
     </div>
   )

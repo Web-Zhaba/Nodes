@@ -125,7 +125,16 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    entries: ["index.html"]
+    entries: ["index.html"],
+    include: [
+      "lucide-react",
+      "react",
+      "react-dom",
+      "react-router-dom",
+      "zustand",
+      "@tanstack/react-query",
+      "motion"
+    ]
   },
   build: {
     // Skip compressed-size logging in build output — saves time

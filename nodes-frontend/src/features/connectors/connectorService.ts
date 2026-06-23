@@ -1,48 +1,25 @@
-import { supabase } from "@/lib/supabase";
+/**
+ * Copyright (c) 2026 Web-Zhaba. All rights reserved.
+ * Refactored to Local-First Offline Connector/Tag Service
+ */
+
+import { useLocalDatabase } from "@/store/useLocalDatabase";
 import type { Connector } from "@/types";
 
 /**
- * Сервис для работы с коннекторами
+ * Get all connectors of the user
  */
-
-/**
- * Получить все коннекторы пользователя
- */
-export async function getUserConnectors(userId?: string): Promise<Connector[]> {
+export async function getUserConnectors(_userId?: string): Promise<Connector[]> {
   try {
-    let finalUserId = userId;
-
-    if (!finalUserId) {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      finalUserId = session?.user?.id;
-    }
-
-    if (!finalUserId) {
-      return [];
-    }
-
-    const { data, error } = await supabase
-      .from("connectors")
-      .select("*")
-      .eq("user_id", finalUserId)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Ошибка получения коннекторов:", error);
-      return [];
-    }
-
-    return data as Connector[];
+    return useLocalDatabase.getState().connectors;
   } catch (error) {
-    console.error("Ошибка получения коннекторов:", error);
+    console.error("Offline getUserConnectors error:", error);
     return [];
   }
 }
 
 /**
- * Создать новый коннектор
+ * Create a new connector
  */
 export async function createConnector(
   name: string,
@@ -51,44 +28,18 @@ export async function createConnector(
     color?: string;
     is_mainline?: boolean;
   },
-  userId?: string
+  _userId?: string
 ): Promise<Connector | null> {
   try {
-    let finalUserId = userId;
-
-    if (!finalUserId) {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      finalUserId = session?.user?.id;
-    }
-
-    if (!finalUserId) {
-      return null;
-    }
-
-    const connectorData = {
-      user_id: finalUserId,
-      name: name.replace(/^#/, ""), // Удаляем # если есть
-      description: options?.description || "",
-      color: options?.color || "#22c55e",
-      is_mainline: options?.is_mainline || false,
-    };
-
-    const { data, error } = await supabase
-      .from("connectors")
-      .insert(connectorData)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Ошибка создания коннектора:", error);
-      return null;
-    }
-
-    return data as Connector;
+    const connector = useLocalDatabase.getState().addConnector(
+      name,
+      options?.color,
+      options?.is_mainline,
+      options?.description
+    );
+    return connector;
   } catch (error) {
-    console.error("Ошибка создания коннектора:", error);
+    console.error("Offline createConnector error:", error);
     return null;
   }
 }

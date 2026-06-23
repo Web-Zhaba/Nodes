@@ -9,10 +9,9 @@ import { useTranslation } from "react-i18next";
 interface IdentitySectionProps {
   form: UseFormReturn<any>;
   isLoading: boolean;
-  email: string;
 }
 
-export function IdentitySection({ form, isLoading, email }: IdentitySectionProps) {
+export function IdentitySection({ form, isLoading }: IdentitySectionProps) {
   const [isEditingName, setIsEditingName] = useState(false);
   const { t } = useTranslation();
 
@@ -61,9 +60,7 @@ export function IdentitySection({ form, isLoading, email }: IdentitySectionProps
             </>
           )}
         </div>
-        <p className="text-xs sm:text-sm text-muted-foreground truncate px-1">
-          {email || "node-operator@system.nodes"}
-        </p>
+        {/* Email/Badge removed for offline simplicity */}
       </div>
     </div>
   );

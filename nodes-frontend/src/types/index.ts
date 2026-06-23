@@ -24,6 +24,7 @@ export interface Node {
   user_id: string;
   name: string;
   description?: string;
+  markdown_content?: string;
 
   // Устаревшие поля (для обратной совместимости)
   category: string;
@@ -120,6 +121,16 @@ export interface CoreConnector {
   connector_id: string;
   created_at: string;
 }
+
+/**
+ * NodeConnector — связь узла с тегом
+ */
+export interface NodeConnector {
+  id: string;
+  node_id: string;
+  connector_id: string;
+  created_at: string;
+}
 /**
  * Profile (Профиль) — расширенные данные пользователя
  */
@@ -160,6 +171,7 @@ export interface Impulse {
   node_id: string;
   value: number;
   completed_at: string; // YYYY-MM-DD
+  comment?: string;
   created_at: string;
 }
 

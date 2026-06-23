@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useThemeStore } from "@/store/useThemeStore";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -17,13 +16,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     }
   }, [isAuthenticated, isLoading, navigate]);
 
-  // Load theme from cloud once when authenticated
-  const { session } = useAuth();
-  useEffect(() => {
-    if (isAuthenticated && session?.user?.id) {
-      useThemeStore.getState().loadFromCloud(session.user.id);
-    }
-  }, [isAuthenticated, session]);
+  // Theme is loaded locally via Zustand persist middleware. No cloud load needed.
 
   if (isLoading) {
     return (

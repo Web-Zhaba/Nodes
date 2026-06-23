@@ -1,332 +1,14 @@
 /**
  * Copyright (c) 2026 Web-Zhaba. All rights reserved.
  * This file is part of Nodes and is proprietary software.
+ * Refactored to Local-First Offline Database Service
  */
 
-import { supabase } from "@/lib/supabase";
+import { useLocalDatabase } from "@/store/useLocalDatabase";
 import type { Node, CreateNodeData } from "@/types";
 
 /**
- * Сервис для работы с узлами
- */
-
-/**
- * Получить все узлы пользователя с коннекторами
- */
-export async function getUserNodes(userId?: string): Promise<Node[]> {
-  try {
-    let finalUserId = userId;
-
-    if (!finalUserId) {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      finalUserId = session?.user?.id;
-    }
-
-    if (!finalUserId) {
-      return [];
-    }
-
-    const { data, error } = await supabase
-      .from("nodes")
-      .select(
-        `
-        *,
-        node_connectors (
-          connector_id
-        )
-      `,
-      )
-      .eq("user_id", finalUserId)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Ошибка получения узлов:", error);
-      return [];
-    }
-
-    // Преобразуем данные: извлекаем connector_ids
-    const nodes = data.map((node: any) => ({
-      ...node,
-      connector_ids:
-        node.node_connectors?.map((nc: any) => nc.connector_id) || [],
-    })) as Node[];
-
-    return nodes;
-  } catch (error) {
-    console.error("Ошибка получения узлов:", error);
-    return [];
-  }
-}
-
-/**
- * Создать новый узел с коннекторами
- */
-export async function createNode(
-  nodeData: CreateNodeData & { connector_ids?: string[] },
-  userId?: string
-): Promise<Node | null> {
-  try {
-    let finalUserId = userId;
-
-    if (!finalUserId) {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      finalUserId = session?.user?.id;
-    }
-
-    if (!finalUserId) {
-      return null;
-    }
-
-    const { connector_ids, ...nodeFields } = nodeData;
-
-    const newNode = {
-      user_id: finalUserId,
-      name: nodeFields.name,
-      description: nodeFields.description || "",
-      node_type: nodeFields.node_type,
-      mass: nodeFields.mass ?? 1.0,
-      target_value: nodeFields.target_value,
-      is_focus_default: nodeFields.is_focus_default ?? false,
-      color: nodeFields.color || "#8b5cf6",
-      icon: nodeFields.icon || "Circle",
-      category: "default", // Для обратной совместимости
-      frequency: "daily", // Для обратной совместимости
-      stability_score: 0,
-      core_id: nodeFields.core_id,
-    };
-
-    // Создаём узел
-    const { data: node, error: nodeError } = await supabase
-      .from("nodes")
-      .insert(newNode)
-      .select()
-      .single();
-
-    if (nodeError) {
-      console.error("Ошибка создания узла:", nodeError);
-      return null;
-    }
-
-    // Если есть коннекторы, создаём связи
-    if (connector_ids && connector_ids.length > 0) {
-      const nodeConnectorsData = connector_ids.map((connector_id) => ({
-        node_id: node.id,
-        connector_id,
-      }));
-
-      const { error: ncError } = await supabase
-        .from("node_connectors")
-        .insert(nodeConnectorsData);
-
-      if (ncError) {
-        console.error("Ошибка создания связей с коннекторами:", ncError);
-        // Не возвращаем ошибку, узел уже создан
-      }
-    }
-
-    // Возвращаем узел с connector_ids
-    return {
-      ...node,
-      connector_ids: connector_ids || [],
-    } as Node;
-  } catch (error) {
-    console.error("Ошибка создания узла:", error);
-    return null;
-  }
-}
-
-/**
- * Обновить узел
- */
-export async function updateNode(
-  id: string,
-  updates: Partial<Node> & { connector_ids?: string[] },
-  userId?: string
-): Promise<boolean> {
-  try {
-    let finalUserId = userId;
-
-    if (!finalUserId) {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      finalUserId = session?.user?.id;
-    }
-
-    const { connector_ids, ...nodeFields } = updates;
-
-    // 1. Обновляем основные поля узла
-    if (Object.keys(nodeFields).length > 0) {
-      const query = supabase.from("nodes").update(nodeFields).eq("id", id);
-
-      if (finalUserId) {
-        query.eq("user_id", finalUserId);
-      }
-
-      const { error: nodeError } = await query;
-
-      if (nodeError) {
-        console.error("Ошибка обновления узла:", nodeError);
-        return false;
-      }
-    }
-
-    // 2. Обновляем коннекторы (если переданы)
-    if (connector_ids !== undefined) {
-      // Удаляем старые связи
-      const { error: deleteError } = await supabase
-        .from("node_connectors")
-        .delete()
-        .eq("node_id", id);
-
-      if (deleteError) {
-        console.error("Ошибка удаления старых связей коннекторов:", deleteError);
-        return false;
-      }
-
-      // Добавляем новые связи
-      if (connector_ids.length > 0) {
-        const nodeConnectorsData = connector_ids.map((connector_id) => ({
-          node_id: id,
-          connector_id,
-        }));
-
-        const { error: insertError } = await supabase
-          .from("node_connectors")
-          .insert(nodeConnectorsData);
-
-        if (insertError) {
-          console.error("Ошибка добавления новых связей коннекторов:", insertError);
-          return false;
-        }
-      }
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Ошибка обновления узла:", error);
-    return false;
-  }
-}
-
-/**
- * Удалить узел
- */
-export async function deleteNode(id: string): Promise<boolean> {
-  try {
-    const { error } = await supabase.from("nodes").delete().eq("id", id);
-
-    if (error) {
-      console.error("Ошибка удаления узла:", error);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Ошибка удаления узла:", error);
-    return false;
-  }
-}
-
-/**
- * Получить узел по ID
- */
-export async function getNodeById(id: string): Promise<Node | null> {
-  try {
-    const { data, error } = await supabase
-      .from("nodes")
-      .select(
-        `
-        *,
-        node_connectors (
-          connector_id
-        )
-      `,
-      )
-      .eq("id", id)
-      .single();
-
-    if (error || !data) {
-      console.error("Ошибка получения узла:", error);
-      return null;
-    }
-
-    // Преобразуем данные: извлекаем connector_ids
-    return {
-      ...(data as any),
-      connector_ids:
-        (data as any).node_connectors?.map((nc: any) => nc.connector_id) || [],
-    } as Node;
-  } catch (error) {
-    console.error("Ошибка получения узла:", error);
-    return null;
-  }
-}
-
-/**
- * Создать импульс (отметка выполнения)
- */
-export async function createImpulse(
-  nodeId: string,
-  value: number = 1,
-  date: Date = new Date()
-): Promise<boolean> {
-  try {
-    const dateStr = formatDateToSql(date);
-
-    const { error } = await supabase.rpc("save_node_progress", {
-      p_node_id: nodeId,
-      p_value: value,
-      p_date: dateStr,
-      p_is_incremental: true
-    });
-
-    if (error) {
-      console.error("Ошибка вызова save_node_progress:", error);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Ошибка создания импульса:", error);
-    return false;
-  }
-}
-
-/**
- * Удалить импульс (снять отметку выполнения)
- */
-export async function deleteImpulse(
-  nodeId: string,
-  date: Date = new Date()
-): Promise<boolean> {
-  try {
-    const dateStr = formatDateToSql(date);
-
-    // Используем RPC, чтобы корректно декрементировать completion_count в таблице nodes
-    const { error } = await supabase.rpc("cancel_node_progress", {
-      p_node_id: nodeId,
-      p_date: dateStr,
-    });
-
-    if (error) {
-      console.error("Ошибка вызова cancel_node_progress:", error);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Ошибка удаления импульса:", error);
-    return false;
-  }
-}
-
-/**
- * Вспомогательная функция для форматирования даты в YYYY-MM-DD
+ * Helper function to format Date object into YYYY-MM-DD
  */
 function formatDateToSql(date: Date): string {
   const year = date.getFullYear();
@@ -335,42 +17,127 @@ function formatDateToSql(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-
 /**
- * Получить импульсы для списка узлов за определенную дату (Batch)
+ * Get all nodes of the user
  */
-export async function getImpulsesForDateBatch(nodeIds: string[], date: Date): Promise<any[]> {
-  if (nodeIds.length === 0) return [];
-
+export async function getUserNodes(_userId?: string): Promise<Node[]> {
   try {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const dateStr = `${year}-${month}-${day}`;
-
-    const { data, error } = await supabase
-      .from("impulses")
-      .select("*")
-      .in("node_id", nodeIds)
-      .eq("completed_at", dateStr);
-
-    if (error) {
-      console.error("Ошибка получения батча импульсов:", error);
-      return [];
-    }
-
-    return data || [];
+    return useLocalDatabase.getState().nodes;
   } catch (error) {
-    console.error("Ошибка получения батча импульсов:", error);
+    console.error("Offline getUserNodes error:", error);
     return [];
   }
 }
 
-
-
+/**
+ * Create a new node with connectors
+ */
+export async function createNode(
+  nodeData: CreateNodeData & { connector_ids?: string[] },
+  _userId?: string
+): Promise<Node | null> {
+  try {
+    const node = useLocalDatabase.getState().addNode(nodeData);
+    return node;
+  } catch (error) {
+    console.error("Offline createNode error:", error);
+    return null;
+  }
+}
 
 /**
- * Обновить значение quantity узла за сегодня
+ * Update an existing node
+ */
+export async function updateNode(
+  id: string,
+  updates: Partial<Node> & { connector_ids?: string[] },
+  _userId?: string
+): Promise<boolean> {
+  try {
+    return useLocalDatabase.getState().updateNode(id, updates);
+  } catch (error) {
+    console.error("Offline updateNode error:", error);
+    return false;
+  }
+}
+
+/**
+ * Delete a node
+ */
+export async function deleteNode(id: string): Promise<boolean> {
+  try {
+    return useLocalDatabase.getState().deleteNode(id);
+  } catch (error) {
+    console.error("Offline deleteNode error:", error);
+    return false;
+  }
+}
+
+/**
+ * Get a node by ID
+ */
+export async function getNodeById(id: string): Promise<Node | null> {
+  try {
+    const node = useLocalDatabase.getState().nodes.find((n) => n.id === id);
+    return node || null;
+  } catch (error) {
+    console.error("Offline getNodeById error:", error);
+    return null;
+  }
+}
+
+/**
+ * Create an impulse (add execution progress)
+ */
+export async function createImpulse(
+  nodeId: string,
+  value: number = 1,
+  date: Date = new Date()
+): Promise<boolean> {
+  try {
+    const dateStr = formatDateToSql(date);
+    const node = useLocalDatabase.getState().nodes.find((n) => n.id === nodeId);
+    const isIncremental = node ? node.node_type === "binary" : true;
+    return useLocalDatabase.getState().recordImpulse(nodeId, value, dateStr, isIncremental);
+  } catch (error) {
+    console.error("Offline createImpulse error:", error);
+    return false;
+  }
+}
+
+/**
+ * Delete an impulse (remove execution progress)
+ */
+export async function deleteImpulse(
+  nodeId: string,
+  date: Date = new Date()
+): Promise<boolean> {
+  try {
+    const dateStr = formatDateToSql(date);
+    return useLocalDatabase.getState().cancelImpulse(nodeId, dateStr);
+  } catch (error) {
+    console.error("Offline deleteImpulse error:", error);
+    return false;
+  }
+}
+
+/**
+ * Get impulses for a list of nodes on a specific date (Batch)
+ */
+export async function getImpulsesForDateBatch(nodeIds: string[], date: Date): Promise<any[]> {
+  if (nodeIds.length === 0) return [];
+  try {
+    const dateStr = formatDateToSql(date);
+    const impulses = useLocalDatabase.getState().impulses;
+    return impulses.filter((i) => nodeIds.includes(i.node_id) && i.completed_at === dateStr);
+  } catch (error) {
+    console.error("Offline getImpulsesForDateBatch error:", error);
+    return [];
+  }
+}
+
+/**
+ * Update quantity/duration absolute value for today
  */
 export async function updateQuantityValue(
   nodeId: string,
@@ -379,98 +146,35 @@ export async function updateQuantityValue(
 ): Promise<boolean> {
   try {
     const dateStr = formatDateToSql(date);
-
-    const { error } = await supabase.rpc("save_node_progress", {
-      p_node_id: nodeId,
-      p_value: value,
-      p_date: dateStr,
-      p_is_incremental: false // Устанавливаем абсолютное значение
-    });
-
-    if (error) {
-      console.error("Ошибка обновления значения quantity:", error);
-      return false;
-    }
-
-    return true;
+    return useLocalDatabase.getState().recordImpulse(nodeId, value, dateStr, false);
   } catch (error) {
-    console.error("Ошибка обновления значения:", error);
+    console.error("Offline updateQuantityValue error:", error);
     return false;
   }
 }
 
 /**
- * Получить ID узлов для фокуса на указанную дату
+ * Get node IDs in focus for a specific date
  */
-export async function getDailyFocusNodeIds(date: Date, userId?: string): Promise<string[]> {
+export async function getDailyFocusNodeIds(date: Date, _userId?: string): Promise<string[]> {
   try {
-    let finalUserId = userId;
-
-    if (!finalUserId) {
-      const { data: { session } } = await supabase.auth.getSession();
-      finalUserId = session?.user?.id;
-    }
-
-    if (!finalUserId) return [];
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const dateStr = `${year}-${month}-${day}`;
-
-    const { data, error } = await supabase
-      .from("daily_focus")
-      .select("node_id")
-      .eq("user_id", finalUserId)
-      .eq("focus_date", dateStr);
-
-    if (error) {
-      console.error("Ошибка получения узлов фокуса:", error);
-      return [];
-    }
-
-    return data.map((d: any) => d.node_id);
+    const dateStr = formatDateToSql(date);
+    return useLocalDatabase.getState().getDailyFocusNodeIds(dateStr);
   } catch (error) {
-    console.error("Ошибка получения узлов фокуса:", error);
+    console.error("Offline getDailyFocusNodeIds error:", error);
     return [];
   }
 }
 
 /**
- * Установить узлы фокуса на указанную дату
+ * Set node IDs in focus for a specific date
  */
-export async function setDailyFocusNodes(nodeIds: string[], date: Date, userId?: string): Promise<boolean> {
+export async function setDailyFocusNodes(nodeIds: string[], date: Date, _userId?: string): Promise<boolean> {
   try {
-    let finalUserId = userId;
-
-    if (!finalUserId) {
-      const { data: { session } } = await supabase.auth.getSession();
-      finalUserId = session?.user?.id;
-    }
-
-    if (!finalUserId) return false;
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const dateStr = `${year}-${month}-${day}`;
-
-    // 1. Удаляем все для этой даты (чтобы синхронизировать)
-    await supabase.from("daily_focus").delete().eq("user_id", finalUserId).eq("focus_date", dateStr);
-
-    // 2. Добавляем запрошенные
-    if (nodeIds.length > 0) {
-      const rows = nodeIds.map(id => ({ user_id: finalUserId, node_id: id, focus_date: dateStr }));
-      const { error } = await supabase.from("daily_focus").insert(rows);
-      if (error) {
-        console.error("Ошибка установки узлов фокуса:", error);
-        return false;
-      }
-    }
-
-    return true;
+    const dateStr = formatDateToSql(date);
+    return useLocalDatabase.getState().setDailyFocusNodes(nodeIds, dateStr);
   } catch (error) {
-    console.error("Ошибка установки узлов фокуса:", error);
+    console.error("Offline setDailyFocusNodes error:", error);
     return false;
   }
 }

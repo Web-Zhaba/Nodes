@@ -18,3 +18,15 @@ if (!window.PointerEvent) {
   }
   window.PointerEvent = PointerEvent as any;
 }
+
+import { vi } from 'vitest';
+const mockDb = new Map<string, string>();
+vi.mock('idb-keyval', () => ({
+  get: vi.fn(async (key: string) => mockDb.get(key)),
+  set: vi.fn(async (key: string, value: string) => {
+    mockDb.set(key, value);
+  }),
+  del: vi.fn(async (key: string) => {
+    mockDb.delete(key);
+  }),
+}));

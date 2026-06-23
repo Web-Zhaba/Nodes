@@ -181,7 +181,7 @@ describe('EditNodeForm Component', () => {
       expect(updateNode).toHaveBeenCalledWith(
         'test-node-1',
         expect.objectContaining({ name: 'Новое имя' }),
-        undefined
+        expect.any(String)
       );
       expect(toast.success).toHaveBeenCalledWith('Узел обновлен');
     });

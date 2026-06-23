@@ -1,46 +1,39 @@
-import { useQuery } from '@tanstack/react-query'
-import { supabase } from '@/lib/supabase'
-import type { SubscriptionStatus } from '../types'
+/**
+ * Copyright (c) 2026 Web-Zhaba. All rights reserved.
+ * Refactored to Local-First Offline Subscription Hook
+ */
 
-const fetchSubscriptionStatus = async (userId: string): Promise<SubscriptionStatus> => {
+import { useQuery } from "@tanstack/react-query";
+import { useLocalDatabase } from "@/store/useLocalDatabase";
+import type { SubscriptionStatus } from "../types";
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('is_pro, pro_expires_at, subscription_plan')
-    .eq('id', userId)
-    .single()
-
-  if (error) throw error
-
-  const now = new Date()
-  const expiresAt = data?.pro_expires_at ? new Date(data.pro_expires_at) : null
-  // is_pro = true, и либо нет даты истечения (бессрочно), либо дата в будущем
-  const isPro = Boolean(data?.is_pro) && (expiresAt === null || expiresAt > now)
+const fetchSubscriptionStatus = async (_userId: string): Promise<SubscriptionStatus> => {
+  const profile = useLocalDatabase.getState().profile;
+  const isPro = profile.is_pro ?? true;
 
   return {
-    isPro,
-    plan: isPro ? 'pro' : 'free',
-    expiresAt: data?.pro_expires_at ?? null,
-  }
-}
+    isPro: isPro,
+    plan: isPro ? "pro" : "free",
+    expiresAt: null,
+  };
+};
 
 /**
- * Хук для получения статуса подписки пользователя.
- * Кэшируется на 5 минут, refetch при фокусе окна отключён.
+ * Hook for checking user subscription status local-first
  */
 export const useSubscription = (userId?: string) => {
   const query = useQuery({
-    queryKey: ['subscription', userId],
+    queryKey: ["subscription", userId],
     queryFn: () => fetchSubscriptionStatus(userId!),
     enabled: Boolean(userId),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
-  })
+  });
 
   return {
-    isPro: query.data?.isPro ?? false,
-    plan: query.data?.plan ?? 'free',
+    isPro: query.data?.isPro ?? true,
+    plan: query.data?.plan ?? "pro",
     expiresAt: query.data?.expiresAt ?? null,
     isLoading: query.isLoading,
-  }
-}
+  };
+};

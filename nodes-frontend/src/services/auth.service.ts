@@ -1,156 +1,117 @@
-import { supabase } from "@/lib/supabase";
-import type { Session } from "@supabase/supabase-js";
-import { Capacitor } from "@capacitor/core";
-import { Browser } from "@capacitor/browser";
-import { useThemeStore } from "@/store/useThemeStore";
-import { config } from "@/config";
+/**
+ * Copyright (c) 2026 Web-Zhaba. All rights reserved.
+ * Refactored to Local-First Offline Auth Service
+ */
+
+import { useLocalDatabase } from "@/store/useLocalDatabase";
+import type { Session, User } from "@supabase/supabase-js";
+
+const DEFAULT_USER_ID = "00000000-0000-0000-0000-000000000000";
+
+const mockUser: User = {
+  id: DEFAULT_USER_ID,
+  email: "local_user@nodes.local",
+  app_metadata: { provider: "local" },
+  user_metadata: { display_name: "Локальный Проводник" },
+  aud: "authenticated",
+  created_at: new Date().toISOString(),
+  confirmed_at: new Date().toISOString(),
+  email_confirmed_at: new Date().toISOString(),
+  phone: "",
+  role: "authenticated",
+  updated_at: new Date().toISOString(),
+};
+
+const mockSession: Session = {
+  access_token: "mock-local-token",
+  token_type: "bearer",
+  expires_in: 3153600000,
+  refresh_token: "mock-local-refresh-token",
+  user: mockUser,
+  expires_at: Math.floor(Date.now() / 1000) + 3153600000,
+};
 
 export const authService = {
   /**
-   * Получение текущей сессии
+   * Get current session
    */
-  async getSession(): Promise<{ session: Session | null, error: any }> {
-    const { data, error } = await supabase.auth.getSession();
-    return { session: data?.session ?? null, error };
+  async getSession(): Promise<{ session: Session | null; error: any }> {
+    return { session: mockSession, error: null };
   },
 
   /**
-   * Выход из аккаунта
+   * Log out
    */
   async signOut(): Promise<{ error: any }> {
-    // Clear theme cache before logout
-    useThemeStore.getState().clearCache();
-    return await supabase.auth.signOut();
+    return { error: null };
   },
 
   /**
-   * Вход по паролю
+   * Log in with password
    */
-  async signInWithPassword(email: string, password: string): Promise<{ data: any, error: any }> {
-    return await supabase.auth.signInWithPassword({ email, password });
+  async signInWithPassword(_email: string, _password: string): Promise<{ data: any; error: any }> {
+    return { data: { user: mockUser, session: mockSession }, error: null };
   },
 
   /**
-   * Регистрация
+   * Register
    */
-  async signUp(email: string, password: string, redirectTo?: string): Promise<{ data: any, error: any }> {
-    return await supabase.auth.signUp({
-      email,
-      password,
-      ...(redirectTo && { options: { emailRedirectTo: redirectTo } })
-    });
+  async signUp(_email: string, _password: string, _redirectTo?: string): Promise<{ data: any; error: any }> {
+    return { data: { user: mockUser, session: mockSession }, error: null };
   },
 
   /**
-   * Запрос на восстановление пароля
+   * Request password reset
    */
-  async resetPasswordForEmail(email: string, redirectTo: string): Promise<{ error: any }> {
-    return await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo,
-    });
+  async resetPasswordForEmail(_email: string, _redirectTo: string): Promise<{ error: any }> {
+    return { error: null };
   },
 
   /**
-   * Обновление пароля (после перехода по ссылке)
+   * Update password
    */
-  async updatePassword(password: string): Promise<{ data: any, error: any }> {
-    return await supabase.auth.updateUser({ password });
+  async updatePassword(_password: string): Promise<{ data: any; error: any }> {
+    return { data: { user: mockUser }, error: null };
   },
 
   /**
-   * Выход на всех других устройствах
+   * Terminate active sessions on other devices
    */
   async signOutOthers(): Promise<{ error: any }> {
-    return await supabase.auth.signOut({ scope: 'others' });
+    return { error: null };
   },
 
   /**
-   * Получение активных сессий (через RPC)
+   * Get active sessions (mock)
    */
-  async getActiveSessions(): Promise<{ data: any[], error: any }> {
-    const { data, error } = await supabase.rpc('get_active_sessions');
-    if (error) return { data: [], error };
-    return { data: data || [], error: null };
+  async getActiveSessions(): Promise<{ data: any[]; error: any }> {
+    return { data: [], error: null };
   },
 
   /**
-   * Вход через OAuth (Google, GitHub и т.д.)
+   * OAuth login
    */
-  async signInWithOAuth(provider: 'google' | 'github'): Promise<{ error: any }> {
-    if (Capacitor.isNativePlatform()) {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          skipBrowserRedirect: true,
-          redirectTo: 'nodes://auth/callback',
-        },
-      });
-      if (error) return { error };
-      if (data?.url) {
-        await Browser.open({ url: data.url });
-      }
-      return { error: null };
-    }
-
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${config.siteUrl}/auth/callback`,
-      },
-    });
-    return { error };
+  async signInWithOAuth(_provider: "google" | "github"): Promise<{ error: any }> {
+    return { error: null };
   },
 
   /**
-   * Централизованная обработка callback после OAuth или сброса пароля
+   * Handle redirect callback
    */
-  async handleAuthCallback() {
-    const hash = window.location.hash;
-    const params = new URLSearchParams(window.location.search);
-    
-    // 1. Проверка ошибок в URL
-    const errorFromUrl = params.get('error') || new URLSearchParams(hash.substring(1)).get('error');
-    if (errorFromUrl) {
-      const errorDescription = params.get('error_description') || new URLSearchParams(hash.substring(1)).get('error_description');
-      return { type: 'error', message: errorDescription || 'Ошибка аутентификации' };
-    }
-
-    // 2. Обработка кода авторизации
-    const code = params.get('code');
-    if (code) {
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
-      if (error) return { type: 'error', message: error.message };
-    }
-
-    // 3. Проверка сессии
-    const { data: { session }, error } = await supabase.auth.getSession();
-    if (error) return { type: 'error', message: error.message };
-    
-    if (session) {
-      const isRecovery = params.get('type') === 'recovery' || new URLSearchParams(hash.substring(1)).get('type') === 'recovery';
-      return { 
-        type: isRecovery ? 'recovery' : 'success', 
-        session 
-      };
-    }
-
-    return { type: 'loading' };
+  async handleAuthCallback(): Promise<{ type: "success" | "error" | "recovery" | "loading"; session?: Session | null; message?: string }> {
+    return { type: "success", session: mockSession };
   },
 
   /**
-   * Обновление профиля пользователя
+   * Update local profile settings
    */
-  async updateProfile(userId: string, updates: any): Promise<{ data: any, error: any }> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId)
-      .select()
-      .single();
-    
-    return { data, error };
-  }
+  async updateProfile(_userId: string, updates: any): Promise<{ data: any; error: any }> {
+    try {
+      useLocalDatabase.getState().updateProfile(updates);
+      const profile = useLocalDatabase.getState().profile;
+      return { data: profile, error: null };
+    } catch (err) {
+      return { data: null, error: err };
+    }
+  },
 };

@@ -2,8 +2,9 @@ import { Link, useLocation, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Home } from 'lucide-react';
 import { Share2 } from 'lucide-react';
-import { BarChart3, Lightbulb } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import { User } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { FloatingNavbar } from "@/components/ui/floating-navbar";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
@@ -31,8 +32,8 @@ export default function Layout() {
   const navItems = [
     { path: "/", label: t("nav.dashboard", "Сегодня"), icon: Home },
     { path: "/graph", label: t("nav.graph", "Граф"), icon: Share2 },
+    { path: "/notes", label: t("nav.notes", "Заметки"), icon: FileText },
     { path: "/analytics", label: t("nav.analytics", "Аналитика"), icon: BarChart3 },
-    { path: "/recommendations", label: t("nav.recommendations", "Идеи"), icon: Lightbulb },
     { path: "/profile", label: t("nav.profile", "Профиль"), icon: User },
   ];
 

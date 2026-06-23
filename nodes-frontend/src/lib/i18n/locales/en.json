@@ -1,73 +1,4 @@
 {
-  "legal": {
-    "lastUpdated": "Last updated",
-    "privacy": {
-      "title": "Personal Data Processing Policy",
-      "sections": [
-        {
-          "title": "1. General Provisions",
-          "content": "This Personal Data Processing Policy (hereinafter — the Policy) defines the procedure for processing and ensuring the security of personal data of users of the NODES service (hereinafter — the Service), carried out by the self-employed Kryakunov Daniil Romanovich (hereinafter — the Operator)."
-        },
-        {
-          "title": "2. Purposes of Data Collection",
-          "content": "The Operator processes the User's personal data solely for the purposes of providing access to the Service's functionality, User identification, ensuring feedback, analyzing Service usage, and improving its quality."
-        },
-        {
-          "title": "3. Legal Basis for Processing",
-          "content": "Personal data processing is carried out based on the User's consent, expressed by accepting the terms of this Policy and the User Agreement upon registration with the Service."
-        },
-        {
-          "title": "4. Scope of Processed Data",
-          "content": "Personal data processed by the Service includes: email address, data about created content (nodes, cores), as well as technical information collected automatically (IP addresses, cookies)."
-        },
-        {
-          "title": "5. Processing and Storage Procedure",
-          "content": "The Operator ensures the confidentiality of personal data and takes necessary legal, organizational, and technical measures for its protection. Data storage is carried out on servers located within the Russian Federation."
-        },
-        {
-          "title": "6. User Rights",
-          "content": "The User has the right to receive information regarding the processing of their personal data, as well as the right to clarify, block, or destroy it if the data is incomplete, outdated, or inaccurate."
-        },
-        {
-          "title": "7. Final Provisions",
-          "content": "The Operator has the right to make changes to this Policy unilaterally. The new version of the Policy takes effect from the moment it is posted on the Service. Contact address for inquiries: support@nodes-tracker.ru."
-        }
-      ]
-    },
-    "terms": {
-      "title": "User Agreement",
-      "sections": [
-        {
-          "title": "1. General Provisions",
-          "content": "This User Agreement (hereinafter — the Agreement) is a legally binding document between self-employed Kryakunov Daniil Romanovich (hereinafter — the Grantor) and the Internet user (hereinafter — the User), arising in connection with the use of the NODES service."
-        },
-        {
-          "title": "2. Subject of the Agreement",
-          "content": "The Grantor provides the User with access to the Service's functional capabilities for personal record-keeping, habit tracking, and data visualization under a non-exclusive license."
-        },
-        {
-          "title": "3. Registration and Security",
-          "content": "The User bears full responsibility for the security of their credentials and for all actions performed under their account in the Service."
-        },
-        {
-          "title": "4. Intellectual Property",
-          "content": "Software code, design, and other elements of the Service are objects of intellectual property of the Grantor. Use of Service elements without the Grantor's consent is prohibited."
-        },
-        {
-          "title": "5. Payment and Subscription Terms",
-          "content": "Paid services (Pro subscription) are provided on a prepaid basis. Access to digital functionality is granted automatically after successful payment. Refunds are regulated by the current legislation of the Russian Federation."
-        },
-        {
-          "title": "6. Limitation of Liability",
-          "content": "The Service is provided on an 'as is' basis. The Grantor does not guarantee uninterrupted operation and is not liable for direct or indirect damages arising in connection with the use of the Service."
-        },
-        {
-          "title": "7. Requisites and Contacts",
-          "content": "Executor: self-employed Kryakunov Daniil Romanovich. INN: 350201302146. Support: support@nodes-tracker.ru."
-        }
-      ]
-    }
-  },
   "dashboard": {
     "calendar": {
       "backToToday": "Back to Today"
@@ -151,6 +82,7 @@
   "nav": {
     "dashboard": "Today",
     "nodes": "Nodes",
+    "notes": "Notes",
     "graph": "Graph",
     "analytics": "Analytics",
     "recommendations": "Ideas",
@@ -718,6 +650,47 @@
       "title": "Your Neural Network",
       "subtitle": "This is your graph — nodes orbit around cores. It grows as you add more.",
       "graphHint": "Your graph will look even better with more nodes!"
+    }
+  },
+  "node": {
+    "notes": {
+      "open": "Open Notes",
+      "preview": "Preview",
+      "edit": "Editor",
+      "tab": {
+        "guidelines": "Instructions",
+        "daily": "Diary"
+      }
+    },
+    "stability": "Stability",
+    "edit": "Edit",
+    "completedToday": "Completed Today",
+    "notCompletedToday": "Mark Completed"
+  },
+  "wiki": {
+    "title": "Knowledge Base",
+    "subtitle": "Maps and instructions of action nodes",
+    "search": "Search node or page...",
+    "filter": {
+      "hasNotes": "With notes",
+      "all": "All nodes"
+    },
+    "emptyList": "No nodes found",
+    "words": "words",
+    "chars": "chars",
+    "noNotesTitle": "Note is empty",
+    "noNotesDesc": "Switch to editor mode to add content.",
+    "writeNote": "Write a note",
+    "noSelectedTitle": "Select a Page",
+    "noSelectedDesc": "Select a node or a free page from the left panel to read, edit, or create notes. Your action knowledge base is stored here.",
+    "addPage": "Add Page",
+    "newPagePlaceholder": "Page name...",
+    "section": {
+      "wiki": "Free Pages",
+      "nodes": "Habits guidelines"
+    },
+    "type": {
+      "free": "Free page"
     }
   }
 }

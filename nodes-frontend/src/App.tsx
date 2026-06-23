@@ -60,11 +60,9 @@ const AuthCallbackPage = lazy(() => import("@/pages/AuthCallbackPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const GraphPage = lazy(() => import("@/pages/GraphPage"));
 const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
-const RecommendationsPage = lazy(() => import("@/pages/RecommendationsPage"));
+const NotesPage = lazy(() => import("@/pages/NotesPage"));
 const PublicGraphPage = lazy(() => import("@/pages/PublicGraphPage"));
 const PublicNodePage = lazy(() => import("@/pages/PublicNodePage"));
-const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
-const TermsPage = lazy(() => import("@/pages/TermsPage"));
 
 function AppRouter() {
   const { t } = useTranslation();
@@ -89,8 +87,6 @@ function AppRouter() {
         <Route path="/login" element={<AuthRedirect />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
-        <Route path="/privacy" element={<PrivacyPage />} />
-        <Route path="/terms" element={<TermsPage />} />
 
         {/* Neural Public Sharing — read-only, no auth required */}
         <Route path="/share/u/:slug" element={<PublicGraphPage />} />
@@ -112,7 +108,7 @@ function AppRouter() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="graph" element={<GraphPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="recommendations" element={<RecommendationsPage />} />
+          <Route path="notes" element={<NotesPage />} />
         </Route>
 
         {/* 404 */}

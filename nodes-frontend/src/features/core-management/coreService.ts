@@ -1,145 +1,178 @@
-import { supabase } from "@/lib/supabase";
+/**
+ * Copyright (c) 2026 Web-Zhaba. All rights reserved.
+ * Refactored to Local-First Offline Core Service
+ */
+
+import { useLocalDatabase } from "@/store/useLocalDatabase";
+import { recalculateCoreStability } from "@/lib/physics/stability";
 import type { Core, CoreConnector } from "@/types";
 
 /**
- * Получить все Ядра пользователя
+ * Get all cores of the user
  */
-export async function getUserCores(userId: string | undefined): Promise<Core[]> {
-  if (!userId) return [];
-  
-  const { data, error } = await supabase
-    .from("cores")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching cores:", error);
+export async function getUserCores(_userId: string | undefined): Promise<Core[]> {
+  try {
+    return useLocalDatabase.getState().cores;
+  } catch (error) {
+    console.error("Offline getUserCores error:", error);
     return [];
   }
-
-  return data || [];
 }
 
 /**
- * Создать новое Ядро
+ * Create a new Core
  */
 export async function createCore(
-  userId: string,
+  _userId: string,
   name: string,
   color: string,
   icon: string = "Circle"
 ): Promise<Core | null> {
-  const { data, error } = await supabase
-    .from("cores")
-    .insert({
-      user_id: userId,
+  try {
+    const core = useLocalDatabase.getState().addCore({
       name,
       color,
       icon,
-    })
-    .select("*")
-    .single();
-
-  if (error) {
-    console.error("Error creating core:", error);
+    });
+    return core;
+  } catch (error) {
+    console.error("Offline createCore error:", error);
     return null;
   }
-
-  return data;
 }
 
 /**
- * Обновить Ядро
+ * Update an existing Core
  */
 export async function updateCore(
   coreId: string,
   updates: Partial<Pick<Core, "name" | "color" | "icon">>
 ): Promise<Core | null> {
-  const { data, error } = await supabase
-    .from("cores")
-    .update(updates)
-    .eq("id", coreId)
-    .select("*")
-    .single();
-
-  if (error) {
-    console.error("Error updating core:", error);
+  try {
+    const success = useLocalDatabase.getState().updateCore(coreId, updates);
+    if (!success) return null;
+    return useLocalDatabase.getState().cores.find((c) => c.id === coreId) || null;
+  } catch (error) {
+    console.error("Offline updateCore error:", error);
     return null;
   }
-
-  return data;
 }
 
 /**
- * Удалить Ядро
+ * Delete a Core
  */
 export async function deleteCore(coreId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from("cores")
-    .delete()
-    .eq("id", coreId);
-
-  if (error) {
-    console.error("Error deleting core:", error);
+  try {
+    return useLocalDatabase.getState().deleteCore(coreId);
+  } catch (error) {
+    console.error("Offline deleteCore error:", error);
     return false;
   }
-
-  return true;
 }
 
 /**
- * Получить все связи (core_connectors) для пользователя
- * (для MOC логики)
+ * Get all core connectors mappings
  */
 export async function getUserCoreConnectors(): Promise<CoreConnector[]> {
-  // Поскольку RLS разрешает пользователю видеть только свои связи,
-  // мы можем просто запросить все
-  const { data, error } = await supabase
-    .from("core_connectors")
-    .select("*");
-
-  if (error) {
-    console.error("Error fetching core connectors:", error);
+  try {
+    return useLocalDatabase.getState().coreConnectors;
+  } catch (error) {
+    console.error("Offline getUserCoreConnectors error:", error);
     return [];
   }
-
-  return data || [];
 }
 
 /**
- * Добавить или удалить связь Ядра и Коннектора
+ * Add or remove mapping between a Core and a Connector (tag)
  */
 export async function toggleCoreConnector(
-  coreId: string, 
-  connectorId: string, 
+  coreId: string,
+  connectorId: string,
   isLinked: boolean
-): Promise<{id: string} | null> {
-  if (isLinked) {
-    const { data, error } = await supabase
-      .from("core_connectors")
-      .insert({
+): Promise<{ id: string } | null> {
+  try {
+    const state = useLocalDatabase.getState();
+    const now = new Date().toISOString();
+
+    if (isLinked) {
+      const exists = state.coreConnectors.some(
+        (cc) => cc.core_id === coreId && cc.connector_id === connectorId
+      );
+
+      if (exists) {
+        const found = state.coreConnectors.find(
+          (cc) => cc.core_id === coreId && cc.connector_id === connectorId
+        );
+        return { id: found?.id || "exists" };
+      }
+
+      const id = crypto.randomUUID();
+      const newCC: CoreConnector = {
+        id,
         core_id: coreId,
-        connector_id: connectorId
-      })
-      .select('id')
-      .single();
+        connector_id: connectorId,
+        created_at: now,
+      };
 
-    if (error) {
-      console.error("Error adding core connector:", error);
-      return null;
-    }
-    return data;
-  } else {
-    const { error } = await supabase
-      .from("core_connectors")
-      .delete()
-      .match({ core_id: coreId, connector_id: connectorId });
+      // Add to core connectors list
+      const updatedCCs = [...state.coreConnectors, newCC];
 
-    if (error) {
-      console.error("Error removing core connector:", error);
-      return null;
+      // Re-calculate the stability of this core
+      const newStability = recalculateCoreStability(
+        coreId,
+        state.nodes,
+        updatedCCs,
+        state.nodeConnectors
+      );
+
+      const updatedCores = state.cores.map((c) =>
+        c.id === coreId
+          ? {
+              ...c,
+              stability_score: newStability,
+              updated_at: now,
+            }
+          : c
+      );
+
+      useLocalDatabase.setState({
+        coreConnectors: updatedCCs,
+        cores: updatedCores,
+      });
+
+      return { id };
+    } else {
+      const updatedCCs = state.coreConnectors.filter(
+        (cc) => !(cc.core_id === coreId && cc.connector_id === connectorId)
+      );
+
+      // Re-calculate stability after removal
+      const newStability = recalculateCoreStability(
+        coreId,
+        state.nodes,
+        updatedCCs,
+        state.nodeConnectors
+      );
+
+      const updatedCores = state.cores.map((c) =>
+        c.id === coreId
+          ? {
+              ...c,
+              stability_score: newStability,
+              updated_at: now,
+            }
+          : c
+      );
+
+      useLocalDatabase.setState({
+        coreConnectors: updatedCCs,
+        cores: updatedCores,
+      });
+
+      return { id: "removed" };
     }
-    return { id: "removed" };
+  } catch (error) {
+    console.error("Offline toggleCoreConnector error:", error);
+    return null;
   }
 }

@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Node, Connector } from "@/types";
 import { useTranslation } from "react-i18next";
+import { FileText } from "lucide-react";
 
 interface NodeCardHeaderProps {
   node: Node;
   connectors?: Connector[];
   className?: string;
+  onOpenNotes?: (nodeId: string) => void;
 }
 
 /**
@@ -18,6 +20,7 @@ export function NodeCardHeader({
   node,
   connectors = [],
   className,
+  onOpenNotes,
 }: NodeCardHeaderProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -49,17 +52,41 @@ export function NodeCardHeader({
           <h3 className="font-semibold text-lg truncate leading-tight">
             {node.name}
           </h3>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 -mt-1 -mr-1 text-muted-foreground hover:text-primary transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/nodes/edit/${node.id}`);
-            }}
-          >
-            <DynamicIcon name="settings" className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center gap-0.5 -mt-1 -mr-1 shrink-0">
+            {onOpenNotes && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "h-8 w-8 transition-colors rounded-lg",
+                  node.markdown_content && node.markdown_content.trim() !== ""
+                    ? "text-primary hover:text-primary/80"
+                    : "text-muted-foreground hover:text-primary"
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenNotes(node.id);
+                }}
+                title={t("node.notes.open", "Открыть заметки")}
+              >
+                <FileText className="w-4 h-4" />
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors rounded-lg"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/nodes/edit/${node.id}`);
+              }}
+              title={t("node.edit", "Редактировать")}
+            >
+              <DynamicIcon name="settings" className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Коннекторы */}

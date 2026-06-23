@@ -20,6 +20,7 @@ import { startOfDay } from "date-fns";
 import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery";
 import { NodeCard } from "@/features/nodes/components/NodeCard";
 import type { Node, Connector } from "@/types";
+import { NodeWorkspaceSheet } from "@/features/nodes/components/NodeWorkspaceSheet";
 
 interface NodeCardWrapperProps {
   nodeId: string;
@@ -29,9 +30,10 @@ interface NodeCardWrapperProps {
   userId?: string;
   onImpulse: (nodeId: string, value: number) => Promise<void>;
   onUpdateQuantity: (nodeId: string, value: number) => Promise<void>;
+  onOpenNotes?: (nodeId: string) => void;
 }
 
-const NodeCardWrapper = ({ nodeId, nodes, connectors, selectedDate, userId, onImpulse, onUpdateQuantity }: NodeCardWrapperProps) => {
+const NodeCardWrapper = ({ nodeId, nodes, connectors, selectedDate, userId, onImpulse, onUpdateQuantity, onOpenNotes }: NodeCardWrapperProps) => {
   const node = nodes[nodeId];
   const { data: nodeImpulses = [] } = useImpulsesQuery([nodeId], selectedDate, userId);
 
@@ -50,6 +52,7 @@ const NodeCardWrapper = ({ nodeId, nodes, connectors, selectedDate, userId, onIm
       connectors={connectors}
       onImpulse={async (value) => onImpulse(nodeId, value)}
       onUpdateQuantity={async (value) => onUpdateQuantity(nodeId, value)}
+      onOpenNotes={onOpenNotes}
     />
   );
 };
@@ -59,6 +62,13 @@ export default function GraphPage() {
   const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [activeWorkspaceNodeId, setActiveWorkspaceNodeId] = useState<string | null>(null);
+  const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
+
+  const handleOpenWorkspace = useCallback((nodeId: string) => {
+    setActiveWorkspaceNodeId(nodeId);
+    setIsWorkspaceOpen(true);
+  }, []);
 
   // Queries
   const { data: cores = {}, isLoading: isCoresLoading } = useCoresQuery(user?.id);
@@ -91,8 +101,9 @@ export default function GraphPage() {
       userId={user?.id}
       onImpulse={handleImpulse}
       onUpdateQuantity={handleUpdateQuantity}
+      onOpenNotes={handleOpenWorkspace}
     />
-  ), [nodes, connectors, selectedDate, user?.id, handleImpulse, handleUpdateQuantity]);
+  ), [nodes, connectors, selectedDate, user?.id, handleImpulse, handleUpdateQuantity, handleOpenWorkspace]);
 
   const nodesList = useMemo(() => 
     Object.values(nodes).map(n => ({
@@ -200,6 +211,12 @@ export default function GraphPage() {
           )}
         />
       </div>
+
+      <NodeWorkspaceSheet
+        nodeId={activeWorkspaceNodeId}
+        isOpen={isWorkspaceOpen}
+        onClose={() => setIsWorkspaceOpen(false)}
+      />
     </div>
   );
 }

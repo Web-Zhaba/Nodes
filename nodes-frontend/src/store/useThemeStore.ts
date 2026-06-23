@@ -1,6 +1,5 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { supabase } from "@/lib/supabase"
 
 export type ThemeMode = "light" | "dark"
 
@@ -20,7 +19,6 @@ interface ThemeState {
   applyTheme: () => void
   applyPalette: (lightColors: Record<string, string>, darkColors: Record<string, string>) => void
   resetToDefaults: () => void
-  loadFromCloud: (userId: string) => Promise<void>
   clearCache: () => void
   updateConfig: (config: ThemeConfig) => void
 }
@@ -150,37 +148,6 @@ export const useThemeStore = create<ThemeState>()(
             }
           }
         })
-      },
-      loadFromCloud: async (userId: string) => {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("theme_config")
-          .eq("id", userId)
-          .single()
-
-        if (error || !data?.theme_config) {
-          set({ isInitialized: true })
-          return
-        }
-
-        const cloudConfig = data.theme_config as Partial<ThemeConfig>
-        if (cloudConfig && typeof cloudConfig === "object") {
-           const currentConfig = get().config || { mode: "dark", colors: { light: {}, dark: {} } }
-           const mergedConfig = {
-             mode: cloudConfig.mode || currentConfig.mode || "dark",
-             colors: {
-               light: { ...(currentConfig.colors?.light || {}), ...(cloudConfig.colors?.light || {}) },
-               dark: { ...(currentConfig.colors?.dark || {}), ...(cloudConfig.colors?.dark || {}) },
-             }
-           }
-           set({
-             isInitialized: true,
-             config: mergedConfig
-           })
-           get().applyTheme()
-        } else {
-          set({ isInitialized: true })
-        }
       },
       updateConfig: (newConfig) => {
         const baseConfig = {

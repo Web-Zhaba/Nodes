@@ -1,27 +1,24 @@
+/**
+ * Copyright (c) 2026 Web-Zhaba. All rights reserved.
+ * Refactored to Local-First Offline Profile & Settings Page
+ */
+
 import { useState, useMemo, useEffect, useRef } from "react";
-import { User } from 'lucide-react';
-import { Shield } from 'lucide-react';
-import { Zap } from 'lucide-react';
-import { Palette } from 'lucide-react';
-import { Settings2 } from 'lucide-react';
-import { Globe } from 'lucide-react';
+import { User, Palette, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useForm, FormProvider } from "react-hook-form";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 import { GeneralTab } from "@/features/profile/GeneralTab";
 import { AppearanceTab } from "@/features/profile/AppearanceTab";
-import { SecurityTab } from "@/features/profile/SecurityTab";
-import { IntegrationsTab } from "@/features/profile/IntegrationsTab";
-import { PrivacyTab } from "@/features/profile/PrivacyTab";
-import { SubscriptionTab } from "@/features/profile/SubscriptionTab";
+import { DataTab } from "@/features/profile/DataTab";
 import { ProfileSaveButton } from "@/features/profile/components/ProfileSaveButton";
 import { useThemeStore } from "@/store/useThemeStore";
+import { useLocalDatabase } from "@/store/useLocalDatabase";
 
 interface ProfileFormValues {
   // General
@@ -32,13 +29,6 @@ interface ProfileFormValues {
   showGreeting: string;
   customGreeting: string;
   showRecommendations: boolean;
-  
-  // Privacy
-  isPublic: boolean;
-  publicSlug: string;
-  bio: string;
-  nodesPrivacy: Record<string, boolean>;
-  coresPrivacy: Record<string, boolean>;
 
   // Appearance
   themeConfig: any;
@@ -49,7 +39,7 @@ export default function ProfilePage() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const updateConfig = useThemeStore(state => state.updateConfig);
+  const updateConfig = useThemeStore((state) => state.updateConfig);
   const originalThemeRef = useRef<any>(null);
 
   const methods = useForm<ProfileFormValues>({
@@ -61,61 +51,43 @@ export default function ProfilePage() {
       resetTime: "00:00",
       showGreeting: "true",
       customGreeting: "",
-      isPublic: false,
-      publicSlug: "",
-      bio: "",
-      nodesPrivacy: {},
-      coresPrivacy: {},
+      showRecommendations: false,
       themeConfig: {
-        mode: "light",
-        colors: { light: {}, dark: {} }
-      }
-    }
+        mode: "dark",
+        colors: { light: {}, dark: {} },
+      },
+    },
   });
 
   const { reset, handleSubmit } = methods;
 
-  // Загружаем данные профиля, узлов и ядер
+  // Load profile data locally
   const { data: combinedData } = useQuery({
     queryKey: ["profile-full-settings", user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      
-      const [profileRes, nodesRes, coresRes] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", user.id).single(),
-        supabase.from("nodes").select("id, is_public").eq("user_id", user.id),
-        supabase.from("cores").select("id, is_public").eq("user_id", user.id)
-      ]);
-
-      if (profileRes.error) throw profileRes.error;
-      
+      const state = useLocalDatabase.getState();
       return {
-        profile: profileRes.data,
-        nodes: nodesRes.data || [],
-        cores: coresRes.data || []
+        profile: state.profile,
+        nodes: state.nodes,
+        cores: state.cores,
       };
     },
     enabled: !!user?.id,
   });
 
-  // Синхронизируем форму с загруженными данными
+  // Sync form values
   useEffect(() => {
     if (combinedData) {
-      const { profile, nodes, cores } = combinedData;
+      const { profile } = combinedData;
       const rawThemeConfig = profile.theme_config || {};
       const themeConfig = {
         mode: rawThemeConfig.mode || "dark",
         colors: {
           light: rawThemeConfig.colors?.light || {},
-          dark: rawThemeConfig.colors?.dark || {}
-        }
+          dark: rawThemeConfig.colors?.dark || {},
+        },
       };
-
-      const nodesPrivacy: Record<string, boolean> = {};
-      nodes.forEach(n => nodesPrivacy[n.id] = n.is_public || false);
-
-      const coresPrivacy: Record<string, boolean> = {};
-      cores.forEach(c => coresPrivacy[c.id] = c.is_public || false);
 
       reset({
         displayName: profile.display_name || "",
@@ -124,26 +96,19 @@ export default function ProfilePage() {
         resetTime: profile.daily_reset_time || "00:00",
         showGreeting: profile.show_greeting ? "true" : "false",
         customGreeting: profile.custom_greeting || "",
-        showRecommendations: profile.show_recommendations ?? true,
-        isPublic: profile.is_public || false,
-        publicSlug: profile.public_slug || "",
-        bio: profile.bio || "",
-        nodesPrivacy,
-        coresPrivacy,
+        showRecommendations: profile.show_recommendations ?? false,
         themeConfig: themeConfig,
       });
 
-      // Сохраняем эталонную тему для возможного отката
       originalThemeRef.current = themeConfig;
       updateConfig(themeConfig);
     }
   }, [combinedData, reset, updateConfig]);
 
-  // Эффект для отката темы при уходе со страницы без сохранения
+  // Revert preview theme on unmount if not saved
   useEffect(() => {
     return () => {
       if (originalThemeRef.current) {
-        console.log("ProfilePage unmount: reverting to last saved theme", originalThemeRef.current);
         updateConfig(originalThemeRef.current);
       }
     };
@@ -152,43 +117,22 @@ export default function ProfilePage() {
   const updateProfile = useMutation({
     mutationFn: async (data: ProfileFormValues) => {
       if (!user?.id) return;
-      console.log("Saving profile changes...", data);
       
-      // 1. Сохраняем профиль
-      const profilePromise = supabase
-        .from("profiles")
-        .update({
-          display_name: data.displayName,
-          language: data.language,
-          first_day_of_week: parseInt(data.firstDay),
-          daily_reset_time: data.resetTime,
-          show_greeting: data.showGreeting === "true",
-          custom_greeting: data.customGreeting,
-          show_recommendations: data.showRecommendations,
-          is_public: data.isPublic,
-          public_slug: data.publicSlug || null,
-          bio: data.bio,
-          theme_config: data.themeConfig,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id);
-
-      // 2. Сохраняем приватность узлов (пакетно)
-      const nodePromises = Object.entries(data.nodesPrivacy).map(([id, isPublic]) => 
-        supabase.from("nodes").update({ is_public: isPublic }).eq("id", id)
-      );
-
-      // 3. Сохраняем приватность ядер (пакетно)
-      const corePromises = Object.entries(data.coresPrivacy).map(([id, isPublic]) => 
-        supabase.from("cores").update({ is_public: isPublic }).eq("id", id)
-      );
-
-      const results = await Promise.all([profilePromise, ...nodePromises, ...corePromises]);
-      const errors = results.filter(r => r.error);
-      if (errors.length > 0) throw errors[0].error;
+      const db = useLocalDatabase.getState();
+      
+      // Update local profile
+      db.updateProfile({
+        display_name: data.displayName,
+        language: data.language,
+        first_day_of_week: parseInt(data.firstDay),
+        daily_reset_time: data.resetTime,
+        show_greeting: data.showGreeting === "true",
+        custom_greeting: data.customGreeting,
+        show_recommendations: data.showRecommendations,
+        theme_config: data.themeConfig,
+      });
     },
     onSuccess: (_, variables) => {
-      // Применяем тему к DOM сразу после сохранения
       updateConfig(variables.themeConfig);
       originalThemeRef.current = variables.themeConfig;
 
@@ -202,27 +146,30 @@ export default function ProfilePage() {
     },
     onError: (error: any) => {
       toast.error(t("profile.saveError", "Ошибка при сохранении настроек"), {
-        description: error.message
+        description: error.message,
       });
-    }
+    },
   });
 
   const onSubmit = (data: ProfileFormValues) => {
     updateProfile.mutate(data);
   };
 
-  const TABS = useMemo(() => [
-    { id: "general", label: t("profile.tabs.general", "General"), icon: User },
-    { id: "subscription", label: t("profile.tabs.subscription", "Subscription"), icon: Zap },
-    { id: "appearance", label: t("profile.tabs.appearance", "Appearance"), icon: Palette },
-    { id: "security", label: t("profile.tabs.security", "Security"), icon: Shield },
-    { id: "integrations", label: t("profile.tabs.integrations", "Integrations"), icon: Zap },
-    { id: "privacy", label: t("profile.tabs.privacy", "Privacy"), icon: Globe },
-  ], [t]);
+  const TABS = useMemo(
+    () => [
+      { id: "general", label: t("profile.tabs.general", "General"), icon: User },
+      { id: "appearance", label: t("profile.tabs.appearance", "Appearance"), icon: Palette },
+      { id: "data", label: t("profile.tabs.data", "Данные"), icon: Settings2 },
+    ],
+    [t]
+  );
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="p-3 sm:p-6 max-w-5xl mx-auto space-y-6 sm:space-y-8 pb-24 w-full overflow-hidden">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="p-3 sm:p-6 max-w-5xl mx-auto space-y-6 sm:space-y-8 pb-24 w-full overflow-hidden"
+      >
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="text-[10px] sm:text-xs font-medium text-muted-foreground mb-0.5 sm:mb-1">
@@ -239,7 +186,7 @@ export default function ProfilePage() {
         </header>
 
         <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start">
-          {/* Sidebar Nav - Stretched on mobile */}
+          {/* Sidebar Nav */}
           <nav className="flex flex-row md:flex-col gap-1 w-full md:w-64 shrink-0 overflow-x-auto scrollbar-hide sticky top-20 z-10 bg-background/80 backdrop-blur-xl md:bg-transparent p-1 md:p-0 md:border-none overflow-hidden">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
@@ -250,9 +197,7 @@ export default function ProfilePage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
                     "relative flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 md:gap-3 px-2 sm:px-4 py-2 sm:py-3 rounded-xl text-[11px] sm:text-sm font-medium transition-all duration-300 whitespace-nowrap group",
-                    isActive 
-                      ? "text-primary" 
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                    isActive ? "text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
                   )}
                 >
                   {isActive && (
@@ -262,7 +207,9 @@ export default function ProfilePage() {
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                  <tab.icon className={cn("relative z-10 w-4 h-4 transition-transform duration-300", isActive && "scale-110")} />
+                  <tab.icon
+                    className={cn("relative z-10 w-4 h-4 transition-transform duration-300", isActive && "scale-110")}
+                  />
                   <span className="relative z-10 hidden md:inline">{tab.label}</span>
                 </button>
               );
@@ -280,11 +227,8 @@ export default function ProfilePage() {
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
                 {activeTab === "general" && <GeneralTab />}
-                {activeTab === "subscription" && <SubscriptionTab />}
                 {activeTab === "appearance" && <AppearanceTab />}
-                {activeTab === "security" && <SecurityTab />}
-                {activeTab === "integrations" && <IntegrationsTab />}
-                {activeTab === "privacy" && <PrivacyTab />}
+                {activeTab === "data" && <DataTab />}
               </motion.div>
             </AnimatePresence>
           </div>

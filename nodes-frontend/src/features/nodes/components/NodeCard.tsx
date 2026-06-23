@@ -24,6 +24,7 @@ interface NodeCardProps {
   onImpulse: (value: number) => Promise<void>;
   onUpdateQuantity?: (value: number) => void;
   className?: string;
+  onOpenNotes?: (nodeId: string) => void;
 }
 
 /**
@@ -37,6 +38,7 @@ export const NodeCard = memo(function NodeCard({
   onImpulse,
   onUpdateQuantity,
   className,
+  onOpenNotes,
 }: NodeCardProps) {
   // Определяем статус завершенности: либо по явному пропсу (из БД), 
   // либо по текущему значению (если оно достигло цели)
@@ -98,7 +100,7 @@ export const NodeCard = memo(function NodeCard({
 
           <CardContent className="p-4 space-y-4 flex-1 mt-2 relative z-10">
             {/* Заголовок */}
-            <NodeCardHeader node={node} connectors={connectors} />
+            <NodeCardHeader node={node} connectors={connectors} onOpenNotes={onOpenNotes} />
 
             {/* Описание с tooltip */}
             {node.description && node.description.trim() && (
