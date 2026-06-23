@@ -14,7 +14,7 @@ import { useConnectorsQuery } from "@/features/connectors/hooks/useConnectorsQue
 import { useDailyFocusQuery, useSetDailyFocusMutation } from "@/features/nodes/hooks/useDailyFocusQuery"
 import { useImpulsesQuery, useRecordPulseMutation } from "@/features/nodes/hooks/useImpulsesQuery"
 import { startOfDay, format } from "date-fns"
-import { calculateStability } from "@/lib/api/stability"
+import { useLocalDatabase } from "@/store/useLocalDatabase"
 import { useTranslation } from "react-i18next"
 import type { Impulse } from "@/types"
 import { useNodeLimit, UpgradeModal } from "@/features/subscription"
@@ -47,6 +47,8 @@ export default function NodesListPage() {
   // Профилировщик для замеров
   const perfRef = useRef<{ clickStart: number }>({ clickStart: 0 });
 
+  const recalculateAllDecay = useLocalDatabase((state) => state.recalculateAllDecay)
+
   // Полный пересчет стабильности при загрузке страницы (фоновый, не блокирует UI)
   useEffect(() => {
     if (user?.id) {
@@ -55,15 +57,12 @@ export default function NodesListPage() {
 
       // Пересчитываем только если прошло более 5 минут с последнего раза
       if (!lastRecalc || now - parseInt(lastRecalc) > 1000 * 60 * 5) {
-        calculateStability().then(res => {
-          if (res.success) {
-            console.log('[INIT] Full stability recalc complete');
-            localStorage.setItem(`last_stability_recalc_${user.id}`, now.toString());
-          }
-        });
+        recalculateAllDecay();
+        console.log('[INIT] Local stability recalculation complete');
+        localStorage.setItem(`last_stability_recalc_${user.id}`, now.toString());
       }
     }
-  }, [user?.id]);
+  }, [user?.id, recalculateAllDecay]);
 
   // Хранит ключи дат, которые уже были инициализированы в этой сессии
   const initializedDays = useRef<Set<string>>(new Set());

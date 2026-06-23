@@ -1,26 +1,25 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Toaster } from "sonner";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { useAuth } from "@/hooks/useAuth";
-import Layout from "@/widgets/Layout";
-import ProtectedRoute from "@/widgets/ProtectedRoute";
-import { useTranslation } from "react-i18next";
-import { QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import { get, set, del } from "idb-keyval";
-import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom"
+import { Toaster } from "sonner"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { useAuth } from "@/hooks/useAuth"
+import Layout from "@/widgets/Layout"
+import ProtectedRoute from "@/widgets/ProtectedRoute"
+import { useTranslation } from "react-i18next"
+import { QueryClient } from "@tanstack/react-query"
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
+import { get, set, del } from "idb-keyval"
+import { lazy, Suspense, useEffect } from "react"
 
 // Lazy-load devtools only in development to reduce production bundle
 const ReactQueryDevtools = import.meta.env.DEV
   ? lazy(() => import("@tanstack/react-query-devtools").then((m) => ({ default: m.ReactQueryDevtools })))
-  : () => null;
-import NodesListPage from "@/pages/NodesListPage";
-import { useThemeStore } from "@/store/useThemeStore";
-import { useMobileNavigation } from "@/hooks/useMobileNavigation";
-import { useNetworkStatus } from "@/hooks/useNetworkStatus";
-import { useStatusBarTheme } from "@/hooks/useStatusBarTheme";
-import { useSyncManager } from "@/hooks/useSyncManager"
+  : () => null
+import NodesListPage from "@/pages/NodesListPage"
+import { useThemeStore } from "@/store/useThemeStore"
+import { useMobileNavigation } from "@/hooks/useMobileNavigation"
+import { useNetworkStatus } from "@/hooks/useNetworkStatus"
+import { useStatusBarTheme } from "@/hooks/useStatusBarTheme"
 
 // IndexedDB persister for TanStack Query cache
 const idbPersister = createAsyncStoragePersister({
@@ -31,7 +30,7 @@ const idbPersister = createAsyncStoragePersister({
   },
   key: "nodes-tanstack-cache",
   throttleTime: 1000,
-});
+})
 
 // Create a client with offline-friendly defaults
 const queryClient = new QueryClient({
@@ -40,7 +39,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 60 * 24, // 24 hours — keeps data for offline restart
-      networkMode: "always", // Queue requests even when offline; retry when back
+      networkMode: "always",
       retry: (failureCount) => failureCount < 3,
     },
     mutations: {
@@ -48,36 +47,33 @@ const queryClient = new QueryClient({
       networkMode: "always",
     },
   },
-});
+})
 
 // Ленивая загрузка страниц
-const LoginPage = lazy(() => import("@/pages/LoginPage"));
-const SignupPage = lazy(() => import("@/pages/SignupPage"));
-const CreateNodePage = lazy(() => import("@/pages/CreateNodePage"));
-const EditNodePage = lazy(() => import("@/pages/EditNodePage"));
-const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
-const AuthCallbackPage = lazy(() => import("@/pages/AuthCallbackPage"));
-const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
-const GraphPage = lazy(() => import("@/pages/GraphPage"));
-const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
-const NotesPage = lazy(() => import("@/pages/NotesPage"));
-const PublicGraphPage = lazy(() => import("@/pages/PublicGraphPage"));
-const PublicNodePage = lazy(() => import("@/pages/PublicNodePage"));
+const LoginPage = lazy(() => import("@/pages/LoginPage"))
+const SignupPage = lazy(() => import("@/pages/SignupPage"))
+const CreateNodePage = lazy(() => import("@/pages/CreateNodePage"))
+const EditNodePage = lazy(() => import("@/pages/EditNodePage"))
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"))
+const AuthCallbackPage = lazy(() => import("@/pages/AuthCallbackPage"))
+const ProfilePage = lazy(() => import("@/pages/ProfilePage"))
+const GraphPage = lazy(() => import("@/pages/GraphPage"))
+const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"))
+const NotesPage = lazy(() => import("@/pages/NotesPage"))
 
 function AppRouter() {
-  const { t } = useTranslation();
-  const location = useLocation();
-  useMobileNavigation();
-  useSyncManager();
+  const { t } = useTranslation()
+  const location = useLocation()
+  useMobileNavigation()
 
   // Track page views in Google Analytics on route change
   useEffect(() => {
     if (typeof (window as any).gtag === 'function') {
       (window as any).gtag('config', 'G-D4PDMWV3T6', {
         page_path: location.pathname + location.search,
-      });
+      })
     }
-  }, [location]);
+  }, [location])
 
   return (
     <Suspense
@@ -87,10 +83,6 @@ function AppRouter() {
         <Route path="/login" element={<AuthRedirect />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
-
-        {/* Neural Public Sharing — read-only, no auth required */}
-        <Route path="/share/u/:slug" element={<PublicGraphPage />} />
-        <Route path="/share/n/:token" element={<PublicNodePage />} />
 
         {/* Protected routes */}
         <Route
@@ -115,36 +107,36 @@ function AppRouter() {
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
-  );
+  )
 }
 
 function AuthRedirect() {
-  const { t } = useTranslation();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { t } = useTranslation()
+  const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">{t("common.loading")}</div>
       </div>
-    );
+    )
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" replace />
   }
 
-  return <LoginPage />;
+  return <LoginPage />
 }
 
 function App() {
-  const applyTheme = useThemeStore((state) => state.applyTheme);
-  const isOnline = useNetworkStatus();
-  useStatusBarTheme();
+  const applyTheme = useThemeStore((state) => state.applyTheme)
+  const isOnline = useNetworkStatus()
+  useStatusBarTheme()
 
   useEffect(() => {
-    applyTheme();
-  }, [applyTheme]);
+    applyTheme()
+  }, [applyTheme])
 
   return (
     <PersistQueryClientProvider
@@ -176,7 +168,7 @@ function App() {
       </BrowserRouter>
       </ErrorBoundary>
     </PersistQueryClientProvider>
-  );
+  )
 }
 
-export default App;
+export default App

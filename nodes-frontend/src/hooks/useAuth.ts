@@ -3,14 +3,39 @@
  * Local-First Offline Guest Authentication Hook
  */
 
-import { useEffect, useState } from 'react';
-import { useLocalDatabase } from '@/store/useLocalDatabase';
-import type { User, Session } from '@supabase/supabase-js';
+import { useEffect, useState } from 'react'
+import { useLocalDatabase } from '@/store/useLocalDatabase'
 
-const DEFAULT_USER_ID = "00000000-0000-0000-0000-000000000000";
+const DEFAULT_USER_ID = "00000000-0000-0000-0000-000000000000"
 
-// Mock User matching Supabase's format
-const mockUser: User = {
+// Minimal User type matching what the app expects
+interface LocalUser {
+  id: string
+  email: string
+  app_metadata: Record<string, any>
+  user_metadata: Record<string, any>
+  aud: string
+  created_at: string
+  confirmed_at: string
+  email_confirmed_at: string
+  phone: string
+  role: string
+  updated_at: string
+  identities?: any[]
+}
+
+// Minimal Session type matching what the app expects
+interface LocalSession {
+  access_token: string
+  token_type: string
+  expires_in: number
+  refresh_token: string
+  user: LocalUser
+  expires_at: number
+}
+
+// Mock User
+const mockUser: LocalUser = {
   id: DEFAULT_USER_ID,
   email: "local_user@nodes.local",
   app_metadata: { provider: "local" },
@@ -22,32 +47,32 @@ const mockUser: User = {
   phone: "",
   role: "authenticated",
   updated_at: new Date().toISOString(),
-};
+}
 
-// Mock Session matching Supabase's format
-const mockSession: Session = {
+// Mock Session
+const mockSession: LocalSession = {
   access_token: "mock-local-token",
   token_type: "bearer",
   expires_in: 3153600000, // ~100 years
   refresh_token: "mock-local-refresh-token",
   user: mockUser,
   expires_at: Math.floor(Date.now() / 1000) + 3153600000,
-};
+}
 
 export function useAuth() {
-  const isHydrated = useLocalDatabase((state) => state.isHydrated);
-  const [isLoading, setIsLoading] = useState(true);
+  const isHydrated = useLocalDatabase((state) => state.isHydrated)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (isHydrated) {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, [isHydrated]);
+  }, [isHydrated])
 
   return {
     session: isHydrated ? mockSession : null,
     user: isHydrated ? mockUser : null,
     isLoading,
     isAuthenticated: isHydrated,
-  };
+  }
 }

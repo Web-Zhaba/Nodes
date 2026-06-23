@@ -5,7 +5,6 @@ import { Sparkles, Check, Zap, Palette, BarChart3, Download, Percent } from 'luc
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 import { SUBSCRIPTION_PACKAGES, type SubscriptionPackageId } from '../types'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 
 interface UpgradeModalProps {
@@ -52,33 +51,11 @@ export const UpgradeModal = ({ open, onOpenChange, triggerFeature = 'default' }:
   const handleUpgrade = async () => {
     setIsLoading(true)
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        toast.error(t('subscription.upgrade.errors.login'))
-        return
-      }
-
-      const apiUrl = import.meta.env.VITE_DJANGO_API_URL || ''
-      const response = await fetch(`${apiUrl}/payments/create/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({
-          package_id: selectedPackage
-        })
-      })
-
-      const data = await response.json()
-
-      if (data.confirmation_url) {
-        window.location.href = data.confirmation_url
-      } else {
-        throw new Error(data.message || t('subscription.upgrade.errors.init'))
-      }
+      // Local-first: все PRO-функции уже доступны бесплатно
+      toast.success(t('subscription.upgrade.local_info', 'Все PRO-функции уже доступны в локальной версии!'))
+      onOpenChange(false)
     } catch (error: any) {
-      console.error("Payment error:", error)
+      console.error("Upgrade info error:", error)
       toast.error(t('subscription.upgrade.errors.init'), {
         description: error.message
       })

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner'
@@ -68,7 +67,7 @@ export default function AuthCallbackPage() {
 
     setIsUpdating(true)
     try {
-      const { error } = await supabase.auth.updateUser({ password: newPassword })
+      const { error } = await authService.updatePassword(newPassword)
       if (error) throw error
       
       toast.success(t('auth.callback.password_updated_success', 'Пароль успешно обновлен!'))
